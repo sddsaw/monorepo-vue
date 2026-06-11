@@ -1,0 +1,22 @@
+{
+  "name": "@sa/components",
+  "version": "2.2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./src/*"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "naive-ui": "^2.44.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "naive-ui": "2.44.1",
+    "vue": "3.5.34"
+  }
+}

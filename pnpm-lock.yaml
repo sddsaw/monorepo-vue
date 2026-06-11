@@ -7,70 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@better-scroll/core':
-        specifier: 2.5.1
-        version: 2.5.1
-      '@iconify/vue':
-        specifier: 5.0.1
-        version: 5.0.1(vue@3.5.34(typescript@6.0.3))
-      '@sa/axios':
-        specifier: workspace:*
-        version: link:packages/axios
-      '@sa/color':
-        specifier: workspace:*
-        version: link:packages/color
-      '@sa/hooks':
-        specifier: workspace:*
-        version: link:packages/hooks
-      '@sa/materials':
-        specifier: workspace:*
-        version: link:packages/materials
-      '@sa/utils':
-        specifier: workspace:*
-        version: link:packages/utils
-      '@vueuse/core':
-        specifier: 14.3.0
-        version: 14.3.0(vue@3.5.34(typescript@6.0.3))
-      clipboard:
-        specifier: 2.0.11
-        version: 2.0.11
-      dayjs:
-        specifier: 1.11.20
-        version: 1.11.20
-      defu:
-        specifier: 6.1.7
-        version: 6.1.7
-      echarts:
-        specifier: 6.0.0
-        version: 6.0.0
-      json5:
-        specifier: 2.2.3
-        version: 2.2.3
-      naive-ui:
-        specifier: 2.44.1
-        version: 2.44.1(vue@3.5.34(typescript@6.0.3))
-      nprogress:
-        specifier: 0.2.0
-        version: 0.2.0
-      pinia:
-        specifier: 3.0.4
-        version: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
-      tailwind-merge:
-        specifier: 3.6.0
-        version: 3.6.0
-      vue:
-        specifier: 3.5.34
-        version: 3.5.34(typescript@6.0.3)
-      vue-draggable-plus:
-        specifier: 0.6.1
-        version: 0.6.1(@types/sortablejs@1.15.9)
-      vue-i18n:
-        specifier: 11.4.2
-        version: 11.4.2(vue@3.5.34(typescript@6.0.3))
-      vue-router:
-        specifier: 5.0.7
-        version: 5.0.7(@vue/compiler-sfc@3.5.34)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^9.0.0
@@ -87,12 +23,27 @@ importers:
       '@iconify/json':
         specifier: 2.2.472
         version: 2.2.472
+      '@sa/axios':
+        specifier: workspace:*
+        version: link:packages/axios
+      '@sa/color':
+        specifier: workspace:*
+        version: link:packages/color
+      '@sa/hooks':
+        specifier: workspace:*
+        version: link:packages/hooks
+      '@sa/materials':
+        specifier: workspace:*
+        version: link:packages/materials
       '@sa/scripts':
         specifier: workspace:*
         version: link:packages/scripts
       '@sa/uno-preset':
         specifier: workspace:*
         version: link:packages/uno-preset
+      '@sa/utils':
+        specifier: workspace:*
+        version: link:packages/utils
       '@soybeanjs/eslint-config-vue':
         specifier: ^0.0.2
         version: 0.0.2(@stylistic/eslint-plugin@5.10.0(eslint@10.3.0(jiti@2.7.0)))(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3)
@@ -111,6 +62,9 @@ importers:
       '@vitejs/plugin-vue-jsx':
         specifier: 5.1.5
         version: 5.1.5(vite@8.0.12(@types/node@25.7.0)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.99.0)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.34(typescript@6.0.3))
+      '@vueuse/core':
+        specifier: 14.3.0
+        version: 14.3.0(vue@3.5.34(typescript@6.0.3))
       commitizen:
         specifier: ^4.3.1
         version: 4.3.1(@types/node@25.7.0)(typescript@6.0.3)
@@ -168,9 +122,201 @@ importers:
       vite-plugin-vue-transition-root-validator:
         specifier: ^0.1.0
         version: 0.1.0(vite@8.0.12(@types/node@25.7.0)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.99.0)(tsx@4.21.0)(yaml@2.9.0))(vue@3.5.34(typescript@6.0.3))
+      vue:
+        specifier: 3.5.34
+        version: 3.5.34(typescript@6.0.3)
       vue-tsc:
         specifier: 3.2.8
         version: 3.2.8(typescript@6.0.3)
+
+  apps/admin:
+    dependencies:
+      '@better-scroll/core':
+        specifier: 2.5.1
+        version: 2.5.1
+      '@iconify/vue':
+        specifier: 5.0.1
+        version: 5.0.1(vue@3.5.34(typescript@6.0.3))
+      '@sa/axios':
+        specifier: workspace:*
+        version: link:../../packages/axios
+      '@sa/color':
+        specifier: workspace:*
+        version: link:../../packages/color
+      '@sa/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@sa/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@sa/materials':
+        specifier: workspace:*
+        version: link:../../packages/materials
+      '@sa/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      clipboard:
+        specifier: 2.0.11
+        version: 2.0.11
+      dayjs:
+        specifier: 1.11.20
+        version: 1.11.20
+      defu:
+        specifier: 6.1.7
+        version: 6.1.7
+      echarts:
+        specifier: 6.0.0
+        version: 6.0.0
+      json5:
+        specifier: 2.2.3
+        version: 2.2.3
+      naive-ui:
+        specifier: 2.44.1
+        version: 2.44.1(vue@3.5.34(typescript@6.0.3))
+      nprogress:
+        specifier: 0.2.0
+        version: 0.2.0
+      pinia:
+        specifier: 3.0.4
+        version: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+      tailwind-merge:
+        specifier: 3.6.0
+        version: 3.6.0
+      vue-draggable-plus:
+        specifier: 0.6.1
+        version: 0.6.1(@types/sortablejs@1.15.9)
+      vue-i18n:
+        specifier: 11.4.2
+        version: 11.4.2(vue@3.5.34(typescript@6.0.3))
+      vue-router:
+        specifier: 5.0.7
+        version: 5.0.7(@vue/compiler-sfc@3.5.34)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
+
+  apps/student:
+    dependencies:
+      '@better-scroll/core':
+        specifier: 2.5.1
+        version: 2.5.1
+      '@iconify/vue':
+        specifier: 5.0.1
+        version: 5.0.1(vue@3.5.34(typescript@6.0.3))
+      '@sa/axios':
+        specifier: workspace:*
+        version: link:../../packages/axios
+      '@sa/color':
+        specifier: workspace:*
+        version: link:../../packages/color
+      '@sa/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@sa/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@sa/materials':
+        specifier: workspace:*
+        version: link:../../packages/materials
+      '@sa/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      clipboard:
+        specifier: 2.0.11
+        version: 2.0.11
+      dayjs:
+        specifier: 1.11.20
+        version: 1.11.20
+      defu:
+        specifier: 6.1.7
+        version: 6.1.7
+      echarts:
+        specifier: 6.0.0
+        version: 6.0.0
+      json5:
+        specifier: 2.2.3
+        version: 2.2.3
+      naive-ui:
+        specifier: 2.44.1
+        version: 2.44.1(vue@3.5.34(typescript@6.0.3))
+      nprogress:
+        specifier: 0.2.0
+        version: 0.2.0
+      pinia:
+        specifier: 3.0.4
+        version: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+      tailwind-merge:
+        specifier: 3.6.0
+        version: 3.6.0
+      vue-draggable-plus:
+        specifier: 0.6.1
+        version: 0.6.1(@types/sortablejs@1.15.9)
+      vue-i18n:
+        specifier: 11.4.2
+        version: 11.4.2(vue@3.5.34(typescript@6.0.3))
+      vue-router:
+        specifier: 5.0.7
+        version: 5.0.7(@vue/compiler-sfc@3.5.34)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
+
+  apps/teacher:
+    dependencies:
+      '@better-scroll/core':
+        specifier: 2.5.1
+        version: 2.5.1
+      '@iconify/vue':
+        specifier: 5.0.1
+        version: 5.0.1(vue@3.5.34(typescript@6.0.3))
+      '@sa/axios':
+        specifier: workspace:*
+        version: link:../../packages/axios
+      '@sa/color':
+        specifier: workspace:*
+        version: link:../../packages/color
+      '@sa/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@sa/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
+      '@sa/materials':
+        specifier: workspace:*
+        version: link:../../packages/materials
+      '@sa/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      clipboard:
+        specifier: 2.0.11
+        version: 2.0.11
+      dayjs:
+        specifier: 1.11.20
+        version: 1.11.20
+      defu:
+        specifier: 6.1.7
+        version: 6.1.7
+      echarts:
+        specifier: 6.0.0
+        version: 6.0.0
+      json5:
+        specifier: 2.2.3
+        version: 2.2.3
+      naive-ui:
+        specifier: 2.44.1
+        version: 2.44.1(vue@3.5.34(typescript@6.0.3))
+      nprogress:
+        specifier: 0.2.0
+        version: 0.2.0
+      pinia:
+        specifier: 3.0.4
+        version: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+      tailwind-merge:
+        specifier: 3.6.0
+        version: 3.6.0
+      vue-draggable-plus:
+        specifier: 0.6.1
+        version: 0.6.1(@types/sortablejs@1.15.9)
+      vue-i18n:
+        specifier: 11.4.2
+        version: 11.4.2(vue@3.5.34(typescript@6.0.3))
+      vue-router:
+        specifier: 5.0.7
+        version: 5.0.7(@vue/compiler-sfc@3.5.34)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
 
   packages/alova:
     dependencies:
@@ -211,6 +357,15 @@ importers:
       colord:
         specifier: 2.9.3
         version: 2.9.3
+
+  packages/components:
+    devDependencies:
+      naive-ui:
+        specifier: 2.44.1
+        version: 2.44.1(vue@3.5.34(typescript@6.0.3))
+      vue:
+        specifier: 3.5.34
+        version: 3.5.34(typescript@6.0.3)
 
   packages/hooks:
     dependencies:
@@ -6648,7 +6803,7 @@ snapshots:
 
   '@unocss/rule-utils@66.6.8':
     dependencies:
-      '@unocss/core': 66.6.8
+      '@unocss/core': 66.7.0
       magic-string: 0.30.21
 
   '@unocss/rule-utils@66.7.0':

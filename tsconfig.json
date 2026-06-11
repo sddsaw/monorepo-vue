@@ -6,11 +6,8 @@
     "lib": ["DOM", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "paths": {
-      "@/*": ["./src/*"],
-      "~/*": ["./*"]
-    },
     "resolveJsonModule": true,
+    "ignoreDeprecations": "6.0",
     "types": ["vite/client", "node", "unplugin-icons/types/vue", "naive-ui/volar"],
     "strict": true,
     "strictNullChecks": true,

@@ -7,4 +7,5 @@ ignoreWorkspaceRootCheck: true
 shamefullyHoist: true
 packages:
   - 'packages/*'
+  - 'apps/*'
 linkWorkspacePackages: true
