@@ -1,7 +1,7 @@
 {
   "name": "@sa/student",
   "type": "module",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "scripts": {
     "dev": "vite --mode test",
@@ -12,25 +12,25 @@
     "typecheck": "vue-tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
-    "@better-scroll/core": "2.5.1",
-    "@iconify/vue": "5.0.1",
+    "@better-scroll/core": "catalog:",
+    "@iconify/vue": "catalog:",
     "@sa/axios": "workspace:*",
     "@sa/color": "workspace:*",
     "@sa/components": "workspace:*",
     "@sa/hooks": "workspace:*",
     "@sa/materials": "workspace:*",
     "@sa/utils": "workspace:*",
-    "clipboard": "2.0.11",
-    "dayjs": "1.11.20",
-    "defu": "6.1.7",
-    "echarts": "6.0.0",
-    "json5": "2.2.3",
-    "naive-ui": "2.44.1",
-    "nprogress": "0.2.0",
-    "pinia": "3.0.4",
-    "tailwind-merge": "3.6.0",
-    "vue-draggable-plus": "0.6.1",
-    "vue-i18n": "11.4.2",
-    "vue-router": "5.0.7"
+    "clipboard": "catalog:",
+    "dayjs": "catalog:",
+    "defu": "catalog:",
+    "echarts": "catalog:",
+    "json5": "catalog:",
+    "naive-ui": "catalog:",
+    "nprogress": "catalog:",
+    "pinia": "catalog:",
+    "tailwind-merge": "catalog:",
+    "vue-draggable-plus": "catalog:",
+    "vue-i18n": "catalog:",
+    "vue-router": "catalog:"
   }
 }

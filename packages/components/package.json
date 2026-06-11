@@ -1,6 +1,6 @@
 {
   "name": "@sa/components",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -16,7 +16,7 @@
     "vue": "^3.5.0"
   },
   "devDependencies": {
-    "naive-ui": "2.44.1",
-    "vue": "3.5.34"
+    "naive-ui": "catalog:",
+    "vue": "catalog:"
   }
 }
