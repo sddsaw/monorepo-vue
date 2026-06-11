@@ -41,6 +41,7 @@ export default defineConfig((configEnv) => {
       port: 9725,
     },
     build: {
+      outDir: '../../dist/admin',
       reportCompressedSize: false,
       sourcemap: viteEnv.VITE_SOURCE_MAP === 'Y',
       commonjsOptions: {

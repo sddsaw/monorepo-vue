@@ -11,6 +11,10 @@
       ]
     }
   },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
   "dependencies": {
     "colord": "catalog:",
     "crypto-js": "4.2.0",

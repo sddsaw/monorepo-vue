@@ -1,6 +1,7 @@
 import type { PluginOption } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import { visualizer } from 'rollup-plugin-visualizer'
 import progress from 'vite-plugin-progress'
 import vueRootValidator from 'vite-plugin-vue-transition-root-validator'
 import { setupDevtoolsPlugin } from './devtools'
@@ -20,6 +21,12 @@ export function setupVitePlugins(viteEnv: Env.ImportMeta, buildTime: string) {
     progress(),
     setupHtmlPlugin(buildTime),
     vueRootValidator(),
+    visualizer({
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: '../../dist/visualizer/admin.html',
+    }) as PluginOption,
   ]
 
   return plugins

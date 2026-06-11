@@ -1,5 +1,5 @@
 {
-  "name": "@sa/teacher",
+  "name": "@apps/teacher",
   "type": "module",
   "version": "2.3.1",
   "private": true,
@@ -9,7 +9,9 @@
     "build": "vite build --mode prod",
     "build:test": "vite build --mode test",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit --skipLibCheck"
+    "typecheck": "vue-tsc --noEmit --skipLibCheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@better-scroll/core": "catalog:",

@@ -11,6 +11,10 @@
       ]
     }
   },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
   "dependencies": {
     "@sa/utils": "workspace:*",
     "simplebar-vue": "2.4.2"
