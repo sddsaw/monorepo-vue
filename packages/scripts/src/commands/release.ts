@@ -1,6 +1,6 @@
 import { versionBump } from 'bumpp'
 
-export async function release(execute = 'changelogen', push = true) {
+export async function release(execute = 'changelogen --output', push = true) {
   await versionBump({
     files: ['**/package.json', '!**/node_modules'],
     execute,
