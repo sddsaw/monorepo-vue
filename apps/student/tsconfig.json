@@ -1,11 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./*"]
-    }
+    },
+    "types": ["vite/client", "node", "unplugin-icons/types/vue", "naive-ui/volar"]
   },
   "include": ["./**/*.ts", "./**/*.tsx", "./**/*.vue"],
   "exclude": ["node_modules", "dist"]
