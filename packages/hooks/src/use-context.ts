@@ -1,15 +1,15 @@
-import { inject, provide } from 'vue';
+import { inject, provide } from 'vue'
 
-type ContextName = string | { name: string; key: string | symbol };
+type ContextName = string | { name: string, key: string | symbol }
 
-type ContextValue<T> = T extends (...args: any[]) => any ? ReturnType<T> : T;
+type ContextValue<T> = T extends (...args: any[]) => any ? ReturnType<T> : T
 
-type ContextProvider<T> = T extends (...args: any[]) => any ? T : (arg: T) => T;
+type ContextProvider<T> = T extends (...args: any[]) => any ? T : (arg: T) => T
 
 type ContextConsumer<Context> = <N extends string | null | undefined = undefined>(
   consumerName?: N,
-  defaultValue?: Context
-) => N extends null | undefined ? Context | null : Context;
+  defaultValue?: Context,
+) => N extends null | undefined ? Context | null : Context
 
 /**
  * Creates a context provider and consumer pair.
@@ -19,13 +19,13 @@ type ContextConsumer<Context> = <N extends string | null | undefined = undefined
  */
 export default function useContext<T>(
   contextName: ContextName,
-  composable?: T extends (...args: any[]) => any ? T : never
+  composable?: T extends (...args: any[]) => any ? T : never,
 ) {
-  type Context = ContextValue<T>;
+  type Context = ContextValue<T>
 
-  const name = typeof contextName === 'string' ? contextName : contextName.name;
+  const name = typeof contextName === 'string' ? contextName : contextName.name
 
-  const key = typeof contextName === 'string' ? Symbol(contextName) : contextName.key;
+  const key = typeof contextName === 'string' ? Symbol(contextName) : contextName.key
 
   /**
    * Injects the context value.
@@ -36,22 +36,22 @@ export default function useContext<T>(
    * @returns The context value.
    */
   const useInject = (consumerName?: string | null, defaultValue?: any) => {
-    const value = inject(key, defaultValue) ?? null;
+    const value = inject(key, defaultValue) ?? null
 
     if (consumerName != null && value === null) {
-      throw new Error(`\`${consumerName}\` must be used within \`${name}\``);
+      throw new Error(`\`${consumerName}\` must be used within \`${name}\``)
     }
 
-    return value;
-  };
+    return value
+  }
 
   const useProvide = (...args: any[]) => {
-    const value = composable?.(...args) ?? args[0];
+    const value = composable?.(...args) ?? args[0]
 
-    provide(key, value);
+    provide(key, value)
 
-    return value;
-  };
+    return value
+  }
 
-  return [useProvide, useInject] as [ContextProvider<T>, ContextConsumer<Context>];
+  return [useProvide, useInject] as [ContextProvider<T>, ContextConsumer<Context>]
 }

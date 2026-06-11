@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { createReusableTemplate } from '@vueuse/core';
-import { useThemeStore } from '@/store/modules/theme';
-import { $t } from '@/locales';
+import { createReusableTemplate } from '@vueuse/core'
+import { computed } from 'vue'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
 
 defineOptions({
-  name: 'CardData'
-});
+  name: 'CardData',
+})
 
 interface CardData {
-  key: string;
-  title: string;
-  value: number;
-  unit: string;
+  key: string
+  title: string
+  value: number
+  unit: string
   color: {
-    start: string;
-    end: string;
-  };
-  icon: string;
+    start: string
+    end: string
+  }
+  icon: string
 }
 
 const cardData = computed<CardData[]>(() => [
@@ -28,9 +28,9 @@ const cardData = computed<CardData[]>(() => [
     unit: '',
     color: {
       start: '#ec4786',
-      end: '#b955a4'
+      end: '#b955a4',
     },
-    icon: 'ant-design:bar-chart-outlined'
+    icon: 'ant-design:bar-chart-outlined',
   },
   {
     key: 'turnover',
@@ -39,9 +39,9 @@ const cardData = computed<CardData[]>(() => [
     unit: '$',
     color: {
       start: '#865ec0',
-      end: '#5144b4'
+      end: '#5144b4',
     },
-    icon: 'ant-design:money-collect-outlined'
+    icon: 'ant-design:money-collect-outlined',
   },
   {
     key: 'downloadCount',
@@ -50,9 +50,9 @@ const cardData = computed<CardData[]>(() => [
     unit: '',
     color: {
       start: '#56cdf3',
-      end: '#719de3'
+      end: '#719de3',
     },
-    icon: 'carbon:document-download'
+    icon: 'carbon:document-download',
   },
   {
     key: 'dealCount',
@@ -61,22 +61,22 @@ const cardData = computed<CardData[]>(() => [
     unit: '',
     color: {
       start: '#fcbc25',
-      end: '#f68057'
+      end: '#f68057',
     },
-    icon: 'ant-design:trademark-circle-outlined'
-  }
-]);
+    icon: 'ant-design:trademark-circle-outlined',
+  },
+])
 
 interface GradientBgProps {
-  gradientColor: string;
+  gradientColor: string
 }
 
-const [DefineGradientBg, GradientBg] = createReusableTemplate<GradientBgProps>();
+const [DefineGradientBg, GradientBg] = createReusableTemplate<GradientBgProps>()
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 
 function getGradientColor(color: CardData['color']) {
-  return `linear-gradient(to bottom right, ${color.start}, ${color.end})`;
+  return `linear-gradient(to bottom right, ${color.start}, ${color.end})`
 }
 </script>
 
@@ -86,7 +86,7 @@ function getGradientColor(color: CardData['color']) {
     <DefineGradientBg v-slot="{ $slots, gradientColor }">
       <div
         class="px-16px pb-4px pt-8px text-white"
-        :style="{ backgroundImage: gradientColor, borderRadius: themeStore.themeRadius + 'px' }"
+        :style="{ backgroundImage: gradientColor, borderRadius: `${themeStore.themeRadius}px` }"
       >
         <component :is="$slots.default" />
       </div>
@@ -96,7 +96,9 @@ function getGradientColor(color: CardData['color']) {
     <NGrid cols="s:1 m:2 l:4" responsive="screen" :x-gap="16" :y-gap="16">
       <NGi v-for="item in cardData" :key="item.key">
         <GradientBg :gradient-color="getGradientColor(item.color)" class="flex-1">
-          <h3 class="text-16px">{{ item.title }}</h3>
+          <h3 class="text-16px">
+            {{ item.title }}
+          </h3>
           <div class="flex justify-between pt-12px">
             <SvgIcon :icon="item.icon" class="text-32px" />
             <CountTo

@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import type { PageTabProps } from '../../types';
-import style from './index.module.css';
+import type { PageTabProps } from '../../types'
+import style from './index.module.css'
 
 defineOptions({
-  name: 'SliderTab'
-});
+  name: 'SliderTab',
+})
 
-defineProps<PageTabProps>();
+defineProps<PageTabProps>()
 
-type SlotFn = (props?: Record<string, unknown>) => any;
+defineSlots<Slots>()
 
-type Slots = {
+type SlotFn = (props?: Record<string, unknown>) => any
+
+interface Slots {
   /**
    * Slot
    *
    * The center content of the tab
    */
-  default?: SlotFn;
+  default?: SlotFn
   /**
    * Slot
    *
    * The left content of the tab
    */
-  prefix?: SlotFn;
+  prefix?: SlotFn
   /**
    * Slot
    *
    * The right content of the tab
    */
-  suffix?: SlotFn;
-};
-
-defineSlots<Slots>();
+  suffix?: SlotFn
+}
 </script>
 
 <template>
@@ -41,12 +41,12 @@ defineSlots<Slots>();
       style['slider-tab'],
       { [style['slider-tab_dark']]: darkMode },
       { [style['slider-tab_active']]: active },
-      { [style['slider-tab_active_dark']]: active && darkMode }
+      { [style['slider-tab_active_dark']]: active && darkMode },
     ]"
   >
-    <slot name="prefix"></slot>
-    <slot></slot>
-    <slot name="suffix"></slot>
+    <slot name="prefix" />
+    <slot />
+    <slot name="suffix" />
   </div>
 </template>
 

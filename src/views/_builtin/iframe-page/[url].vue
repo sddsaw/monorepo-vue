@@ -1,14 +1,14 @@
 <script setup lang="ts">
 interface Props {
-  url: string;
+  url: string
 }
 
-defineProps<Props>();
+defineProps<Props>()
 </script>
 
 <template>
   <div class="h-full">
-    <iframe id="iframePage" class="size-full" :src="url"></iframe>
+    <iframe id="iframePage" class="size-full" :src="url" />
   </div>
 </template>
 

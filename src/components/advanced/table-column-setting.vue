@@ -1,61 +1,64 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>, K = never">
-import { computed } from 'vue';
-import { VueDraggable } from 'vue-draggable-plus';
-import { $t } from '@/locales';
+import { computed } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
+import { $t } from '@/locales'
 
 defineOptions({
-  name: 'TableColumnSetting'
-});
+  name: 'TableColumnSetting',
+})
 
 const columns = defineModel<NaiveUI.TableColumnCheck[]>('columns', {
-  required: true
-});
+  required: true,
+})
 
 const tooltipRecord: Record<NaiveUI.TableColumnFixed, App.I18n.I18nKey> = {
   left: 'datatable.fixed.right',
   right: 'datatable.fixed.unFixed',
-  unFixed: 'datatable.fixed.left'
-};
+  unFixed: 'datatable.fixed.left',
+}
 
 function handleFixed(column: NaiveUI.TableColumnCheck) {
-  const fixedOptions: NaiveUI.TableColumnFixed[] = ['left', 'right', 'unFixed'];
-  const index = fixedOptions.findIndex(item => item === column.fixed);
-  const nextIndex = index === fixedOptions.length - 1 ? 0 : index + 1;
-  column.fixed = fixedOptions[nextIndex];
+  const fixedOptions: NaiveUI.TableColumnFixed[] = ['left', 'right', 'unFixed']
+  const index = fixedOptions.findIndex(item => item === column.fixed)
+  const nextIndex = index === fixedOptions.length - 1 ? 0 : index + 1
+  column.fixed = fixedOptions[nextIndex]
 }
 
 const visibleStats = computed(() => {
-  let total = 0;
-  let checked = 0;
+  let total = 0
+  let checked = 0
 
-  columns.value.forEach(column => {
-    if (!column.visible) return;
+  columns.value.forEach((column) => {
+    if (!column.visible)
+      return
 
-    total += 1;
-    if (column.checked) checked += 1;
-  });
+    total += 1
+    if (column.checked)
+      checked += 1
+  })
 
-  return { total, checked };
-});
+  return { total, checked }
+})
 
 const selectAllChecked = computed(() => {
-  const { total, checked } = visibleStats.value;
+  const { total, checked } = visibleStats.value
 
-  return total > 0 && checked === total;
-});
+  return total > 0 && checked === total
+})
 
 const selectAllIndeterminate = computed(() => {
-  const { total, checked } = visibleStats.value;
+  const { total, checked } = visibleStats.value
 
-  return checked > 0 && checked < total;
-});
+  return checked > 0 && checked < total
+})
 
 function toggleSelectAll(checked: boolean) {
-  columns.value.forEach(column => {
-    if (!column.visible) return;
+  columns.value.forEach((column) => {
+    if (!column.visible)
+      return
 
-    column.checked = checked;
-  });
+    column.checked = checked
+  })
 }
 </script>
 
@@ -95,7 +98,9 @@ function toggleSelectAll(checked: boolean) {
               <template v-if="typeof item.title === 'function'">
                 <component :is="item.title" />
               </template>
-              <template v-else>{{ item.title }}</template>
+              <template v-else>
+                {{ item.title }}
+              </template>
             </NCheckbox>
           </div>
           <ButtonIcon

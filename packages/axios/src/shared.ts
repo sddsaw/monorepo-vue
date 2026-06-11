@@ -1,10 +1,10 @@
-import type { AxiosHeaderValue, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import type { ResponseType } from './type';
+import type { AxiosHeaderValue, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import type { ResponseType } from './type'
 
 export function getContentType(config: InternalAxiosRequestConfig) {
-  const contentType: AxiosHeaderValue = config.headers?.['Content-Type'] || 'application/json';
+  const contentType: AxiosHeaderValue = config.headers?.['Content-Type'] || 'application/json'
 
-  return contentType;
+  return contentType
 }
 
 /**
@@ -13,8 +13,8 @@ export function getContentType(config: InternalAxiosRequestConfig) {
  * @param status
  */
 export function isHttpSuccess(status: number) {
-  const isSuccessCode = status >= 200 && status < 300;
-  return isSuccessCode || status === 304;
+  const isSuccessCode = status >= 200 && status < 300
+  return isSuccessCode || status === 304
 }
 
 /**
@@ -23,57 +23,61 @@ export function isHttpSuccess(status: number) {
  * @param response axios response
  */
 export function isResponseJson(response: AxiosResponse) {
-  const { responseType } = response.config;
+  const { responseType } = response.config
 
-  return responseType === 'json' || responseType === undefined;
+  return responseType === 'json' || responseType === undefined
 }
 
 export async function transformResponse(response: AxiosResponse) {
-  const responseType: ResponseType = (response.config?.responseType as ResponseType) || 'json';
-  if (responseType === 'json') return;
+  const responseType: ResponseType = (response.config?.responseType as ResponseType) || 'json'
+  if (responseType === 'json')
+    return
 
-  const isJson = (response.headers['content-type'] as string)?.includes('application/json');
-  if (!isJson) return;
+  const isJson = (response.headers['content-type'] as string)?.includes('application/json')
+  if (!isJson)
+    return
 
   if (responseType === 'blob') {
-    await transformBlobToJson(response);
+    await transformBlobToJson(response)
   }
 
   if (responseType === 'arrayBuffer') {
-    await transformArrayBufferToJson(response);
+    await transformArrayBufferToJson(response)
   }
 }
 
 export async function transformBlobToJson(response: AxiosResponse) {
   try {
-    let data = response.data;
+    let data = response.data
 
     if (typeof data === 'string') {
-      data = JSON.parse(data);
+      data = JSON.parse(data)
     }
 
     if (Object.prototype.toString.call(data) === '[object Blob]') {
-      const json = await data.text();
-      data = JSON.parse(json);
+      const json = await data.text()
+      data = JSON.parse(json)
     }
 
-    response.data = data;
-  } catch {}
+    response.data = data
+  }
+  catch {}
 }
 
 export async function transformArrayBufferToJson(response: AxiosResponse) {
   try {
-    let data = response.data;
+    let data = response.data
 
     if (typeof data === 'string') {
-      data = JSON.parse(data);
+      data = JSON.parse(data)
     }
 
     if (Object.prototype.toString.call(data) === '[object ArrayBuffer]') {
-      const json = new TextDecoder().decode(data);
-      data = JSON.parse(json);
+      const json = new TextDecoder().decode(data)
+      data = JSON.parse(json)
     }
 
-    response.data = data;
-  } catch {}
+    response.data = data
+  }
+  catch {}
 }

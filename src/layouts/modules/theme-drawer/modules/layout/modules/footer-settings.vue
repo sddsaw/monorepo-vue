@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useThemeStore } from '@/store/modules/theme';
-import { $t } from '@/locales';
-import SettingItem from '../../../components/setting-item.vue';
+import { computed } from 'vue'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
+import SettingItem from '../../../components/setting-item.vue'
 
 defineOptions({
-  name: 'FooterSettings'
-});
+  name: 'FooterSettings',
+})
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 
-const layoutMode = computed(() => themeStore.layout.mode);
-const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wrapper');
+const layoutMode = computed(() => themeStore.layout.mode)
+const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wrapper')
 const isMixHorizontalMode = computed(() =>
-  ['top-hybrid-sidebar-first', 'top-hybrid-header-first'].includes(layoutMode.value)
-);
+  ['top-hybrid-sidebar-first', 'top-hybrid-header-first'].includes(layoutMode.value),
+)
 </script>
 
 <template>

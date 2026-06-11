@@ -1,74 +1,75 @@
 <script setup lang="ts">
-import type { PopoverPlacement } from 'naive-ui';
-import { themeLayoutModeRecord } from '@/constants/app';
-import { $t } from '@/locales';
+import type { PopoverPlacement } from 'naive-ui'
+import { themeLayoutModeRecord } from '@/constants/app'
+import { $t } from '@/locales'
 
 defineOptions({
-  name: 'LayoutModeCard'
-});
+  name: 'LayoutModeCard',
+})
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<Emits>()
 
 interface Props {
   /** Layout mode */
-  mode: UnionKey.ThemeLayoutMode;
+  mode: UnionKey.ThemeLayoutMode
   /** Disabled */
-  disabled?: boolean;
+  disabled?: boolean
 }
-
-const props = defineProps<Props>();
 
 interface Emits {
   /** Layout mode change */
-  (e: 'update:mode', mode: UnionKey.ThemeLayoutMode): void;
+  (e: 'update:mode', mode: UnionKey.ThemeLayoutMode): void
 }
-
-const emit = defineEmits<Emits>();
 
 type LayoutConfig = Record<
   UnionKey.ThemeLayoutMode,
   {
-    placement: PopoverPlacement;
-    menuClass: string;
-    mainClass: string;
+    placement: PopoverPlacement
+    menuClass: string
+    mainClass: string
   }
->;
+>
 
 const layoutConfig: LayoutConfig = {
-  vertical: {
+  'vertical': {
     placement: 'bottom',
     menuClass: 'w-1/3 h-full',
-    mainClass: 'w-2/3 h-3/4'
+    mainClass: 'w-2/3 h-3/4',
   },
   'vertical-mix': {
     placement: 'bottom',
     menuClass: 'w-1/4 h-full',
-    mainClass: 'w-2/3 h-3/4'
+    mainClass: 'w-2/3 h-3/4',
   },
   'vertical-hybrid-header-first': {
     placement: 'bottom',
     menuClass: 'w-1/4 h-full',
-    mainClass: 'w-2/3 h-3/4'
+    mainClass: 'w-2/3 h-3/4',
   },
-  horizontal: {
+  'horizontal': {
     placement: 'bottom',
     menuClass: 'w-full h-1/4',
-    mainClass: 'w-full h-3/4'
+    mainClass: 'w-full h-3/4',
   },
   'top-hybrid-sidebar-first': {
     placement: 'bottom',
     menuClass: 'w-full h-1/4',
-    mainClass: 'w-2/3 h-3/4'
+    mainClass: 'w-2/3 h-3/4',
   },
   'top-hybrid-header-first': {
     placement: 'bottom',
     menuClass: 'w-full h-1/4',
-    mainClass: 'w-2/3 h-3/4'
-  }
-};
+    mainClass: 'w-2/3 h-3/4',
+  },
+}
 
 function handleChangeMode(mode: UnionKey.ThemeLayoutMode) {
-  if (props.disabled) return;
+  if (props.disabled)
+    return
 
-  emit('update:mode', mode);
+  emit('update:mode', mode)
 }
 </script>
 
@@ -87,13 +88,15 @@ function handleChangeMode(mode: UnionKey.ThemeLayoutMode) {
             :class="{ '!ring-primary': mode === key }"
           >
             <div class="h-full w-full gap-1" :class="[key.includes('vertical') ? 'flex' : 'flex-col']">
-              <slot :name="key"></slot>
+              <slot :name="key" />
             </div>
           </div>
         </template>
         {{ $t(`theme.layout.layoutMode.${key}_detail`) }}
       </IconTooltip>
-      <p class="mt-8px text-12px">{{ $t(themeLayoutModeRecord[key]) }}</p>
+      <p class="mt-8px text-12px">
+        {{ $t(themeLayoutModeRecord[key]) }}
+      </p>
     </div>
   </div>
 </template>

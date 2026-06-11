@@ -1,15 +1,15 @@
 {
   "name": "@sa/axios",
   "version": "2.2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "typesVersions": {
     "*": {
       "*": [
         "./src/*"
       ]
     }
-  },
-  "exports": {
-    ".": "./src/index.ts"
   },
   "dependencies": {
     "@sa/utils": "workspace:*",

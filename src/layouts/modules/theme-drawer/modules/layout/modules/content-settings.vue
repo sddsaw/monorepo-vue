@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { themePageAnimationModeOptions, themeScrollModeOptions } from '@/constants/app';
-import { useThemeStore } from '@/store/modules/theme';
-import { translateOptions } from '@/utils/common';
-import { $t } from '@/locales';
-import SettingItem from '../../../components/setting-item.vue';
+import { computed } from 'vue'
+import { themePageAnimationModeOptions, themeScrollModeOptions } from '@/constants/app'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
+import { translateOptions } from '@/utils/common'
+import SettingItem from '../../../components/setting-item.vue'
 
 defineOptions({
-  name: 'ContentSettings'
-});
+  name: 'ContentSettings',
+})
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 
-const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wrapper');
+const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wrapper')
 </script>
 
 <template>

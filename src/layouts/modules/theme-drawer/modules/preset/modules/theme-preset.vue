@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { defu } from 'defu';
-import { useThemeStore } from '@/store/modules/theme';
-import { themeSettings } from '@/theme/settings';
-import { $t } from '@/locales';
+import { defu } from 'defu'
+import { computed } from 'vue'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
+import { themeSettings } from '@/theme/settings'
 
 defineOptions({
-  name: 'ThemePreset'
-});
+  name: 'ThemePreset',
+})
 
 type ThemePreset = Pick<
   App.Theme.ThemeSetting,
@@ -29,66 +29,72 @@ type ThemePreset = Pick<
   | 'watermark'
   | 'tokens'
 > & {
-  name: string;
-  desc: string;
-  i18nkey?: string;
-  version: string;
+  name: string
+  desc: string
+  i18nkey?: string
+  version: string
   /** Optional NaiveUI theme overrides */
-  naiveui?: App.Theme.NaiveUIThemeOverride;
-};
+  naiveui?: App.Theme.NaiveUIThemeOverride
+}
 
-const presetModules = import.meta.glob('@/theme/preset/*.json', { eager: true, import: 'default' });
+const presetModules = import.meta.glob('@/theme/preset/*.json', { eager: true, import: 'default' })
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 
 // Extract preset data
 const presets = computed(() =>
   Object.entries(presetModules)
     .map(([path, presetData]) => {
-      const fileName = path.split('/').pop()?.replace('.json', '') || '';
+      const fileName = path.split('/').pop()?.replace('.json', '') || ''
       return {
         id: fileName,
-        ...(presetData as ThemePreset)
-      };
+        ...(presetData as ThemePreset),
+      }
     })
     .sort((a, b) => {
-      if (a.name === 'default') return -1;
-      if (b.name === 'default') return 1;
-      return a.name.localeCompare(b.name);
-    })
-);
+      if (a.name === 'default')
+        return -1
+      if (b.name === 'default')
+        return 1
+      return a.name.localeCompare(b.name)
+    }),
+)
 
-const getPresetName = (preset: ThemePreset): string => {
-  if (!preset.i18nkey) return preset.name;
+function getPresetName(preset: ThemePreset): string {
+  if (!preset.i18nkey)
+    return preset.name
   try {
-    const key = `${preset.i18nkey}.name` as App.I18n.I18nKey;
-    const translated = $t(key);
-    return translated !== key ? translated : preset.name;
-  } catch {
-    return preset.name;
+    const key = `${preset.i18nkey}.name` as App.I18n.I18nKey
+    const translated = $t(key)
+    return translated !== key ? translated : preset.name
   }
-};
+  catch {
+    return preset.name
+  }
+}
 
-const getPresetDesc = (preset: ThemePreset): string => {
-  if (!preset.i18nkey) return preset.desc;
+function getPresetDesc(preset: ThemePreset): string {
+  if (!preset.i18nkey)
+    return preset.desc
   try {
-    const key = `${preset.i18nkey}.desc` as App.I18n.I18nKey;
-    const translated = $t(key);
-    return translated !== key ? translated : preset.desc;
-  } catch {
-    return preset.desc;
+    const key = `${preset.i18nkey}.desc` as App.I18n.I18nKey
+    const translated = $t(key)
+    return translated !== key ? translated : preset.desc
   }
-};
+  catch {
+    return preset.desc
+  }
+}
 
-const applyPreset = (preset: ThemePreset): void => {
-  const mergedPreset = defu(preset, themeSettings);
-  const { themeScheme, grayscale, colourWeakness, layout, watermark, naiveui, ...rest } = mergedPreset;
-  themeStore.setThemeScheme(themeScheme);
-  themeStore.setGrayscale(grayscale);
-  themeStore.setColourWeakness(colourWeakness);
-  themeStore.setThemeLayout(layout.mode);
-  themeStore.setWatermarkEnableUserName(watermark.enableUserName);
-  themeStore.setWatermarkEnableTime(watermark.enableTime);
+function applyPreset(preset: ThemePreset): void {
+  const mergedPreset = defu(preset, themeSettings)
+  const { themeScheme, grayscale, colourWeakness, layout, watermark, naiveui, ...rest } = mergedPreset
+  themeStore.setThemeScheme(themeScheme)
+  themeStore.setGrayscale(grayscale)
+  themeStore.setColourWeakness(colourWeakness)
+  themeStore.setThemeLayout(layout.mode)
+  themeStore.setWatermarkEnableUserName(watermark.enableUserName)
+  themeStore.setWatermarkEnableTime(watermark.enableTime)
 
   Object.assign(themeStore, {
     ...rest,
@@ -99,14 +105,14 @@ const applyPreset = (preset: ThemePreset): void => {
     sider: { ...rest.sider },
     footer: { ...rest.footer },
     watermark: { ...watermark },
-    tokens: { ...rest.tokens }
-  });
+    tokens: { ...rest.tokens },
+  })
 
   // Apply NaiveUI theme overrides if present
-  themeStore.setNaiveThemeOverrides(naiveui);
+  themeStore.setNaiveThemeOverrides(naiveui)
 
-  window.$message?.success($t('theme.appearance.preset.applySuccess'));
-};
+  window.$message?.success($t('theme.appearance.preset.applySuccess'))
+}
 </script>
 
 <template>
@@ -130,7 +136,9 @@ const applyPreset = (preset: ThemePreset): void => {
         </NButton>
       </div>
 
-      <p class="line-clamp-2 mb-3 text-xs text-gray-500 leading-4">{{ getPresetDesc(preset) }}</p>
+      <p class="line-clamp-2 mb-3 text-xs text-gray-500 leading-4">
+        {{ getPresetDesc(preset) }}
+      </p>
 
       <div class="flex items-center justify-between">
         <div class="flex gap-1">

@@ -1,11 +1,10 @@
-import type { Router } from 'vue-router';
+import type { Router } from 'vue-router'
 
 export function createProgressGuard(router: Router) {
   router.beforeEach(() => {
-    window.NProgress?.start?.();
-    return;
-  });
+    window.NProgress?.start?.()
+  })
   router.afterEach(() => {
-    window.NProgress?.done?.();
-  });
+    window.NProgress?.done?.()
+  })
 }

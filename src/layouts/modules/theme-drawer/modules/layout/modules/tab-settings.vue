@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { themeTabModeOptions } from '@/constants/app';
-import { useThemeStore } from '@/store/modules/theme';
-import { translateOptions } from '@/utils/common';
-import { $t } from '@/locales';
-import SettingItem from '../../../components/setting-item.vue';
+import { themeTabModeOptions } from '@/constants/app'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
+import { translateOptions } from '@/utils/common'
+import SettingItem from '../../../components/setting-item.vue'
 
 defineOptions({
-  name: 'TabSettings'
-});
+  name: 'TabSettings',
+})
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 </script>
 
 <template>

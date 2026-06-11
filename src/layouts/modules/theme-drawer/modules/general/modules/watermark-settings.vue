@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { watermarkTimeFormatOptions } from '@/constants/app';
-import { useThemeStore } from '@/store/modules/theme';
-import { $t } from '@/locales';
-import SettingItem from '../../../components/setting-item.vue';
+import { computed } from 'vue'
+import { watermarkTimeFormatOptions } from '@/constants/app'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
+import SettingItem from '../../../components/setting-item.vue'
 
 defineOptions({
-  name: 'WatermarkSettings'
-});
+  name: 'WatermarkSettings',
+})
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 
 const isWatermarkTextVisible = computed(
-  () => themeStore.watermark.visible && !themeStore.watermark.enableUserName && !themeStore.watermark.enableTime
-);
+  () => themeStore.watermark.visible && !themeStore.watermark.enableUserName && !themeStore.watermark.enableTime,
+)
 </script>
 
 <template>

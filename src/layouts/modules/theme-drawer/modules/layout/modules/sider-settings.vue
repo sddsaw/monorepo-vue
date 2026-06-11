@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useThemeStore } from '@/store/modules/theme';
-import { $t } from '@/locales';
-import SettingItem from '../../../components/setting-item.vue';
+import { computed } from 'vue'
+import { $t } from '@/locales'
+import { useThemeStore } from '@/store/modules/theme'
+import SettingItem from '../../../components/setting-item.vue'
 
 defineOptions({
-  name: 'SiderSettings'
-});
+  name: 'SiderSettings',
+})
 
-const themeStore = useThemeStore();
+const themeStore = useThemeStore()
 
-const layoutMode = computed(() => themeStore.layout.mode);
-const isMixLayoutMode = computed(() => layoutMode.value.includes('mix') || layoutMode.value.includes('hybrid'));
-const isHybridLayoutMode = computed(() => layoutMode.value.includes('hybrid'));
+const layoutMode = computed(() => themeStore.layout.mode)
+const isMixLayoutMode = computed(() => layoutMode.value.includes('mix') || layoutMode.value.includes('hybrid'))
+const isHybridLayoutMode = computed(() => layoutMode.value.includes('hybrid'))
 </script>
 
 <template>
