@@ -1,6 +1,6 @@
 import { useCountDown, useLoading } from '@sa/hooks'
+import { REG_PHONE } from '@sa/utils'
 import { computed } from 'vue'
-import { REG_PHONE } from '@/constants/reg'
 import { $t } from '@/locales'
 
 export function useCaptcha() {
