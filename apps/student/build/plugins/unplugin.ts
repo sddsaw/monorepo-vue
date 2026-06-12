@@ -32,6 +32,34 @@ export function setupUnplugin(viteEnv: Env.ImportMeta) {
       resolvers: [
         NaiveUiResolver(),
         IconsResolver({ customCollections: [collectionName], componentPrefix: VITE_ICON_PREFIX }),
+        (componentName) => {
+          const sharedComponents = [
+            'BetterScroll',
+            'ButtonIcon',
+            'CountTo',
+            'LookForward',
+            'SoybeanAvatar',
+            'SvgIcon',
+            'WaveBg',
+            'SaButton',
+            'TableColumnSetting',
+            'TableHeaderOperation',
+            'AppProvider',
+            'DarkModeContainer',
+            'ExceptionBase',
+            'FullScreen',
+            'IconTooltip',
+            'LangSwitch',
+            'MenuToggler',
+            'PinToggler',
+            'ReloadButton',
+            'SystemLogo',
+            'ThemeSchemaSwitch',
+          ]
+          if (sharedComponents.includes(componentName)) {
+            return { name: componentName, from: '@sa/components' }
+          }
+        },
       ],
     }),
     createSvgIconsPlugin({

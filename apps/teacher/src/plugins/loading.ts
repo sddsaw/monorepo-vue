@@ -1,8 +1,8 @@
 // @unocss-include
 import { getColorPalette, getRgb } from '@sa/color'
+import { toggleHtmlClass } from '@sa/utils'
 import { DARK_CLASS } from '@/constants/app'
 import { $t } from '@/locales'
-import { toggleHtmlClass } from '@/utils/common'
 import { localStg } from '@/utils/storage'
 
 export function setupLoading() {

@@ -1,55 +1,61 @@
 <script setup lang="ts">
+import { useEcharts } from '@sa/hooks'
 import { watch } from 'vue'
-import { useEcharts } from '@/hooks/common/echarts'
 import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
+import { useThemeStore } from '@/store/modules/theme'
 
 defineOptions({
   name: 'PieChart',
 })
 
 const appStore = useAppStore()
+const themeStore = useThemeStore()
 
-const { domRef, updateOptions } = useEcharts(() => ({
-  tooltip: {
-    trigger: 'item',
-  },
-  legend: {
-    bottom: '1%',
-    left: 'center',
-    itemStyle: {
-      borderWidth: 0,
+const { domRef, updateOptions } = useEcharts(
+  () => ({
+    tooltip: {
+      trigger: 'item',
     },
-  },
-  series: [
-    {
-      color: ['#5da8ff', '#8e9dff', '#fedc69', '#26deca'],
-      name: $t('page.home.schedule'),
-      type: 'pie',
-      radius: ['45%', '75%'],
-      avoidLabelOverlap: false,
+    legend: {
+      bottom: '1%',
+      left: 'center',
       itemStyle: {
-        borderRadius: 10,
-        borderColor: '#fff',
-        borderWidth: 1,
+        borderWidth: 0,
       },
-      label: {
-        show: false,
-        position: 'center',
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: '12',
-        },
-      },
-      labelLine: {
-        show: false,
-      },
-      data: [] as { name: string, value: number }[],
     },
-  ],
-}))
+    series: [
+      {
+        color: ['#5da8ff', '#8e9dff', '#fedc69', '#26deca'],
+        name: $t('page.home.schedule'),
+        type: 'pie',
+        radius: ['45%', '75%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 1,
+        },
+        label: {
+          show: false,
+          position: 'center',
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '12',
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: [] as { name: string, value: number }[],
+      },
+    ],
+  }),
+  () => themeStore.darkMode,
+  () => themeStore.themeColor,
+)
 
 async function mockData() {
   await new Promise((resolve) => {

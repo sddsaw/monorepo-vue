@@ -1,8 +1,9 @@
-import type { FormInst } from 'naive-ui'
 import type { ComputedRef, Ref } from 'vue'
-import { ref, toValue } from 'vue'
+import { toValue } from 'vue'
 import { REG_CODE_SIX, REG_EMAIL, REG_PHONE, REG_PWD, REG_USER_NAME } from '@/constants/reg'
 import { $t } from '@/locales'
+
+export { useNaiveForm } from '@sa/hooks'
 
 export function useFormRules() {
   const patternRules = {
@@ -75,23 +76,5 @@ export function useFormRules() {
     defaultRequiredRule,
     createRequiredRule,
     createConfirmPwdRule,
-  }
-}
-
-export function useNaiveForm() {
-  const formRef = ref<FormInst | null>(null)
-
-  async function validate() {
-    await formRef.value?.validate()
-  }
-
-  async function restoreValidation() {
-    formRef.value?.restoreValidation()
-  }
-
-  return {
-    formRef,
-    validate,
-    restoreValidation,
   }
 }

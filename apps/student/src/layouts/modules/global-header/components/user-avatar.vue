@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VNode } from 'vue'
+import { useSvgIcon } from '@sa/components'
 import { computed } from 'vue'
-import { useSvgIcon } from '@/hooks/common/icon'
 import { useRouterPush } from '@/hooks/common/router'
 import { $t } from '@/locales'
 import { useAuthStore } from '@/store/modules/auth'

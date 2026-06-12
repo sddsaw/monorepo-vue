@@ -1,106 +1,112 @@
 <script setup lang="ts">
+import { useEcharts } from '@sa/hooks'
 import { watch } from 'vue'
-import { useEcharts } from '@/hooks/common/echarts'
 import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
+import { useThemeStore } from '@/store/modules/theme'
 
 defineOptions({
   name: 'LineChart',
 })
 
 const appStore = useAppStore()
+const themeStore = useThemeStore()
 
-const { domRef, updateOptions } = useEcharts(() => ({
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross',
-      label: {
-        backgroundColor: '#6a7985',
-      },
-    },
-  },
-  legend: {
-    data: [$t('page.home.downloadCount'), $t('page.home.registerCount')],
-    top: '0',
-  },
-  grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    top: '15%',
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    data: [] as string[],
-  },
-  yAxis: {
-    type: 'value',
-  },
-  series: [
-    {
-      color: '#8e9dff',
-      name: $t('page.home.downloadCount'),
-      type: 'line',
-      smooth: true,
-      stack: 'Total',
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            {
-              offset: 0.25,
-              color: '#8e9dff',
-            },
-            {
-              offset: 1,
-              color: '#fff',
-            },
-          ],
+const { domRef, updateOptions } = useEcharts(
+  () => ({
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'cross',
+        label: {
+          backgroundColor: '#6a7985',
         },
       },
-      emphasis: {
-        focus: 'series',
-      },
-      data: [] as number[],
     },
-    {
-      color: '#26deca',
-      name: $t('page.home.registerCount'),
-      type: 'line',
-      smooth: true,
-      stack: 'Total',
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [
-            {
-              offset: 0.25,
-              color: '#26deca',
-            },
-            {
-              offset: 1,
-              color: '#fff',
-            },
-          ],
+    legend: {
+      data: [$t('page.home.downloadCount'), $t('page.home.registerCount')],
+      top: '0',
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      top: '15%',
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: [] as string[],
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        color: '#8e9dff',
+        name: $t('page.home.downloadCount'),
+        type: 'line',
+        smooth: true,
+        stack: 'Total',
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0.25,
+                color: '#8e9dff',
+              },
+              {
+                offset: 1,
+                color: '#fff',
+              },
+            ],
+          },
         },
+        emphasis: {
+          focus: 'series',
+        },
+        data: [] as number[],
       },
-      emphasis: {
-        focus: 'series',
+      {
+        color: '#26deca',
+        name: $t('page.home.registerCount'),
+        type: 'line',
+        smooth: true,
+        stack: 'Total',
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              {
+                offset: 0.25,
+                color: '#26deca',
+              },
+              {
+                offset: 1,
+                color: '#fff',
+              },
+            ],
+          },
+        },
+        emphasis: {
+          focus: 'series',
+        },
+        data: [],
       },
-      data: [],
-    },
-  ],
-}))
+    ],
+  }),
+  () => themeStore.darkMode,
+  () => themeStore.themeColor,
+)
 
 async function mockData() {
   await new Promise((resolve) => {

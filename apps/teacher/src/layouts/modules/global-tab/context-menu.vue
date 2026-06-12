@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DropdownOption } from 'naive-ui'
+import { useSvgIcon } from '@sa/components'
 import { computed } from 'vue'
-import { useSvgIcon } from '@/hooks/common/icon'
 import { $t } from '@/locales'
 import { useTabStore } from '@/store/modules/tab'
 

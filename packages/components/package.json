@@ -16,11 +16,21 @@
     "lint:fix": "eslint --fix ."
   },
   "peerDependencies": {
+    "@iconify/vue": "catalog:",
+    "@vueuse/core": "catalog:",
     "naive-ui": "^2.44.0",
+    "tailwind-merge": "catalog:",
     "vue": "^3.5.0"
   },
+  "dependencies": {
+    "@sa/color": "workspace:*",
+    "@sa/hooks": "workspace:*"
+  },
   "devDependencies": {
+    "@iconify/vue": "catalog:",
+    "@vueuse/core": "catalog:",
     "naive-ui": "catalog:",
+    "tailwind-merge": "catalog:",
     "vue": "catalog:"
   }
 }

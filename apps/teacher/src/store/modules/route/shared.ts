@@ -1,6 +1,6 @@
 import type { ElegantConstRoute, LastLevelRouteKey, RouteKey, RouteMap } from '@elegant-router/types'
 import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
-import { useSvgIcon } from '@/hooks/common/icon'
+import { useSvgIcon } from '@sa/components'
 import { $t } from '@/locales'
 
 /**

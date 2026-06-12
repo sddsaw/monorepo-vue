@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { BetterScroll } from '@sa/components'
 import { PageTab } from '@sa/materials'
+import { isPC } from '@sa/utils'
 import { useElementBounding } from '@vueuse/core'
 import { nextTick, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import BetterScroll from '@/components/custom/better-scroll.vue'
 import { useAppStore } from '@/store/modules/app'
 import { useTabStore } from '@/store/modules/tab'
 import { useThemeStore } from '@/store/modules/theme'
-import { isPC } from '@/utils/agent'
 import ContextMenu from './context-menu.vue'
 
 defineOptions({

@@ -1,4 +1,4 @@
-import { transformRecordToOption } from '@/utils/common'
+import { transformRecordToOption } from '@sa/utils'
 
 export const GLOBAL_HEADER_MENU_ID = '__GLOBAL_HEADER_MENU__'
 
