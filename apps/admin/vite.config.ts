@@ -1,52 +1,30 @@
-import process from 'node:process'
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig, loadEnv } from 'vite'
-import { createViteProxy, getBuildTime } from './build/config'
-import { setupVitePlugins } from './build/plugins'
+import { createViteConfig } from '@internal/vite-config'
 
-export default defineConfig((configEnv) => {
-  const viteEnv = loadEnv(configEnv.mode, process.cwd()) as unknown as Env.ImportMeta
-
-  const buildTime = getBuildTime()
-
-  const enableProxy = configEnv.command === 'serve' && !configEnv.isPreview
-
-  return {
-    base: viteEnv.VITE_BASE_URL,
-    resolve: {
-      alias: {
-        '~': fileURLToPath(new URL('./', import.meta.url)),
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-      },
+export default createViteConfig({
+  appName: 'admin',
+  port: 9527,
+  previewPort: 9725,
+  scss: {
+    additionalData: `@use "@/styles/scss/global.scss" as *;`,
+  },
+  routerOptions: {
+    routePathTransformer(routeName, routePath) {
+      if (routeName === 'login') {
+        const modules = ['pwd-login', 'code-login', 'register', 'reset-pwd', 'bind-wechat']
+        return `/login/:module(${modules.join('|')})?`
+      }
+      return routePath
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          api: 'modern-compiler',
-          additionalData: `@use "@/styles/scss/global.scss" as *;`,
-        },
-      },
+    onRouteMetaGen(routeName) {
+      const constantRoutes = ['login', '403', '404', '500']
+      const meta: Record<string, any> = {
+        title: routeName,
+        i18nKey: `route.${routeName}`,
+      }
+      if (constantRoutes.includes(routeName)) {
+        meta.constant = true
+      }
+      return meta
     },
-    plugins: setupVitePlugins(viteEnv, buildTime),
-    define: {
-      BUILD_TIME: JSON.stringify(buildTime),
-    },
-    server: {
-      host: '0.0.0.0',
-      port: 9527,
-      open: true,
-      proxy: createViteProxy(viteEnv, enableProxy),
-    },
-    preview: {
-      port: 9725,
-    },
-    build: {
-      outDir: '../../dist/admin',
-      reportCompressedSize: false,
-      sourcemap: viteEnv.VITE_SOURCE_MAP === 'Y',
-      commonjsOptions: {
-        ignoreTryCatch: false,
-      },
-    },
-  }
+  },
 })

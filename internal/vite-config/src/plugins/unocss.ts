@@ -1,10 +1,11 @@
+import type { ViteEnv } from '../types.js'
 import path from 'node:path'
 import process from 'node:process'
 import { FileSystemIconLoader } from '@iconify/utils/lib/loader/node-loaders'
 import { presetIcons } from 'unocss'
 import unocss from 'unocss/vite'
 
-export function setupUnocss(viteEnv: Env.ImportMeta) {
+export function setupUnocss(viteEnv: ViteEnv) {
   const { VITE_ICON_PREFIX, VITE_ICON_LOCAL_PREFIX } = viteEnv
 
   const localIconPath = path.join(process.cwd(), 'src/assets/svg-icon')
@@ -22,7 +23,7 @@ export function setupUnocss(viteEnv: Env.ImportMeta) {
         },
         collections: {
           [collectionName]: FileSystemIconLoader(localIconPath, svg =>
-            svg.replace(/^<svg\s/, '<svg width="1em" height="1em" ')),
+            svg.replace(/^<svg\s/, '<svg width="1em" height="1em" ')) as any,
         },
         warn: true,
       }),
