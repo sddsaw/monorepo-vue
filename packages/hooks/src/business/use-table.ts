@@ -1,7 +1,7 @@
 import type { Ref, VNodeChild } from 'vue'
 import { computed, ref } from 'vue'
-import useBoolean from './use-boolean'
-import useLoading from './use-loading'
+import useBoolean from '../basic/use-boolean'
+import useLoading from '../basic/use-loading'
 
 export interface PaginationData<T> {
   data: T[]

@@ -230,6 +230,9 @@ const local: App.I18n.Schema = {
     '500': 'Server Error',
     'iframe-page': 'Iframe',
     'home': 'Home',
+    'demo': 'Demo',
+    'demo_from': 'Form Encapsulation',
+    'demo_infinite-scroll': 'Infinite Scroll',
   },
   page: {
     login: {

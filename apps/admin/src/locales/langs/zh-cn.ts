@@ -226,6 +226,9 @@ const local: App.I18n.Schema = {
     '500': '服务器错误',
     'iframe-page': '外链页面',
     'home': '首页',
+    'demo': '演示页面',
+    'demo_from': '表单封装',
+    'demo_infinite-scroll': '滚动加载封装',
   },
   page: {
     login: {

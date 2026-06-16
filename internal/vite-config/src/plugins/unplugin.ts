@@ -2,6 +2,7 @@ import type { PluginOption } from 'vite'
 import type { ViteEnv } from '../types.js'
 import fs from 'node:fs'
 import path from 'node:path'
+import AutoImport from 'unplugin-auto-import/vite'
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
@@ -72,6 +73,16 @@ export function setupUnplugin(viteEnv: ViteEnv, root: string, extraResolvers: an
   const collectionName = VITE_ICON_LOCAL_PREFIX.replace(`${VITE_ICON_PREFIX}-`, '')
 
   const plugins: PluginOption[] = [
+    AutoImport({
+      imports: [
+        'vue',
+        'vue-router',
+        'pinia',
+        '@vueuse/core',
+        'vue-i18n',
+      ],
+      dts: 'src/typings/auto-imports.d.ts',
+    }),
     Icons({
       compiler: 'vue3',
       customCollections: {
