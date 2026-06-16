@@ -19,6 +19,7 @@ import WaveBg from './basic/WaveBg/index.vue'
 // Business components
 import AppProvider from './business/AppProvider/index.vue'
 import ExceptionBase from './business/ExceptionBase/index.vue'
+import FileUpload from './business/FileUpload/index.vue'
 import LangSwitch from './business/LangSwitch/index.vue'
 import SoybeanAvatar from './business/SoybeanAvatar/index.vue'
 import TableColumnSetting from './business/TableColumnSetting/index.vue'
@@ -32,6 +33,7 @@ export {
   CountTo,
   DarkModeContainer,
   ExceptionBase,
+  FileUpload,
   FullScreen,
   IconTooltip,
   InfiniteScroll,

@@ -22,6 +22,7 @@
     "@sa/hooks": "workspace:*",
     "@sa/materials": "workspace:*",
     "@sa/utils": "workspace:*",
+    "@volcengine/tos-sdk": "catalog:",
     "clipboard": "catalog:",
     "dayjs": "catalog:",
     "defu": "catalog:",

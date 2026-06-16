@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import type { SchemaFormOptions } from '@sa/components'
 import { SchemaForm } from '@sa/components'
-import { NAlert, NButton, NCard, NGi, NGrid, NInput, NSpace } from 'naive-ui'
-import { ref } from 'vue'
-
+import { useNaiveForm, useResetReactive } from '@sa/hooks'
 // ==========================================
 // 1. SchemaForm 响应式表单数据源定义
 // ==========================================
-const formData = ref({
+const [formData, resetForm] = useResetReactive({
   username: '',
   password: '',
   age: null,
@@ -21,6 +19,8 @@ const formData = ref({
   interests: [],
   bio: '',
   customRemark: '',
+  avatar: '',
+  files: [],
 })
 
 // 模拟异步请求角色选项数据的 API
@@ -38,7 +38,7 @@ async function fetchRoleListApi() {
   }
 }
 
-const formRef = ref<InstanceType<typeof SchemaForm> | null>(null)
+const { formRef, validate, restoreValidation } = useNaiveForm()
 
 // ==========================================
 // 2. SchemaForm 配置项定义 (全功能展示)
@@ -146,6 +146,8 @@ const formOptions = ref<SchemaFormOptions[]>([
       startPlaceholder: '开始日期',
       endPlaceholder: '结束日期',
       clearable: true,
+      valueFormat: 'yyyy-MM-dd',
+      format: 'yyyy-MM-dd',
     },
   },
   {
@@ -191,6 +193,34 @@ const formOptions = ref<SchemaFormOptions[]>([
     },
   },
   {
+    value: 'avatar',
+    label: '上传头像',
+    type: 'upload',
+    span: 24,
+    attrs: {
+      max: 1,
+      multiple: false,
+      accept: 'image/*',
+      listType: 'image-card',
+      // 监听上传成功事件
+      onUploadSuccess: (url) => {
+        window.$message?.success(`上传文件成功！云端地址为: ${url}`)
+      },
+    },
+  },
+  {
+    value: 'files',
+    label: '拖拽上传文件',
+    type: 'upload',
+    span: 24,
+    attrs: {
+      max: 5,
+      accept: '*',
+      listType: 'text',
+      isDirectoryDnd: true,
+    },
+  },
+  {
     value: 'customRemark',
     label: '自定义插槽扩展',
     type: 'slot',
@@ -203,7 +233,7 @@ const formOptions = ref<SchemaFormOptions[]>([
 // ==========================================
 async function handleValidate() {
   try {
-    await formRef.value?.validate()
+    await validate()
     window.$message?.success('表单校验通过！')
   }
   catch {
@@ -212,22 +242,8 @@ async function handleValidate() {
 }
 
 function handleReset() {
-  formRef.value?.restoreValidation()
-  formData.value = {
-    username: '',
-    password: '',
-    age: null,
-    gender: 'male',
-    roleId: null,
-    city: null,
-    birthday: null,
-    workRange: null,
-    meetingTime: null,
-    enableStatus: true,
-    interests: [],
-    bio: '',
-    customRemark: '',
-  }
+  restoreValidation()
+  resetForm()
 }
 </script>
 

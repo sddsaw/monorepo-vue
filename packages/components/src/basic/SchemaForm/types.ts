@@ -1,3 +1,5 @@
+import type { OBSConfig } from '@sa/utils'
+
 import type {
   CheckboxGroupProps,
   DatePickerProps,
@@ -20,7 +22,43 @@ export type FormComponentType
     | 'radio'
     | 'input-number'
     | 'time-picker'
+    | 'upload'
     | 'slot'
+
+interface FileUploadProps {
+  /** 最大上传数量 */
+  max?: number
+  /** 最大文件大小（字节） */
+  maxSize?: number
+  /** 是否支持多选 */
+  multiple?: boolean
+  /** 接受的文件类型 */
+  accept?: string
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 是否显示文件列表 */
+  showFileList?: boolean
+  /** 列表类型 */
+  listType?: 'text' | 'image' | 'image-card'
+  /** 是否支持拖拽文件夹 */
+  isDirectoryDnd?: boolean
+  /** OBS 配置 */
+  obsConfig?: OBSConfig
+  /** 上传前的钩子 */
+  beforeUpload?: (file: File) => boolean | Promise<boolean>
+  /** 是否自动上传到 OBS */
+  autoUploadObs?: boolean
+  /** 上传任务启动事件 */
+  onUploadStart?: (file: File) => void
+  /** 上传进度更新事件 */
+  onUploadProgress?: (file: File, progress: number) => void
+  /** 上传成功事件，返回上传后的云文件 URL */
+  onUploadSuccess?: (url: string) => void
+  /** 上传失败事件 */
+  onUploadError?: (error: any, file: File) => void
+  /** 移除文件事件 */
+  onRemove?: (file: any) => void
+}
 
 export interface OptionItem {
   label: string
@@ -43,6 +81,7 @@ interface ComponentPropsMap {
   }
   'input-number': InputNumberProps
   'time-picker': TimePickerProps
+  'upload': FileUploadProps
   'slot': Record<string, unknown>
 }
 

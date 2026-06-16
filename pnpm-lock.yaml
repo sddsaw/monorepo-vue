@@ -15,6 +15,9 @@ catalogs:
     '@types/node':
       specifier: 25.7.0
       version: 25.7.0
+    '@volcengine/tos-sdk':
+      specifier: ^2.9.0
+      version: 2.9.1
     '@vueuse/core':
       specifier: 14.3.0
       version: 14.3.0
@@ -92,15 +95,15 @@ importers:
       '@iconify/json':
         specifier: 2.2.472
         version: 2.2.472
+      '@internal/eslint-config':
+        specifier: workspace:*
+        version: link:internal/eslint-config
       '@sa/axios':
         specifier: workspace:*
         version: link:packages/axios
       '@sa/color':
         specifier: workspace:*
         version: link:packages/color
-      '@sa/eslint-config':
-        specifier: workspace:*
-        version: link:internal/eslint-config
       '@sa/hooks':
         specifier: workspace:*
         version: link:packages/hooks
@@ -230,6 +233,9 @@ importers:
       '@sa/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@volcengine/tos-sdk':
+        specifier: 'catalog:'
+        version: 2.9.1
       clipboard:
         specifier: 'catalog:'
         version: 2.0.11
@@ -267,12 +273,12 @@ importers:
         specifier: 'catalog:'
         version: 5.0.7(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
     devDependencies:
+      '@internal/eslint-config':
+        specifier: workspace:*
+        version: link:../../internal/eslint-config
       '@internal/vite-config':
         specifier: workspace:*
         version: link:../../internal/vite-config
-      '@sa/eslint-config':
-        specifier: workspace:*
-        version: link:../../internal/eslint-config
 
   apps/student:
     dependencies:
@@ -300,6 +306,9 @@ importers:
       '@sa/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@volcengine/tos-sdk':
+        specifier: 'catalog:'
+        version: 2.9.1
       clipboard:
         specifier: 'catalog:'
         version: 2.0.11
@@ -337,12 +346,12 @@ importers:
         specifier: 'catalog:'
         version: 5.0.7(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
     devDependencies:
+      '@internal/eslint-config':
+        specifier: workspace:*
+        version: link:../../internal/eslint-config
       '@internal/vite-config':
         specifier: workspace:*
         version: link:../../internal/vite-config
-      '@sa/eslint-config':
-        specifier: workspace:*
-        version: link:../../internal/eslint-config
 
   apps/teacher:
     dependencies:
@@ -370,6 +379,9 @@ importers:
       '@sa/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@volcengine/tos-sdk':
+        specifier: 'catalog:'
+        version: 2.9.1
       clipboard:
         specifier: 'catalog:'
         version: 2.0.11
@@ -407,12 +419,12 @@ importers:
         specifier: 'catalog:'
         version: 5.0.7(@vue/compiler-sfc@3.5.38)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(vue@3.5.34(typescript@6.0.3))
     devDependencies:
+      '@internal/eslint-config':
+        specifier: workspace:*
+        version: link:../../internal/eslint-config
       '@internal/vite-config':
         specifier: workspace:*
         version: link:../../internal/vite-config
-      '@sa/eslint-config':
-        specifier: workspace:*
-        version: link:../../internal/eslint-config
 
   internal/eslint-config:
     dependencies:
@@ -621,6 +633,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@volcengine/tos-sdk':
+        specifier: 'catalog:'
+        version: 2.9.1
       colord:
         specifier: 'catalog:'
         version: 2.9.3
@@ -1732,6 +1747,9 @@ packages:
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
+  '@types/http-proxy@1.17.17':
+    resolution: {integrity: sha512-ED6LB+Z1AVylNTu7hdzuBqOgMnvG/ld6wGCG8wFnAzKX5uyW2K3WD52v0gnLCTK/VLpXtKckgWuyScYK6cSPaw==}
+
   '@types/jsesc@2.5.1':
     resolution: {integrity: sha512-9VN+6yxLOPLOav+7PwjZbxiID2bVaeq0ED4qSQmdQTdjnXJSaCVKTR58t15oqH1H5t8Ng2ZX1SabJVoN9Q34bw==}
 
@@ -1970,6 +1988,10 @@ packages:
 
   '@volar/typescript@2.4.28':
     resolution: {integrity: sha512-Ja6yvWrbis2QtN4ClAKreeUZPVYMARDYZl9LMEv1iQ1QdepB6wn0jTRxA9MftYmYa4DQ4k/DaSZpFPUfxl8giw==}
+
+  '@volcengine/tos-sdk@2.9.1':
+    resolution: {integrity: sha512-hmrBzl7/LpJYezGWytPg6CZk5lvFgmDKUVZJLM3vwZgp3UKSZwgxFA7V0QmLnerPDRpLPAqh0bP8qUBSVHfmhA==}
+    engines: {node: '>=10'}
 
   '@vue-macros/common@3.1.2':
     resolution: {integrity: sha512-h9t4ArDdniO9ekYHAD95t9AZcAbb19lEGK+26iAjUODOIJKmObDNBSe4+6ELQAA3vtYiFPPBtHh7+cQCKi3Dng==}
@@ -2249,10 +2271,19 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
+  axios-adapter-uniapp@0.1.4:
+    resolution: {integrity: sha512-4je5JcWGrrTjPEJXVXJZnOkv+BsnYn/fKbQmjxzdCGFyoQw1gq3tfQ4/WhLzy+Gi9cQJl3K8EH26G7U0BK3wcw==}
+
   axios-retry@4.5.0:
     resolution: {integrity: sha512-aR99oXhpEDGo0UuAlYcn2iGRds30k366Zfa05XWScR9QaQD4JYiP3/1Qt1u7YlefUOK+cn0CcwoL1oefavQUlQ==}
     peerDependencies:
       axios: 0.x || 1.x
+
+  axios@0.21.4:
+    resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
+
+  axios@0.27.2:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
 
   axios@1.16.0:
     resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
@@ -3156,6 +3187,9 @@ packages:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
 
+  eventemitter3@4.0.7:
+    resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
+
   eventemitter3@5.0.4:
     resolution: {integrity: sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw==}
 
@@ -3541,6 +3575,19 @@ packages:
   htmlparser2@3.10.1:
     resolution: {integrity: sha512-IgieNijUMbkDovyoKObU1DUhm1iwNYE/fuifEoEHfd1oZKZDaONBSkal7Y01shxsM49R4XaMdGez3WnF9UfiCQ==}
 
+  http-proxy-middleware@2.0.9:
+    resolution: {integrity: sha512-c1IyJYLYppU574+YI7R4QyX2ystMtVXZwIdzazUIPIJsHuWNd+mho2j+bKoHftndicGj9yh+xjd+l0yj7VeT1Q==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@types/express': ^4.17.13
+    peerDependenciesMeta:
+      '@types/express':
+        optional: true
+
+  http-proxy@1.18.1:
+    resolution: {integrity: sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==}
+    engines: {node: '>=8.0.0'}
+
   human-signals@8.0.1:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
@@ -3764,6 +3811,10 @@ packages:
   is-plain-obj@1.1.0:
     resolution: {integrity: sha512-yvkRyxmFKEOQ4pNXCmJG5AEQNlXJS5LaONXo5/cLdTZdWvsZ1ioJEonLGAosKlMWE8lwUy/bJzMjcw8az73+Fg==}
     engines: {node: '>=0.10.0'}
+
+  is-plain-obj@3.0.0:
+    resolution: {integrity: sha512-gwsOE28k+23GP1B6vFl1oVh/WOzmawBrKwo5Ev6wMKzPkaXaCDIQKzLnvsA42DRlbVTWorkgTKIviAKCWkfUwA==}
+    engines: {node: '>=10'}
 
   is-plain-obj@4.1.0:
     resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
@@ -4877,6 +4928,9 @@ packages:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
 
+  requires-port@1.0.0:
+    resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+
   reserved-identifiers@1.2.0:
     resolution: {integrity: sha512-yE7KUfFvaBFzGPs5H3Ops1RevfUEsDc5Iz65rOwWg4lE8HJSYtle77uul3+573457oHvBKuHYDl/xqUkKpEEdw==}
     engines: {node: '>=18'}
@@ -5340,6 +5394,9 @@ packages:
     resolution: {integrity: sha512-A5F0cM6+mDleacLIEUkmfpkBbnHJFV1d2rprHU2MXNk7mlxHq2zGojA+SRvQD1RoMo9gqjZPWEaKG4v1BQ48lw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
+  tos-crc64-js@0.0.1:
+    resolution: {integrity: sha512-l2Ndi9BaDH3gmAJ5VIS/1WeqFcucK41WCbw5dije24k2XtUCclYfvhntWIVHe+0S85QcED4vjqm3AO1izlQ30g==}
+
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
@@ -5381,6 +5438,10 @@ packages:
 
   type-fest@0.21.3:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
+    engines: {node: '>=10'}
+
+  type-fest@1.4.0:
+    resolution: {integrity: sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==}
     engines: {node: '>=10'}
 
   type-level-regexp@0.1.17:
@@ -6845,6 +6906,10 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
+  '@types/http-proxy@1.17.17':
+    dependencies:
+      '@types/node': 25.7.0
+
   '@types/jsesc@2.5.1': {}
 
   '@types/json-schema@7.0.15': {}
@@ -7209,6 +7274,21 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
+  '@volcengine/tos-sdk@2.9.1':
+    dependencies:
+      axios: 0.21.4(debug@4.4.3)
+      axios-adapter-uniapp: 0.1.4(debug@4.4.3)
+      crypto-js: 4.2.0
+      debug: 4.4.3
+      http-proxy-middleware: 2.0.9(debug@4.4.3)
+      lodash: 4.18.1
+      qs: 6.15.1
+      tos-crc64-js: 0.0.1
+      type-fest: 1.4.0
+    transitivePeerDependencies:
+      - '@types/express'
+      - supports-color
+
   '@vue-macros/common@3.1.2(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@vue/compiler-sfc': 3.5.38
@@ -7547,14 +7627,33 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
+  axios-adapter-uniapp@0.1.4(debug@4.4.3):
+    dependencies:
+      axios: 0.27.2(debug@4.4.3)
+    transitivePeerDependencies:
+      - debug
+
   axios-retry@4.5.0(axios@1.16.0):
     dependencies:
       axios: 1.16.0
       is-retry-allowed: 2.2.0
 
+  axios@0.21.4(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3)
+    transitivePeerDependencies:
+      - debug
+
+  axios@0.27.2(debug@4.4.3):
+    dependencies:
+      follow-redirects: 1.16.0(debug@4.4.3)
+      form-data: 4.0.5
+    transitivePeerDependencies:
+      - debug
+
   axios@1.16.0:
     dependencies:
-      follow-redirects: 1.16.0
+      follow-redirects: 1.16.0(debug@4.4.3)
       form-data: 4.0.5
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -8644,6 +8743,8 @@ snapshots:
 
   etag@1.8.1: {}
 
+  eventemitter3@4.0.7: {}
+
   eventemitter3@5.0.4: {}
 
   evtd@0.2.4: {}
@@ -8717,7 +8818,7 @@ snapshots:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.7
+      micromatch: 4.0.8
 
   fast-json-stable-stringify@2.1.0: {}
 
@@ -8806,7 +8907,9 @@ snapshots:
 
   flatted@3.4.2: {}
 
-  follow-redirects@1.16.0: {}
+  follow-redirects@1.16.0(debug@4.4.3):
+    optionalDependencies:
+      debug: 4.4.3
 
   for-each@0.3.5:
     dependencies:
@@ -9079,6 +9182,24 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
+  http-proxy-middleware@2.0.9(debug@4.4.3):
+    dependencies:
+      '@types/http-proxy': 1.17.17
+      http-proxy: 1.18.1(debug@4.4.3)
+      is-glob: 4.0.3
+      is-plain-obj: 3.0.0
+      micromatch: 4.0.8
+    transitivePeerDependencies:
+      - debug
+
+  http-proxy@1.18.1(debug@4.4.3):
+    dependencies:
+      eventemitter3: 4.0.7
+      follow-redirects: 1.16.0(debug@4.4.3)
+      requires-port: 1.0.0
+    transitivePeerDependencies:
+      - debug
+
   human-signals@8.0.1: {}
 
   iconv-lite@0.4.24:
@@ -9149,7 +9270,7 @@ snapshots:
       cli-width: 3.0.0
       external-editor: 3.1.0
       figures: 3.2.0
-      lodash: 4.17.21
+      lodash: 4.18.1
       mute-stream: 0.0.8
       ora: 5.4.1
       run-async: 2.4.1
@@ -9295,6 +9416,8 @@ snapshots:
   is-obj@2.0.0: {}
 
   is-plain-obj@1.1.0: {}
+
+  is-plain-obj@3.0.0: {}
 
   is-plain-obj@4.1.0: {}
 
@@ -10584,6 +10707,8 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
+  requires-port@1.0.0: {}
+
   reserved-identifiers@1.2.0: {}
 
   resolve-dir@1.0.1:
@@ -11106,6 +11231,8 @@ snapshots:
     dependencies:
       eslint-visitor-keys: 5.0.1
 
+  tos-crc64-js@0.0.1: {}
+
   totalist@3.0.1: {}
 
   traverse@0.6.11:
@@ -11147,6 +11274,8 @@ snapshots:
       prelude-ls: 1.2.1
 
   type-fest@0.21.3: {}
+
+  type-fest@1.4.0: {}
 
   type-level-regexp@0.1.17: {}
 

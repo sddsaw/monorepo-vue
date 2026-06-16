@@ -1,20 +1,22 @@
 <script setup lang="tsx">
 import type { OptionItem, SchemaFormOptions } from '../types'
 import {
-  NDatePicker,
   NInput,
   NInputNumber,
   NSelect,
   NSwitch,
   NTimePicker,
 } from 'naive-ui'
-import { ref, watchEffect } from 'vue'
+import { defineAsyncComponent, ref, watchEffect } from 'vue'
+import FormDatePicker from './FormDatePicker.vue'
 import { OptionsCheckboxGroup, OptionsRadioGroup } from './OptionsGroup'
 
 const props = defineProps<{
   item: SchemaFormOptions
   formModel: Record<string, any>
 }>()
+
+const FileUpload = defineAsyncComponent(() => import('../../../business/FileUpload/index.vue'))
 
 const value = defineModel<any>()
 
@@ -23,7 +25,7 @@ const componentMap = {
   'input': NInput,
   'select': NSelect,
   'switch': NSwitch,
-  'date-picker': NDatePicker,
+  'date-picker': FormDatePicker,
   'checkbox': OptionsCheckboxGroup,
   'radio': OptionsRadioGroup,
   'input-number': NInputNumber,
@@ -34,7 +36,7 @@ const componentMap = {
 // 缓存解析后的选项列表
 const localOptions = ref<OptionItem[]>([])
 
-// 独立的 watchEffect 用于解析每个项的 options 配置
+// 独立的 watchEffect 用于解析每个项 of options 配置
 watchEffect(async () => {
   const optConfig = props.item.options
   if (Array.isArray(optConfig)) {
@@ -61,9 +63,15 @@ function getComponentAttrs(): Record<string, unknown> {
 </script>
 
 <template>
+  <FileUpload
+    v-if="props.item.type === 'upload'"
+    v-model="value"
+    class="w-full"
+    v-bind="getComponentAttrs()"
+  />
   <component
     :is="componentMap[props.item.type as keyof typeof componentMap]"
-    v-if="componentMap[props.item.type as keyof typeof componentMap]"
+    v-else-if="componentMap[props.item.type as keyof typeof componentMap]"
     v-model:value="value"
     class="w-full"
     v-bind="getComponentAttrs()"
