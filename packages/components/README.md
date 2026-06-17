@@ -13,14 +13,54 @@
 
 ```text
 packages/components/
-├── src/
-│   ├── basic/            # 基础组件目录
-│   ├── business/         # 业务组件目录
-│   ├── hooks/            # 共享 Icon 渲染 hooks 
-│   ├── index.ts          # 组件库入口文件，集中导出所有组件和类型
-│   └── typings/          # 类型定义
-├── package.json          # 依赖声明
-└── tsconfig.json         # TypeScript 编译配置
+├── package.json (依赖声明)
+├── tsconfig.json (TypeScript 配置)
+└── src/
+    ├── index.ts (入口文件, 62行) ─────────────────────────────────── 组件库集中导出
+    │
+    ├── basic/ ────────────────────────────────────────────────────── 基础组件目录
+    │   ├── BetterScroll/index.vue (BetterScroll, 54行) ────────────── 滚动容器
+    │   ├── ButtonIcon/index.vue (ButtonIcon, 49行) ────────────────── 图标按钮
+    │   ├── CollapsiblePanel/index.vue (CollapsiblePanel, 257行) ───── 折叠面板
+    │   ├── CountTo/index.vue (CountTo, 88行) ──────────────────────── 数字滚动
+    │   ├── DarkModeContainer/index.vue (DarkModeContainer, 17行) ──── 暗黑容器
+    │   ├── FullScreen/index.vue (FullScreen, 26行) ────────────────── 全屏按钮
+    │   ├── IconTooltip/index.vue (IconTooltip, 43行) ──────────────── 图标提示
+    │   ├── IframeContainer/ ──────────────────────────────────────── iframe 容器
+    │   │   ├── index.vue (IframeContainer, 188行)
+    │   │   └── types.ts (33行)
+    │   ├── InfiniteScroll/index.vue (InfiniteScroll, 92行) ────────── 无限滚动
+    │   ├── LookForward/index.vue (LookForward, 28行) ──────────────── 敬请期待
+    │   ├── MenuToggler/index.vue (MenuToggler, 57行) ──────────────── 菜单折叠
+    │   ├── PinToggler/index.vue (PinToggler, 31行) ────────────────── 面板固定
+    │   ├── ReloadButton/index.vue (ReloadButton, 24行) ────────────── 刷新按钮
+    │   ├── SaButton/index.vue (SaButton, 15行) ────────────────────── 专属按钮
+    │   ├── SvgIcon/index.vue (SvgIcon, 54行) ──────────────────────── 图标组件
+    │   ├── SystemLogo/index.vue (SystemLogo, 166行) ──────────────── 系统 Logo
+    │   ├── WaveBg/index.vue (WaveBg, 61行) ────────────────────────── 波浪背景
+    │   └── SchemaForm/ ───────────────────────────────────────────── 动态表单
+    │       ├── index.vue (SchemaForm, 118行) ──────────────────────── 表单主入口
+    │       ├── types.ts (113行) ───────────────────────────────────── 表单类型
+    │       └── components/
+    │           ├── FormDatePicker.vue (FormDatePicker, 46行)
+    │           ├── SchemaFormItem.vue (SchemaFormItem, 79行)
+    │           └── OptionsGroup.tsx (OptionsGroup, 67行)
+    │
+    ├── business/ ─────────────────────────────────────────────────── 业务组件目录
+    │   ├── AppProvider/index.vue (AppProvider, 39行) ──────────────── 全局注入
+    │   ├── ExceptionBase/index.vue (ExceptionBase, 49行) ──────────── 异常页面
+    │   ├── FileUpload/index.vue (FileUpload, 365行) ───────────────── 存储直传
+    │   ├── LangSwitch/index.vue (LangSwitch, 65行) ────────────────── 语言切换
+    │   ├── SoybeanAvatar/index.vue (SoybeanAvatar, 18行) ──────────── 头像组件
+    │   ├── TableColumnSetting/index.vue (TableColumnSetting, 124行) ─ 表格列设置
+    │   ├── TableHeaderOperation/index.vue (TableHeaderOperation, 78行) 表格操作区
+    │   └── ThemeSchemaSwitch/index.vue (ThemeSchemaSwitch, 60行) ──── 主题切换
+    │
+    ├── hooks/
+    │   └── icon.ts (10行) ────────────────────────────────────────── 图标 hook
+    │
+    └── typings/
+        └── global.d.ts (14行) ────────────────────────────────────── 全局类型
 ```
 
 ---
