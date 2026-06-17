@@ -23,6 +23,7 @@ export type FormComponentType
     | 'input-number'
     | 'time-picker'
     | 'upload'
+    | 'rich-editor'
     | 'slot'
 
 interface FileUploadProps {
@@ -43,7 +44,7 @@ interface FileUploadProps {
   /** 是否支持拖拽文件夹 */
   isDirectoryDnd?: boolean
   /** OBS 配置 */
-  obsConfig?: OBSConfig
+  obsConfig?: Partial<OBSConfig>
   /** 上传前的钩子 */
   beforeUpload?: (file: File) => boolean | Promise<boolean>
   /** 是否自动上传到 OBS */
@@ -82,6 +83,13 @@ interface ComponentPropsMap {
   'input-number': InputNumberProps
   'time-picker': TimePickerProps
   'upload': FileUploadProps
+  'rich-editor': {
+    placeholder?: string
+    disabled?: boolean
+    minHeight?: string
+    maxHeight?: string
+    obsConfig?: Partial<OBSConfig>
+  }
   'slot': Record<string, unknown>
 }
 

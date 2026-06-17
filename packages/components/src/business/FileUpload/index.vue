@@ -14,7 +14,6 @@ defineOptions({
 
 // 3. Props 和 Emits 定义
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: () => [],
   max: 5,
   multiple: true,
   accept: 'image/*',
@@ -30,9 +29,10 @@ const emit = defineEmits<Emits>()
 // 2. 类型与接口声明
 type FileItem = string | string[]
 
+// 声明 v-model:value 双向绑定
+const valueModel = defineModel<FileItem>('value', { default: () => [] })
+
 interface Props {
-  /** v-model 绑定的文件列表 */
-  modelValue?: FileItem
   /** 最大上传数量 */
   max?: number
   /** 最大文件大小（字节） */
@@ -50,7 +50,7 @@ interface Props {
   /** 是否支持拖拽文件夹 */
   isDirectoryDnd?: boolean
   /** OBS 配置 */
-  obsConfig?: OBSConfig
+  obsConfig?: Partial<OBSConfig>
   /** 上传前的钩子 */
   beforeUpload?: (file: File) => boolean | Promise<boolean>
   /** 是否自动上传到 OBS（true=自动上传，false=只选择文件并通过事件传出） */
@@ -58,8 +58,6 @@ interface Props {
 }
 
 interface Emits {
-  /** 更新绑定的文件数据源（v-model） */
-  (e: 'update:modelValue', value: FileItem): void
   /** 文件数据源变更事件 */
   (e: 'change', fileList: FileItem): void
   /** 上传任务启动事件 */
@@ -91,11 +89,11 @@ const emittedFileKeys = new Set<string>() // 用于去重、记录已触发过 f
 
 // 6. 计算属性
 const fileList = computed<string[]>(() => {
-  if (!props.modelValue)
+  if (!valueModel.value)
     return []
-  return Array.isArray(props.modelValue)
-    ? props.modelValue.filter(Boolean)
-    : [props.modelValue].filter(Boolean)
+  return Array.isArray(valueModel.value)
+    ? valueModel.value.filter(Boolean)
+    : [valueModel.value].filter(Boolean)
 })
 
 // 检查是否达到最大上传数量（包含正在上传的文件）
@@ -115,7 +113,7 @@ const uploader = computed(() => new ObjectStorageUploader(props.obsConfig || {})
 
 // 监听外部 modelValue 变化，同步文件列表状态
 watch(
-  () => props.modelValue,
+  () => valueModel.value,
   () => {
     const currentUrls = fileList.value
 
@@ -277,11 +275,11 @@ async function handleCustomRequest(options: UploadCustomRequestOptions) {
     // 更新模型值
     if (props.multiple) {
       const newValue = [...fileList.value, url]
-      emit('update:modelValue', newValue)
+      valueModel.value = newValue
       emit('change', newValue)
     }
     else {
-      emit('update:modelValue', url)
+      valueModel.value = url
       emit('change', url)
     }
     emit('uploadSuccess', url)
@@ -306,11 +304,11 @@ function handleRemove(data: Parameters<UploadOnRemove>[0]) {
   if (file.status === 'finished' && file.url) {
     const newList = fileList.value.filter(v => v !== file.url)
     if (props.multiple) {
-      emit('update:modelValue', newList)
+      valueModel.value = newList
       emit('change', newList)
     }
     else {
-      emit('update:modelValue', '')
+      valueModel.value = ''
       emit('change', '')
     }
   }

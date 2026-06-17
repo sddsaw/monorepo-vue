@@ -17,6 +17,7 @@ const props = defineProps<{
 }>()
 
 const FileUpload = defineAsyncComponent(() => import('../../../business/FileUpload/index.vue'))
+const RichEditor = defineAsyncComponent(() => import('../../RichEditor/index.vue'))
 
 const value = defineModel<any>()
 
@@ -30,6 +31,8 @@ const componentMap = {
   'radio': OptionsRadioGroup,
   'input-number': NInputNumber,
   'time-picker': NTimePicker,
+  'rich-editor': RichEditor,
+  'upload': FileUpload,
   'slot': null,
 } as const
 
@@ -63,15 +66,9 @@ function getComponentAttrs(): Record<string, unknown> {
 </script>
 
 <template>
-  <FileUpload
-    v-if="props.item.type === 'upload'"
-    v-model="value"
-    class="w-full"
-    v-bind="getComponentAttrs()"
-  />
   <component
     :is="componentMap[props.item.type as keyof typeof componentMap]"
-    v-else-if="componentMap[props.item.type as keyof typeof componentMap]"
+    v-if="componentMap[props.item.type as keyof typeof componentMap]"
     v-model:value="value"
     class="w-full"
     v-bind="getComponentAttrs()"

@@ -229,6 +229,7 @@ const local: App.I18n.Schema = {
     'demo': '演示页面',
     'demo_from': '表单封装',
     'demo_infinite-scroll': '滚动加载封装',
+    'demo_rich-editor': '富文本封装',
   },
   page: {
     login: {

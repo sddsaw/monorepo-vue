@@ -233,6 +233,7 @@ const local: App.I18n.Schema = {
     'demo': 'Demo',
     'demo_from': 'Form Encapsulation',
     'demo_infinite-scroll': 'Infinite Scroll',
+    'demo_rich-editor': 'Rich Text Editor',
   },
   page: {
     login: {

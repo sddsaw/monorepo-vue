@@ -12,6 +12,7 @@ import LookForward from './basic/LookForward/index.vue'
 import MenuToggler from './basic/MenuToggler/index.vue'
 import PinToggler from './basic/PinToggler/index.vue'
 import ReloadButton from './basic/ReloadButton/index.vue'
+import RichEditor from './basic/RichEditor/index.vue'
 import SaButton from './basic/SaButton/index.vue'
 import SchemaForm from './basic/SchemaForm/index.vue'
 import SvgIcon from './basic/SvgIcon/index.vue'
@@ -46,6 +47,7 @@ export {
   MenuToggler,
   PinToggler,
   ReloadButton,
+  RichEditor,
   SaButton,
   SchemaForm,
   SoybeanAvatar,
