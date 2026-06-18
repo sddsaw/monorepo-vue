@@ -14,5 +14,9 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
+  },
+  "peerDependencies": {
+    "@unocss/core": "^66.0.0",
+    "@unocss/preset-mini": "^66.0.0"
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BetterScroll } from '@sa/components'
+import BetterScroll from '@sa/components/basic/BetterScroll/index.vue'
 import { PageTab } from '@sa/materials'
 import { isPC } from '@sa/utils'
 import { useElementBounding } from '@vueuse/core'

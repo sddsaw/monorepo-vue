@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VNode } from 'vue'
-import { useSvgIcon } from '@sa/components'
+import { useSvgIcon } from '@sa/components/hooks/icon'
 import { computed } from 'vue'
 import { useRouterPush } from '@/hooks/common/router'
 import { $t } from '@/locales'

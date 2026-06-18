@@ -2,7 +2,9 @@
   "name": "@sa/components",
   "version": "2.3.1",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./src/*": "./src/*",
+    "./*": "./src/*"
   },
   "typesVersions": {
     "*": {
@@ -16,11 +18,14 @@
     "lint:fix": "eslint --fix ."
   },
   "peerDependencies": {
+    "@better-scroll/core": "catalog:",
     "@iconify/vue": "catalog:",
     "@vueuse/core": "catalog:",
     "naive-ui": "^2.44.0",
     "tailwind-merge": "catalog:",
-    "vue": "^3.5.0"
+    "vue": "^3.5.0",
+    "vue-draggable-plus": "catalog:",
+    "vue-router": "catalog:"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-vue": "catalog:",

@@ -47,25 +47,32 @@ export type ECOption = echarts.ComposeOption<
   | DatasetComponentOption
 >
 
-echarts.use([
-  TitleComponent,
-  LegendComponent,
-  TooltipComponent,
-  GridComponent,
-  DatasetComponent,
-  TransformComponent,
-  ToolboxComponent,
-  BarChart,
-  LineChart,
-  PieChart,
-  ScatterChart,
-  PictorialBarChart,
-  RadarChart,
-  GaugeChart,
-  LabelLayout,
-  UniversalTransition,
-  CanvasRenderer,
-])
+let registered = false
+
+function registerEcharts() {
+  if (registered)
+    return
+  echarts.use([
+    TitleComponent,
+    LegendComponent,
+    TooltipComponent,
+    GridComponent,
+    DatasetComponent,
+    TransformComponent,
+    ToolboxComponent,
+    BarChart,
+    LineChart,
+    PieChart,
+    ScatterChart,
+    PictorialBarChart,
+    RadarChart,
+    GaugeChart,
+    LabelLayout,
+    UniversalTransition,
+    CanvasRenderer,
+  ])
+  registered = true
+}
 
 export interface ChartHooks {
   onRender?: (chart: echarts.ECharts) => void | Promise<void>
@@ -87,6 +94,8 @@ export default function useEcharts<T extends ECOption>(
   themeColorGetter: () => string,
   hooks: ChartHooks = {},
 ) {
+  registerEcharts()
+
   const scope = effectScope()
 
   const darkMode = computed(darkModeGetter)

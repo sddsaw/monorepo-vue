@@ -84,12 +84,58 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
       preview: {
         port: previewPort || 9725,
       },
+      esbuild:
+        configEnv.command === 'build' && configEnv.mode === 'prod'
+          ? {
+              drop: ['console', 'debugger'],
+            }
+          : {},
       build: {
         outDir: `../../dist/${appName}`,
+        emptyOutDir: true,
         reportCompressedSize: false,
         sourcemap: viteEnv.VITE_SOURCE_MAP === 'Y',
         commonjsOptions: {
           ignoreTryCatch: false,
+        },
+        rollupOptions: {
+          output: {
+            entryFileNames: 'static/js/[name]-[hash].js',
+            chunkFileNames: 'static/js/[name]-[hash].js',
+            assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+            manualChunks(id) {
+              if (!id.includes('node_modules'))
+                return
+
+              const matchRules: [string, string[]][] = [
+                ['echarts', ['echarts', 'zrender']],
+                ['ckeditor', ['ckeditor', '@ckeditor']],
+                ['vue', ['vue', 'vue-router', 'pinia']],
+                ['ui', ['naive-ui']],
+                [
+                  'vendor-utils',
+                  [
+                    'axios',
+                    'dayjs',
+                    'crypto-js',
+                    'qs',
+                    'vue-i18n',
+                    'nprogress',
+                    'clipboard',
+                    '@vueuse/core',
+                    '@vueuse/shared',
+                    'defu',
+                  ],
+                ],
+              ]
+
+              for (const [chunkName, pkgs] of matchRules) {
+                if (pkgs.some(pkg => id.includes(`/node_modules/${pkg}/`) || id.includes(`/.pnpm/${pkg}`))) {
+                  return chunkName
+                }
+              }
+            },
+          },
         },
       },
     }

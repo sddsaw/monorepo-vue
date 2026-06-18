@@ -11,55 +11,15 @@ import Components from 'unplugin-vue-components/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 function createSharedComponentsResolver(root: string) {
-  let sharedComponents: string[] | null = null
-
   return (componentName: string) => {
-    if (!sharedComponents) {
-      sharedComponents = []
-      try {
-        const packageIndexPath = path.resolve(root, '../../packages/components/src/index.ts')
-        if (fs.existsSync(packageIndexPath)) {
-          const content = fs.readFileSync(packageIndexPath, 'utf-8')
-          const match = content.match(/export\s*\{([^}]+)\}/)
-          if (match) {
-            sharedComponents = match[1]
-              .split(',')
-              .map(name => name.trim())
-              .filter(Boolean)
-          }
-        }
-      }
-      catch (e) {
-        console.error('[ViteConfig] Failed to dynamically load shared components, fallback to default list', e)
-        // Fallback fallback list
-        sharedComponents = [
-          'BetterScroll',
-          'ButtonIcon',
-          'CountTo',
-          'LookForward',
-          'SoybeanAvatar',
-          'SvgIcon',
-          'WaveBg',
-          'SaButton',
-          'TableColumnSetting',
-          'TableHeaderOperation',
-          'AppProvider',
-          'DarkModeContainer',
-          'ExceptionBase',
-          'FullScreen',
-          'IconTooltip',
-          'LangSwitch',
-          'MenuToggler',
-          'PinToggler',
-          'ReloadButton',
-          'SystemLogo',
-          'ThemeSchemaSwitch',
-        ]
-      }
+    const packageSrcPath = path.resolve(root, '../../packages/components/src')
+    const basicPath = path.join(packageSrcPath, 'basic', componentName, 'index.vue')
+    if (fs.existsSync(basicPath)) {
+      return { from: `@sa/components/basic/${componentName}/index.vue` }
     }
-
-    if (sharedComponents.includes(componentName)) {
-      return { name: componentName, from: '@sa/components' }
+    const businessPath = path.join(packageSrcPath, 'business', componentName, 'index.vue')
+    if (fs.existsSync(businessPath)) {
+      return { from: `@sa/components/business/${componentName}/index.vue` }
     }
   }
 }

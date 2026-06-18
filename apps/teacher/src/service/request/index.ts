@@ -1,4 +1,4 @@
-import type { AxiosResponse } from 'axios'
+import type { AxiosResponse } from '@sa/axios'
 import type { RequestInstanceState } from './type'
 import { BACKEND_ERROR_CODE, createFlatRequest, createRequest } from '@sa/axios'
 import { $t } from '@/locales'

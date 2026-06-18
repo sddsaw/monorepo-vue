@@ -16,7 +16,7 @@ declare module 'vue' {
     ButtonIcon: typeof import('@sa/components')['ButtonIcon']
     CountTo: typeof import('@sa/components')['CountTo']
     DarkModeContainer: typeof import('@sa/components')['DarkModeContainer']
-    ExceptionBase: typeof import('@sa/components')['ExceptionBase']
+    ExceptionBase: typeof import('@sa/components/business/ExceptionBase/index.vue')['default']
     FullScreen: typeof import('@sa/components')['FullScreen']
     IconAntDesignEnterOutlined: typeof import('~icons/ant-design/enter-outlined')['default']
     IconLocalBanner: typeof import('~icons/local/banner')['default']
@@ -76,7 +76,7 @@ declare module 'vue' {
     SvgIcon: typeof import('@sa/components')['SvgIcon']
     SystemLogo: typeof import('@sa/components')['SystemLogo']
     ThemeSchemaSwitch: typeof import('@sa/components')['ThemeSchemaSwitch']
-    WaveBg: typeof import('@sa/components')['WaveBg']
+    WaveBg: typeof import('@sa/components/basic/WaveBg/index.vue')['default']
   }
 }
 
@@ -86,7 +86,7 @@ declare global {
   const ButtonIcon: typeof import('@sa/components')['ButtonIcon']
   const CountTo: typeof import('@sa/components')['CountTo']
   const DarkModeContainer: typeof import('@sa/components')['DarkModeContainer']
-  const ExceptionBase: typeof import('@sa/components')['ExceptionBase']
+  const ExceptionBase: typeof import('@sa/components/business/ExceptionBase/index.vue')['default']
   const FullScreen: typeof import('@sa/components')['FullScreen']
   const IconAntDesignEnterOutlined: typeof import('~icons/ant-design/enter-outlined')['default']
   const IconLocalBanner: typeof import('~icons/local/banner')['default']
@@ -146,5 +146,5 @@ declare global {
   const SvgIcon: typeof import('@sa/components')['SvgIcon']
   const SystemLogo: typeof import('@sa/components')['SystemLogo']
   const ThemeSchemaSwitch: typeof import('@sa/components')['ThemeSchemaSwitch']
-  const WaveBg: typeof import('@sa/components')['WaveBg']
+  const WaveBg: typeof import('@sa/components/basic/WaveBg/index.vue')['default']
 }
