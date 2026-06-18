@@ -10,15 +10,15 @@
     "pnpm": ">=10.5.0"
   },
   "scripts": {
-    "build": "turbo run build",
-    "build:admin": "turbo run build --filter=@apps/admin",
-    "build:student": "turbo run build --filter=@apps/student",
-    "build:teacher": "turbo run build --filter=@apps/teacher",
+    "build": "pnpm update-icons && turbo run build",
+    "build:admin": "pnpm update-icons && turbo run build --filter=@apps/admin",
+    "build:student": "pnpm update-icons && turbo run build --filter=@apps/student",
+    "build:teacher": "pnpm update-icons && turbo run build --filter=@apps/teacher",
     "cleanup": "sa cleanup",
     "commit": "git-cz",
-    "dev": "turbo run dev --filter=@apps/admin",
-    "dev:student": "turbo run dev --filter=@apps/student",
-    "dev:teacher": "turbo run dev --filter=@apps/teacher",
+    "dev": "pnpm update-icons && turbo run dev --filter=@apps/admin",
+    "dev:student": "pnpm update-icons && turbo run dev --filter=@apps/student",
+    "dev:teacher": "pnpm update-icons && turbo run dev --filter=@apps/teacher",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "preinstall": "npx only-allow pnpm",
@@ -26,6 +26,7 @@
     "preview": "pnpm --filter @apps/admin preview",
     "release": "sa release",
     "typecheck": "turbo run typecheck",
+    "update-icons": "sa update-icons",
     "update-pkg": "sa update-pkg"
   },
   "devDependencies": {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import SettingItem from '../../../components/setting-item.vue'
 
@@ -8,6 +7,14 @@ defineOptions({
 })
 
 const themeStore = useThemeStore()
+
+const colorLabelRecord: Record<App.Theme.ThemeColorKey, string> = {
+  primary: '主色',
+  info: '信息色',
+  success: '成功色',
+  warning: '警告色',
+  error: '错误色',
+}
 
 function handleUpdateColor(color: string, key: App.Theme.ThemeColorKey) {
   themeStore.updateThemeColors(key, color)
@@ -34,13 +41,13 @@ const swatches: string[] = [
 </script>
 
 <template>
-  <NDivider>{{ $t('theme.appearance.themeColor.title') }}</NDivider>
+  <NDivider>{{ '主题颜色' }}</NDivider>
   <div class="flex-col-stretch gap-12px">
-    <SettingItem key="recommend-color" :label="$t('theme.appearance.recommendColor')">
+    <SettingItem key="recommend-color" label="应用推荐算法的颜色">
       <template #suffix>
         <IconTooltip>
           <p>
-            <span class="pr-12px">{{ $t('theme.appearance.recommendColorDesc') }}</span>
+            <span class="pr-12px">{{ '推荐颜色的算法参照' }}</span>
             <br>
             <NButton
               text
@@ -61,11 +68,11 @@ const swatches: string[] = [
     <SettingItem
       v-for="(_, key) in themeStore.themeColors"
       :key="key"
-      :label="$t(`theme.appearance.themeColor.${key}`)"
+      :label="colorLabelRecord[key]"
     >
       <template v-if="key === 'info'" #suffix>
         <NCheckbox v-model:checked="themeStore.isInfoFollowPrimary">
-          {{ $t('theme.appearance.themeColor.followPrimary') }}
+          {{ '跟随主色' }}
         </NCheckbox>
       </template>
       <div class="w-90px">

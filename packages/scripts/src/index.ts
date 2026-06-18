@@ -1,10 +1,10 @@
 import { cac } from 'cac'
 import { blue, lightGreen } from 'kolorist'
 import { version } from '../package.json'
-import { cleanup, release, updatePkg } from './commands'
+import { cleanup, release, updateIcons, updatePkg } from './commands'
 import { loadCliOptions } from './config'
 
-type Command = 'cleanup' | 'update-pkg' | 'release'
+type Command = 'cleanup' | 'update-pkg' | 'release' | 'update-icons'
 
 type CommandAction<A extends object> = (args?: A) => Promise<void> | void
 
@@ -54,6 +54,12 @@ export async function setupCli() {
       desc: 'update package.json dependencies versions',
       action: async () => {
         await updatePkg(cliOptions.ncuCommandArgs)
+      },
+    },
+    'update-icons': {
+      desc: 'update local icons from @iconify/json',
+      action: async () => {
+        await updateIcons()
       },
     },
 

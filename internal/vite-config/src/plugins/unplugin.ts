@@ -39,7 +39,6 @@ export function setupUnplugin(viteEnv: ViteEnv, root: string, extraResolvers: an
         'vue-router',
         'pinia',
         '@vueuse/core',
-        'vue-i18n',
       ],
       dts: 'src/typings/auto-imports.d.ts',
     }),

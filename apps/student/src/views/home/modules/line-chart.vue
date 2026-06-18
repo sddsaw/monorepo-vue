@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useEcharts } from '@sa/hooks'
 import { watch } from 'vue'
-import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
 import { useThemeStore } from '@/store/modules/theme'
 
@@ -24,7 +23,7 @@ const { domRef, updateOptions } = useEcharts(
       },
     },
     legend: {
-      data: [$t('page.home.downloadCount'), $t('page.home.registerCount')],
+      data: ['下载量', '注册量'],
       top: '0',
     },
     grid: {
@@ -44,7 +43,7 @@ const { domRef, updateOptions } = useEcharts(
     series: [
       {
         color: '#8e9dff',
-        name: $t('page.home.downloadCount'),
+        name: '下载量',
         type: 'line',
         smooth: true,
         stack: 'Total',
@@ -74,7 +73,7 @@ const { domRef, updateOptions } = useEcharts(
       },
       {
         color: '#26deca',
-        name: $t('page.home.registerCount'),
+        name: '注册量',
         type: 'line',
         smooth: true,
         stack: 'Total',

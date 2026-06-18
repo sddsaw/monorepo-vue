@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { themeTabModeOptions } from '@/constants/app'
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import { translateOptions } from '@/utils/common'
 import SettingItem from '../../../components/setting-item.vue'
@@ -13,21 +12,21 @@ const themeStore = useThemeStore()
 </script>
 
 <template>
-  <NDivider>{{ $t('theme.layout.tab.title') }}</NDivider>
+  <NDivider>{{ '标签栏设置' }}</NDivider>
   <TransitionGroup tag="div" name="setting-list" class="flex-col-stretch gap-12px">
-    <SettingItem key="1" :label="$t('theme.layout.tab.visible')">
+    <SettingItem key="1" label="显示标签栏">
       <NSwitch v-model:value="themeStore.tab.visible" />
     </SettingItem>
-    <SettingItem v-if="themeStore.tab.visible" key="2" :label="$t('theme.layout.tab.cache')">
+    <SettingItem v-if="themeStore.tab.visible" key="2" label="标签栏信息缓存">
       <template #suffix>
-        <IconTooltip :desc="$t('theme.layout.tab.cacheTip')" />
+        <IconTooltip desc="离开页面后仍然保留标签栏信息" />
       </template>
       <NSwitch v-model:value="themeStore.tab.cache" />
     </SettingItem>
-    <SettingItem v-if="themeStore.tab.visible" key="3" :label="$t('theme.layout.tab.height')">
+    <SettingItem v-if="themeStore.tab.visible" key="3" label="标签栏高度">
       <NInputNumber v-model:value="themeStore.tab.height" size="small" :step="1" class="w-120px" />
     </SettingItem>
-    <SettingItem v-if="themeStore.tab.visible" key="4" :label="$t('theme.layout.tab.mode.title')">
+    <SettingItem v-if="themeStore.tab.visible" key="4" label="标签栏风格">
       <NSelect
         v-model:value="themeStore.tab.mode"
         :options="translateOptions(themeTabModeOptions)"
@@ -35,9 +34,9 @@ const themeStore = useThemeStore()
         class="w-120px"
       />
     </SettingItem>
-    <SettingItem v-if="themeStore.tab.visible" key="5" :label="$t('theme.layout.tab.closeByMiddleClick')">
+    <SettingItem v-if="themeStore.tab.visible" key="5" label="鼠标中键关闭标签页">
       <template #suffix>
-        <IconTooltip :desc="$t('theme.layout.tab.closeByMiddleClickTip')" />
+        <IconTooltip desc="启用后可以使用鼠标中键点击标签页进行关闭" />
       </template>
       <NSwitch v-model:value="themeStore.tab.closeTabByMiddleClick" />
     </SettingItem>

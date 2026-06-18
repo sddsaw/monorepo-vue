@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import SettingItem from '../../../components/setting-item.vue'
 
@@ -18,25 +17,25 @@ const isMixHorizontalMode = computed(() =>
 </script>
 
 <template>
-  <NDivider>{{ $t('theme.layout.footer.title') }}</NDivider>
+  <NDivider>{{ '底部设置' }}</NDivider>
   <TransitionGroup tag="div" name="setting-list" class="flex-col-stretch gap-12px">
-    <SettingItem key="1" :label="$t('theme.layout.footer.visible')">
+    <SettingItem key="1" label="显示底部">
       <NSwitch v-model:value="themeStore.footer.visible" />
     </SettingItem>
     <SettingItem
       v-if="themeStore.footer.visible && isWrapperScrollMode"
       key="2"
-      :label="$t('theme.layout.footer.fixed')"
+      label="固定底部"
     >
       <NSwitch v-model:value="themeStore.footer.fixed" />
     </SettingItem>
-    <SettingItem v-if="themeStore.footer.visible" key="3" :label="$t('theme.layout.footer.height')">
+    <SettingItem v-if="themeStore.footer.visible" key="3" label="底部高度">
       <NInputNumber v-model:value="themeStore.footer.height" size="small" :step="1" class="w-120px" />
     </SettingItem>
     <SettingItem
       v-if="themeStore.footer.visible && isMixHorizontalMode"
       key="4"
-      :label="$t('theme.layout.footer.right')"
+      label="底部居右"
     >
       <NSwitch v-model:value="themeStore.footer.right" />
     </SettingItem>

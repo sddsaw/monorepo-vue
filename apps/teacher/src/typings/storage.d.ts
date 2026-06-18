@@ -10,8 +10,8 @@ declare namespace StorageType {
   }
 
   interface Local {
-    /** The i18n language */
-    lang: App.I18n.LangType
+    /** The language */
+    lang: string
     /** The token */
     token: string
     /** Fixed sider with mix-menu */

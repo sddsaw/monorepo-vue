@@ -119,7 +119,6 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
                     'dayjs',
                     'crypto-js',
                     'qs',
-                    'vue-i18n',
                     'nprogress',
                     'clipboard',
                     '@vueuse/core',

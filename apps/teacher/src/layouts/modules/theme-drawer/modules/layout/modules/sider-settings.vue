@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import SettingItem from '../../../components/setting-item.vue'
 
@@ -16,26 +15,26 @@ const isHybridLayoutMode = computed(() => layoutMode.value.includes('hybrid'))
 </script>
 
 <template>
-  <NDivider>{{ $t('theme.layout.sider.title') }}</NDivider>
+  <NDivider>{{ '侧边栏设置' }}</NDivider>
   <TransitionGroup tag="div" name="setting-list" class="flex-col-stretch gap-12px">
-    <SettingItem v-if="layoutMode === 'vertical'" key="1" :label="$t('theme.layout.sider.width')">
+    <SettingItem v-if="layoutMode === 'vertical'" key="1" label="侧边栏宽度">
       <NInputNumber v-model:value="themeStore.sider.width" size="small" :step="1" class="w-120px" />
     </SettingItem>
-    <SettingItem v-if="layoutMode === 'vertical'" key="2" :label="$t('theme.layout.sider.collapsedWidth')">
+    <SettingItem v-if="layoutMode === 'vertical'" key="2" label="侧边栏折叠宽度">
       <NInputNumber v-model:value="themeStore.sider.collapsedWidth" size="small" :step="1" class="w-120px" />
     </SettingItem>
-    <SettingItem v-if="isMixLayoutMode" key="3" :label="$t('theme.layout.sider.mixWidth')">
+    <SettingItem v-if="isMixLayoutMode" key="3" label="混合布局侧边栏宽度">
       <NInputNumber v-model:value="themeStore.sider.mixWidth" size="small" :step="1" class="w-120px" />
     </SettingItem>
-    <SettingItem v-if="isMixLayoutMode" key="4" :label="$t('theme.layout.sider.mixCollapsedWidth')">
+    <SettingItem v-if="isMixLayoutMode" key="4" label="混合布局侧边栏折叠宽度">
       <NInputNumber v-model:value="themeStore.sider.mixCollapsedWidth" size="small" :step="1" class="w-120px" />
     </SettingItem>
-    <SettingItem v-if="layoutMode === 'vertical-mix'" key="5" :label="$t('theme.layout.sider.mixChildMenuWidth')">
+    <SettingItem v-if="layoutMode === 'vertical-mix'" key="5" label="混合布局子菜单宽度">
       <NInputNumber v-model:value="themeStore.sider.mixChildMenuWidth" size="small" :step="1" class="w-120px" />
     </SettingItem>
-    <SettingItem v-if="isHybridLayoutMode" key="6" :label="$t('theme.layout.sider.autoSelectFirstMenu')">
+    <SettingItem v-if="isHybridLayoutMode" key="6" label="自动选择第一个子菜单">
       <template #suffix>
-        <IconTooltip :desc="$t('theme.layout.sider.autoSelectFirstMenuTip')" />
+        <IconTooltip desc="点击一级菜单时，自动选择并导航到第一个子菜单的最深层级" />
       </template>
       <NSwitch v-model:value="themeStore.sider.autoSelectFirstMenu" />
     </SettingItem>

@@ -6,7 +6,6 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { GLOBAL_SIDER_MENU_ID } from '@/constants/app'
 import { useRouterPush } from '@/hooks/common/router'
-import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
 import { useRouteStore } from '@/store/modules/route'
 import { useThemeStore } from '@/store/modules/theme'
@@ -101,7 +100,7 @@ watch(
         >
           <header class="flex-y-center justify-between px-12px" :style="{ height: `${themeStore.header.height}px` }">
             <h2 class="text-16px text-primary font-bold">
-              {{ $t('system.title') }}
+              {{ 'Soybean 管理系统' }}
             </h2>
             <PinToggler
               :pin="appStore.mixSiderFixed"

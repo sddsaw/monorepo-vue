@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Clipboard from 'clipboard'
 import { computed, onMounted, ref } from 'vue'
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 
 defineOptions({
@@ -19,7 +18,7 @@ function initClipboard() {
   const clipboard = new Clipboard(domRef.value)
 
   clipboard.on('success', () => {
-    window.$message?.success($t('theme.configOperation.copySuccessMsg'))
+    window.$message?.success('复制成功，请替换 src/theme/settings.ts 中的变量 themeSettings')
   })
 }
 
@@ -35,7 +34,7 @@ function handleReset() {
   themeStore.resetStore()
 
   setTimeout(() => {
-    window.$message?.success($t('theme.configOperation.resetSuccessMsg'))
+    window.$message?.success('重置成功')
   }, 50)
 }
 
@@ -50,11 +49,11 @@ onMounted(() => {
   <div class="w-full flex justify-between">
     <textarea id="themeConfigCopyTarget" v-model="dataClipboardText" class="absolute opacity-0 -z-1" />
     <NButton type="error" ghost @click="handleReset">
-      {{ $t('theme.configOperation.resetConfig') }}
+      {{ '重置配置' }}
     </NButton>
     <div ref="domRef" data-clipboard-target="#themeConfigCopyTarget">
       <NButton type="primary">
-        {{ $t('theme.configOperation.copyConfig') }}
+        {{ '复制配置' }}
       </NButton>
     </div>
   </div>

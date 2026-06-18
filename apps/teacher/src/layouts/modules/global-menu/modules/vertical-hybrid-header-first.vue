@@ -147,7 +147,7 @@ watch(
         >
           <header class="flex-y-center justify-between px-12px" :style="{ height: `${themeStore.header.height}px` }">
             <h2 class="text-16px text-primary font-bold">
-              {{ $t('system.title') }}
+              {{ 'Soybean 管理系统' }}
             </h2>
             <PinToggler
               :pin="appStore.mixSiderFixed"

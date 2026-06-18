@@ -19,6 +19,7 @@
     "lint:fix": "eslint --fix ."
   },
   "devDependencies": {
+    "@iconify/utils": "^2.1.24",
     "bumpp": "11.1.0",
     "c12": "3.3.4",
     "cac": "7.0.0",

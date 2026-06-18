@@ -1,27 +1,16 @@
 <script setup lang="ts">
 import type { WatermarkProps } from 'naive-ui'
-import { darkTheme, NConfigProvider } from 'naive-ui'
+import { darkTheme, dateZhCN, NConfigProvider, zhCN } from 'naive-ui'
 import { computed } from 'vue'
-import { naiveDateLocales, naiveLocales } from './locales/naive'
-import { useAppStore } from './store/modules/app'
 import { useThemeStore } from './store/modules/theme'
 
 defineOptions({
   name: 'App',
 })
 
-const appStore = useAppStore()
 const themeStore = useThemeStore()
 
 const naiveDarkTheme = computed(() => (themeStore.darkMode ? darkTheme : undefined))
-
-const naiveLocale = computed(() => {
-  return naiveLocales[appStore.locale]
-})
-
-const naiveDateLocale = computed(() => {
-  return naiveDateLocales[appStore.locale]
-})
 
 const watermarkProps = computed<WatermarkProps>(() => {
   return {
@@ -44,8 +33,8 @@ const watermarkProps = computed<WatermarkProps>(() => {
   <NConfigProvider
     :theme="naiveDarkTheme"
     :theme-overrides="themeStore.naiveTheme"
-    :locale="naiveLocale"
-    :date-locale="naiveDateLocale"
+    :locale="zhCN"
+    :date-locale="dateZhCN"
     class="h-full"
   >
     <AppProvider>

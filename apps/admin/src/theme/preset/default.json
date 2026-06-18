@@ -1,7 +1,6 @@
 {
-  "name": "default",
-  "desc": "Default theme preset with balanced settings",
-  "i18nkey": "theme.appearance.preset.default",
+  "name": "默认预设",
+  "desc": "Soybean 默认主题预设",
   "version": "1.0.0",
   "themeScheme": "light",
   "grayscale": false,
@@ -31,7 +30,7 @@
       "showIcon": true
     },
     "multilingual": {
-      "visible": true
+      "visible": false
     },
     "globalSearch": {
       "visible": true

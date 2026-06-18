@@ -1,0 +1,32 @@
+{
+  "mdi": [
+    "monitor-dashboard",
+    "menu",
+    "format-horizontal-align-left",
+    "format-horizontal-align-right",
+    "pin-off-outline",
+    "pin-outline"
+  ],
+  "ant-design": [
+    "bar-chart-outlined",
+    "money-collect-outlined",
+    "trademark-circle-outlined",
+    "close-outlined",
+    "column-width-outlined",
+    "line-outlined"
+  ],
+  "carbon": [
+    "document-download"
+  ],
+  "ph": [
+    "sign-out"
+  ],
+  "material-symbols": [
+    "sunny",
+    "nightlight-rounded",
+    "hdr-auto"
+  ],
+  "heroicons": [
+    "language"
+  ]
+}

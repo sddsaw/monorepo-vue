@@ -8,12 +8,7 @@ declare module 'vue-router' {
      * It can be used in document title
      */
     title: string
-    /**
-     * I18n key of the route
-     *
-     * It's used in i18n, if it is set, the title will be ignored
-     */
-    i18nKey?: App.I18n.I18nKey | null
+
     /**
      * Roles of the route
      *

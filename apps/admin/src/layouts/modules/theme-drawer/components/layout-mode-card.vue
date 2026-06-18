@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { PopoverPlacement } from 'naive-ui'
 import { themeLayoutModeRecord } from '@/constants/app'
-import { $t } from '@/locales'
 
 defineOptions({
   name: 'LayoutModeCard',
@@ -10,6 +9,15 @@ defineOptions({
 const props = defineProps<Props>()
 
 const emit = defineEmits<Emits>()
+
+const layoutModeDetailRecord: Record<UnionKey.ThemeLayoutMode, string> = {
+  'vertical': '左侧菜单布局，菜单在左，内容在右。',
+  'vertical-mix': '左侧双菜单布局，一级菜单在左侧深色区域，二级菜单在左侧浅色区域。',
+  'vertical-hybrid-header-first': '左侧混合布局，一级菜单在顶部，二级菜单在左侧深色区域，三级菜单在左侧浅色区域。',
+  'horizontal': '顶部菜单布局，菜单在顶部，内容在下方。',
+  'top-hybrid-sidebar-first': '顶部混合布局，一级菜单在左侧，二级菜单在顶部。',
+  'top-hybrid-header-first': '顶部混合布局，一级菜单在顶部，二级菜单在左侧。',
+}
 
 interface Props {
   /** Layout mode */
@@ -92,10 +100,10 @@ function handleChangeMode(mode: UnionKey.ThemeLayoutMode) {
             </div>
           </div>
         </template>
-        {{ $t(`theme.layout.layoutMode.${key}_detail`) }}
+        {{ layoutModeDetailRecord[key] }}
       </IconTooltip>
       <p class="mt-8px text-12px">
-        {{ $t(themeLayoutModeRecord[key]) }}
+        {{ themeLayoutModeRecord[key] }}
       </p>
     </div>
   </div>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { themePageAnimationModeOptions, themeScrollModeOptions } from '@/constants/app'
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import { translateOptions } from '@/utils/common'
 import SettingItem from '../../../components/setting-item.vue'
@@ -16,11 +15,11 @@ const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wra
 </script>
 
 <template>
-  <NDivider>{{ $t('theme.layout.content.title') }}</NDivider>
+  <NDivider>{{ '内容区域设置' }}</NDivider>
   <TransitionGroup tag="div" name="setting-list" class="flex-col-stretch gap-12px">
-    <SettingItem key="1" :label="$t('theme.layout.content.scrollMode.title')">
+    <SettingItem key="1" label="滚动模式">
       <template #suffix>
-        <IconTooltip :desc="$t('theme.layout.content.scrollMode.tip')" />
+        <IconTooltip desc="主题滚动仅 main 部分滚动，外层滚动可携带头部底部一起滚动" />
       </template>
       <NSelect
         v-model:value="themeStore.layout.scrollMode"
@@ -29,10 +28,10 @@ const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wra
         class="w-120px"
       />
     </SettingItem>
-    <SettingItem key="2" :label="$t('theme.layout.content.page.animate')">
+    <SettingItem key="2" label="页面切换动画">
       <NSwitch v-model:value="themeStore.page.animate" />
     </SettingItem>
-    <SettingItem v-if="themeStore.page.animate" key="3" :label="$t('theme.layout.content.page.mode.title')">
+    <SettingItem v-if="themeStore.page.animate" key="3" label="页面切换动画类型">
       <NSelect
         v-model:value="themeStore.page.animateMode"
         :options="translateOptions(themePageAnimationModeOptions)"
@@ -40,7 +39,7 @@ const isWrapperScrollMode = computed(() => themeStore.layout.scrollMode === 'wra
         class="w-120px"
       />
     </SettingItem>
-    <SettingItem v-if="isWrapperScrollMode" key="4" :label="$t('theme.layout.content.fixedHeaderAndTab')">
+    <SettingItem v-if="isWrapperScrollMode" key="4" label="固定头部和标签栏">
       <NSwitch v-model:value="themeStore.fixedHeaderAndTab" />
     </SettingItem>
   </TransitionGroup>

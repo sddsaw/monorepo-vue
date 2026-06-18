@@ -19,8 +19,6 @@ import {
   getTabIdByRoute,
   isTabInTabs,
   reorderFixedTabs,
-  updateTabByI18nKey,
-  updateTabsByI18nKey,
 } from './shared'
 
 export const useTabStore = defineStore(SetupStoreId.Tab, () => {
@@ -63,8 +61,7 @@ export const useTabStore = defineStore(SetupStoreId.Tab, () => {
     const storageTabs = localStg.get('globalTabs')
 
     if (themeStore.tab.cache && storageTabs) {
-      const extractedTabs = extractTabsByAllRoutes(router, storageTabs)
-      tabs.value = updateTabsByI18nKey(extractedTabs)
+      tabs.value = extractTabsByAllRoutes(router, storageTabs)
     }
 
     addTab(currentRoute)
@@ -346,15 +343,6 @@ export const useTabStore = defineStore(SetupStoreId.Tab, () => {
     return fixedTabIds.includes(tabId)
   }
 
-  /** Update tabs by locale */
-  function updateTabsByLocale() {
-    tabs.value = updateTabsByI18nKey(tabs.value)
-
-    if (homeTab.value) {
-      homeTab.value = updateTabByI18nKey(homeTab.value)
-    }
-  }
-
   /** Cache tabs */
   function cacheTabs() {
     if (!themeStore.tab.cache)
@@ -389,7 +377,6 @@ export const useTabStore = defineStore(SetupStoreId.Tab, () => {
     setTabLabel,
     resetTabLabel,
     isTabRetain,
-    updateTabsByLocale,
     getTabIdByRoute,
     cacheTabs,
   }

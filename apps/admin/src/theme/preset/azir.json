@@ -1,7 +1,6 @@
 {
-  "name": "Azir's Preset",
-  "desc": "It is a cold and elegant preset that Azir likes",
-  "i18nkey": "theme.appearance.preset.azir",
+  "name": "Azir的预设",
+  "desc": "是 Azir 比较喜欢的莫兰迪色系冷淡风",
   "version": "1.0.1",
   "themeScheme": "light",
   "recommendColor": true,

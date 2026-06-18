@@ -3,7 +3,6 @@ import { computed, reactive } from 'vue'
 import { useCaptcha } from '@/hooks/business/captcha'
 import { useFormRules, useNaiveForm } from '@/hooks/common/form'
 import { useRouterPush } from '@/hooks/common/router'
-import { $t } from '@/locales'
 
 defineOptions({
   name: 'Register',
@@ -41,18 +40,18 @@ const rules = computed<Record<keyof FormModel, App.Global.FormRule[]>>(() => {
 async function handleSubmit() {
   await validate()
   // request to register
-  window.$message?.success($t('page.login.common.validateSuccess'))
+  window.$message?.success('验证成功')
 }
 </script>
 
 <template>
   <NForm ref="formRef" :model="model" :rules="rules" size="large" :show-label="false" @keyup.enter="handleSubmit">
     <NFormItem path="phone">
-      <NInput v-model:value="model.phone" :placeholder="$t('page.login.common.phonePlaceholder')" />
+      <NInput v-model:value="model.phone" placeholder="请输入手机号" />
     </NFormItem>
     <NFormItem path="code">
       <div class="w-full flex-y-center gap-16px">
-        <NInput v-model:value="model.code" :placeholder="$t('page.login.common.codePlaceholder')" />
+        <NInput v-model:value="model.code" placeholder="请输入验证码" />
         <NButton size="large" :disabled="isCounting" :loading="loading" @click="getCaptcha(model.phone)">
           {{ label }}
         </NButton>
@@ -63,7 +62,7 @@ async function handleSubmit() {
         v-model:value="model.password"
         type="password"
         show-password-on="click"
-        :placeholder="$t('page.login.common.passwordPlaceholder')"
+        placeholder="请输入密码"
       />
     </NFormItem>
     <NFormItem path="confirmPassword">
@@ -71,15 +70,15 @@ async function handleSubmit() {
         v-model:value="model.confirmPassword"
         type="password"
         show-password-on="click"
-        :placeholder="$t('page.login.common.confirmPasswordPlaceholder')"
+        placeholder="请再次输入密码"
       />
     </NFormItem>
     <NSpace vertical :size="18" class="w-full">
       <NButton type="primary" size="large" round block @click="handleSubmit">
-        {{ $t('common.confirm') }}
+        {{ '确认' }}
       </NButton>
       <NButton size="large" round block @click="toggleLoginModule('pwd-login')">
-        {{ $t('page.login.common.back') }}
+        {{ '返回' }}
       </NButton>
     </NSpace>
   </NForm>

@@ -1,7 +1,6 @@
 {
-  "name": "Compact Preset",
-  "desc": "Compact layout preset for small screens",
-  "i18nkey": "theme.appearance.preset.compact",
+  "name": "紧凑型",
+  "desc": "适用于小屏幕的紧凑布局预设",
   "version": "1.0.1",
   "themeRadius": 6,
   "header": {

@@ -5,7 +5,6 @@ import type { Ref } from 'vue'
 import { useBoolean, useTable } from '@sa/hooks'
 import { jsonClone } from '@sa/utils'
 import { computed, effectScope, onScopeDispose, reactive, shallowRef, watch } from 'vue'
-import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
 
 export type UseNaiveTableOptions<ResponseData, ApiData, Pagination extends boolean> = Omit<
@@ -93,7 +92,7 @@ export function useNaivePaginatedTable<ResponseData, ApiData>(
     itemCount: 0,
     showSizePicker: true,
     pageSizes: [10, 15, 20, 25, 30],
-    prefix: showTotal.value ? page => $t('datatable.itemCount', { total: page.itemCount }) : undefined,
+    prefix: showTotal.value ? page => `共 ${page.itemCount} 条` : undefined,
     onUpdatePage(page) {
       pagination.page = page
     },
@@ -202,7 +201,7 @@ export function useTableOperate<TableData>(
 
   /** the hook after the batch delete operation is completed */
   async function onBatchDeleted() {
-    window.$message?.success($t('common.deleteSuccess'))
+    window.$message?.success('删除成功')
 
     checkedRowKeys.value = []
 
@@ -211,7 +210,7 @@ export function useTableOperate<TableData>(
 
   /** the hook after the delete operation is completed */
   async function onDeleted() {
-    window.$message?.success($t('common.deleteSuccess'))
+    window.$message?.success('删除成功')
 
     await getData()
   }
@@ -273,7 +272,7 @@ function getColumnChecks<Column extends NaiveUI.TableColumn<any>>(
     else if (column.type === 'selection') {
       checks.push({
         key: SELECTION_KEY,
-        title: $t('common.check'),
+        title: '勾选',
         checked: true,
         fixed: column.fixed ?? 'unFixed',
         visible: getColumnVisible?.(column) ?? false,
@@ -282,7 +281,7 @@ function getColumnChecks<Column extends NaiveUI.TableColumn<any>>(
     else if (column.type === 'expand') {
       checks.push({
         key: EXPAND_KEY,
-        title: $t('common.expandColumn'),
+        title: '展开列',
         checked: true,
         fixed: column.fixed ?? 'unFixed',
         visible: getColumnVisible?.(column) ?? false,

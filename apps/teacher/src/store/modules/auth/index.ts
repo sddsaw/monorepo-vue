@@ -4,7 +4,6 @@ import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { SetupStoreId } from '@/enum'
 import { useRouterPush } from '@/hooks/common/router'
-import { $t } from '@/locales'
 import { fetchGetUserInfo, fetchLogin } from '@/service/api'
 import { localStg } from '@/utils/storage'
 import { useRouteStore } from '../route'
@@ -116,8 +115,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
         await redirectFromLogin(needRedirect)
 
         window.$notification?.success({
-          title: $t('page.login.common.loginSuccess'),
-          content: $t('page.login.common.welcomeBack', { userName: userInfo.userName }),
+          title: '登录成功',
+          content: `欢迎回来，${userInfo.userName} ！`,
           duration: 4500,
         })
       }

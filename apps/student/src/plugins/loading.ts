@@ -2,7 +2,6 @@
 import { getColorPalette, getRgb } from '@sa/color'
 import { toggleHtmlClass } from '@sa/utils'
 import { DARK_CLASS } from '@/constants/app'
-import { $t } from '@/locales'
 import { localStg } from '@/utils/storage'
 
 export function setupLoading() {
@@ -47,7 +46,7 @@ export function setupLoading() {
       ${dot}
     </div>
   </div>
-  <h2 class="text-28px font-500 text-primary">${$t('system.title')}</h2>
+  <h2 class="text-28px font-500 text-primary">${'Soybean 管理系统'}</h2>
 </div>`
 
   const app = document.getElementById('app')

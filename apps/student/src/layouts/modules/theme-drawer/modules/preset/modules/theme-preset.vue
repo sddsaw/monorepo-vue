@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { defu } from 'defu'
 import { computed } from 'vue'
-import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import { themeSettings } from '@/theme/settings'
 
@@ -31,7 +30,6 @@ type ThemePreset = Pick<
 > & {
   name: string
   desc: string
-  i18nkey?: string
   version: string
   /** Optional NaiveUI theme overrides */
   naiveui?: App.Theme.NaiveUIThemeOverride
@@ -61,29 +59,11 @@ const presets = computed(() =>
 )
 
 function getPresetName(preset: ThemePreset): string {
-  if (!preset.i18nkey)
-    return preset.name
-  try {
-    const key = `${preset.i18nkey}.name` as App.I18n.I18nKey
-    const translated = $t(key)
-    return translated !== key ? translated : preset.name
-  }
-  catch {
-    return preset.name
-  }
+  return preset.name
 }
 
 function getPresetDesc(preset: ThemePreset): string {
-  if (!preset.i18nkey)
-    return preset.desc
-  try {
-    const key = `${preset.i18nkey}.desc` as App.I18n.I18nKey
-    const translated = $t(key)
-    return translated !== key ? translated : preset.desc
-  }
-  catch {
-    return preset.desc
-  }
+  return preset.desc
 }
 
 function applyPreset(preset: ThemePreset): void {
@@ -111,12 +91,12 @@ function applyPreset(preset: ThemePreset): void {
   // Apply NaiveUI theme overrides if present
   themeStore.setNaiveThemeOverrides(naiveui)
 
-  window.$message?.success($t('theme.appearance.preset.applySuccess'))
+  window.$message?.success('预设应用成功')
 }
 </script>
 
 <template>
-  <NDivider>{{ $t('theme.appearance.preset.title') }}</NDivider>
+  <NDivider>{{ '主题预设' }}</NDivider>
 
   <div class="flex flex-col gap-3">
     <div
@@ -132,7 +112,7 @@ function applyPreset(preset: ThemePreset): void {
           <NBadge :value="`v${preset.version}`" type="info" size="small" class="flex-shrink-0 opacity-80" />
         </div>
         <NButton type="primary" size="tiny" ghost round class="ml-2 flex-shrink-0" @click="applyPreset(preset)">
-          {{ $t('theme.appearance.preset.apply') }}
+          {{ '应用' }}
         </NButton>
       </div>
 

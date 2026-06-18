@@ -2,7 +2,6 @@
 import type { DropdownOption } from 'naive-ui'
 import { useSvgIcon } from '@sa/components/hooks/icon'
 import { computed } from 'vue'
-import { $t } from '@/locales'
 import { useTabStore } from '@/store/modules/tab'
 
 defineOptions({
@@ -37,27 +36,27 @@ const options = computed(() => {
   const opts: LocalDropdownOption[] = [
     {
       key: 'closeCurrent',
-      label: $t('dropdown.closeCurrent'),
+      label: '关闭',
       icon: SvgIconVNode({ icon: 'ant-design:close-outlined', fontSize: 18 }),
     },
     {
       key: 'closeOther',
-      label: $t('dropdown.closeOther'),
+      label: '关闭其它',
       icon: SvgIconVNode({ icon: 'ant-design:column-width-outlined', fontSize: 18 }),
     },
     {
       key: 'closeLeft',
-      label: $t('dropdown.closeLeft'),
+      label: '关闭左侧',
       icon: SvgIconVNode({ icon: 'mdi:format-horizontal-align-left', fontSize: 18 }),
     },
     {
       key: 'closeRight',
-      label: $t('dropdown.closeRight'),
+      label: '关闭右侧',
       icon: SvgIconVNode({ icon: 'mdi:format-horizontal-align-right', fontSize: 18 }),
     },
     {
       key: 'closeAll',
-      label: $t('dropdown.closeAll'),
+      label: '关闭所有',
       icon: SvgIconVNode({ icon: 'ant-design:line-outlined', fontSize: 18 }),
     },
   ]
@@ -66,14 +65,14 @@ const options = computed(() => {
     if (isTabRetain(props.tabId)) {
       opts.push({
         key: 'unpin',
-        label: $t('dropdown.unpin'),
+        label: '取消固定',
         icon: SvgIconVNode({ icon: 'mdi:pin-off-outline', fontSize: 18 }),
       })
     }
     else {
       opts.push({
         key: 'pin',
-        label: $t('dropdown.pin'),
+        label: '固定标签',
         icon: SvgIconVNode({ icon: 'mdi:pin-outline', fontSize: 18 }),
       })
     }

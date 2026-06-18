@@ -33,7 +33,6 @@
     "pinia": "catalog:",
     "tailwind-merge": "catalog:",
     "vue-draggable-plus": "catalog:",
-    "vue-i18n": "catalog:",
     "vue-router": "catalog:"
   },
   "devDependencies": {
