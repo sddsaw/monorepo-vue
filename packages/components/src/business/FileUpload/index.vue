@@ -4,8 +4,9 @@ import type { UploadCustomRequestOptions, UploadFileInfo, UploadInst, UploadOnRe
 import type { FormItemInjection } from 'naive-ui/es/_mixins/use-form-item'
 import { ObjectStorageUploader } from '@sa/utils'
 import { NUpload, NUploadDragger, useMessage } from 'naive-ui'
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, ref, watch } from 'vue'
 import SvgIcon from '../../basic/SvgIcon/index.vue'
+import ImageCropperModal from './ImageCropperModal.vue'
 
 // 1. 组件选项定义
 defineOptions({
@@ -22,6 +23,9 @@ const props = withDefaults(defineProps<Props>(), {
   listType: 'image-card',
   isDirectoryDnd: false,
   autoUploadObs: true,
+  cropper: false,
+  cropperAspectRatio: undefined,
+  cropperPreviewRound: false,
 })
 
 const emit = defineEmits<Emits>()
@@ -55,6 +59,12 @@ interface Props {
   beforeUpload?: (file: File) => boolean | Promise<boolean>
   /** 是否自动上传到 OBS（true=自动上传，false=只选择文件并通过事件传出） */
   autoUploadObs?: boolean
+  /** 是否开启裁剪 */
+  cropper?: boolean
+  /** 裁剪比例，不传则为自由比例 */
+  cropperAspectRatio?: number
+  /** 裁剪预览是否为圆形（常用于头像） */
+  cropperPreviewRound?: boolean
 }
 
 interface Emits {
@@ -84,8 +94,10 @@ const NFormItem = inject<FormItemInjection | null>('n-form-item', null)
 // 5. 组件响应式状态
 const message = useMessage()
 const uploadRef = ref<UploadInst>()
+const cropperModalRef = ref<InstanceType<typeof ImageCropperModal> | null>(null)
 const internalFileList = ref<UploadFileInfo[]>([])
 const emittedFileKeys = new Set<string>() // 用于去重、记录已触发过 fileSelected 的文件 key
+let cropperQueue = Promise.resolve<any>(null)
 
 // 6. 计算属性
 const fileList = computed<string[]>(() => {
@@ -161,6 +173,14 @@ watch(
   { deep: true, immediate: true },
 )
 
+onBeforeUnmount(() => {
+  internalFileList.value.forEach((file) => {
+    if (file.thumbnailUrl && file.thumbnailUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(file.thumbnailUrl)
+    }
+  })
+})
+
 // 8. 核心方法与事件处理器
 
 function getIdByUrl(url: string) {
@@ -185,6 +205,41 @@ async function handleBeforeUpload(data: {
   if (isMaxReached.value) {
     message.warning(`最多只能上传 ${props.max} 个文件`)
     return false
+  }
+
+  // 开启裁剪且为图片时进行裁剪拦截
+  if (props.cropper && file.file && file.file.type.startsWith('image/')) {
+    const originalFile = file.file
+    try {
+      const croppedBlob = await new Promise<Blob | null>((resolve) => {
+        cropperQueue = cropperQueue.then(async () => {
+          if (cropperModalRef.value) {
+            const result = await cropperModalRef.value.open(originalFile, {
+              aspectRatio: props.cropperAspectRatio,
+              previewRound: props.cropperPreviewRound,
+            })
+            resolve(result)
+          }
+          else {
+            resolve(null)
+          }
+        })
+      })
+
+      if (!croppedBlob) {
+        return false // 取消上传
+      }
+
+      // 替换为裁剪后的文件，并设置缩略图预览 (保持 Blob 的真实类型以防止格式解析错误)
+      const croppedFile = new File([croppedBlob], originalFile.name, { type: croppedBlob.type })
+      file.file = croppedFile
+      file.thumbnailUrl = URL.createObjectURL(croppedFile)
+    }
+    catch (error) {
+      console.error('图片裁剪失败:', error)
+      message.error('图片处理失败，请重试')
+      return false
+    }
   }
 
   // 检查文件大小限制
@@ -301,6 +356,11 @@ function handleRemove(data: Parameters<UploadOnRemove>[0]) {
   const { file } = data
   const fileItem: FileItem = file.url || (file.file ? file.file.name : '')
 
+  // 释放本地裁剪文件的 Object URL 内存，防止内存泄漏
+  if (file.thumbnailUrl && file.thumbnailUrl.startsWith('blob:')) {
+    URL.revokeObjectURL(file.thumbnailUrl)
+  }
+
   if (file.status === 'finished' && file.url) {
     const newList = fileList.value.filter(v => v !== file.url)
     if (props.multiple) {
@@ -357,6 +417,7 @@ defineExpose({
         </slot>
       </NUploadDragger>
     </NUpload>
+    <ImageCropperModal ref="cropperModalRef" />
   </div>
 </template>
 

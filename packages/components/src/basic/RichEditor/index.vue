@@ -245,7 +245,7 @@ const editorConfig = computed(() => {
 }
 
 /* 解决内联模式工具栏定位闪烁问题：利用 @keyframes 避开 display: none -> block 无法触发 transition 的限制 */
-@keyframes ck-balloon-fade-in {
+/* @keyframes ck-balloon-fade-in {
   0%, 80% {
     opacity: 0;
   }
@@ -262,7 +262,7 @@ const editorConfig = computed(() => {
 :global(.ck.ck-balloon-panel.ck-balloon-panel_visible) {
   pointer-events: auto;
   animation: ck-balloon-fade-in 80ms ease-out forwards;
-}
+} */
 
 /* 编辑器容器样式 */
 .question-item {

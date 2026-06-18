@@ -26,7 +26,8 @@
     "@ckeditor/ckeditor5-vue": "catalog:",
     "@sa/color": "workspace:*",
     "@sa/hooks": "workspace:*",
-    "ckeditor5": "catalog:"
+    "ckeditor5": "catalog:",
+    "cropperjs": "^1.6.2"
   },
   "devDependencies": {
     "@iconify/vue": "catalog:",

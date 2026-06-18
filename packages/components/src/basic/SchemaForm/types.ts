@@ -59,6 +59,12 @@ interface FileUploadProps {
   onUploadError?: (error: any, file: File) => void
   /** 移除文件事件 */
   onRemove?: (file: any) => void
+  /** 是否开启裁剪 */
+  cropper?: boolean
+  /** 裁剪比例，不传则为自由比例 */
+  cropperAspectRatio?: number
+  /** 裁剪预览是否为圆形（常用于头像） */
+  cropperPreviewRound?: boolean
 }
 
 export interface OptionItem {

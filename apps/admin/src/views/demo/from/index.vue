@@ -202,6 +202,9 @@ const formOptions = ref<SchemaFormOptions[]>([
       multiple: false,
       accept: 'image/*',
       listType: 'image-card',
+      cropper: true,
+      cropperAspectRatio: 1,
+      cropperPreviewRound: true,
       // 监听上传成功事件
       onUploadSuccess: (url) => {
         window.$message?.success(`上传文件成功！云端地址为: ${url}`)

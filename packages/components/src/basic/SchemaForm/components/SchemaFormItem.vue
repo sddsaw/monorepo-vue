@@ -1,14 +1,14 @@
 <script setup lang="tsx">
 import type { OptionItem, SchemaFormOptions } from '../types'
 import {
+  NDatePicker,
   NInput,
   NInputNumber,
   NSelect,
   NSwitch,
   NTimePicker,
 } from 'naive-ui'
-import { defineAsyncComponent, ref, watchEffect } from 'vue'
-import FormDatePicker from './FormDatePicker.vue'
+import { computed, defineAsyncComponent, ref, watchEffect } from 'vue'
 import { OptionsCheckboxGroup, OptionsRadioGroup } from './OptionsGroup'
 
 const props = defineProps<{
@@ -21,12 +21,19 @@ const RichEditor = defineAsyncComponent(() => import('../../RichEditor/index.vue
 
 const value = defineModel<any>()
 
+const modelKey = computed(() => {
+  if (props.item.type === 'date-picker' && props.item.attrs?.valueFormat) {
+    return 'formatted-value'
+  }
+  return 'value'
+})
+
 // 映射组件关系
 const componentMap = {
   'input': NInput,
   'select': NSelect,
   'switch': NSwitch,
-  'date-picker': FormDatePicker,
+  'date-picker': NDatePicker,
   'checkbox': OptionsCheckboxGroup,
   'radio': OptionsRadioGroup,
   'input-number': NInputNumber,
@@ -69,7 +76,7 @@ function getComponentAttrs(): Record<string, unknown> {
   <component
     :is="componentMap[props.item.type as keyof typeof componentMap]"
     v-if="componentMap[props.item.type as keyof typeof componentMap]"
-    v-model:value="value"
+    v-model:[modelKey]="value"
     class="w-full"
     v-bind="getComponentAttrs()"
   />
