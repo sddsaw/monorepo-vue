@@ -14,9 +14,6 @@ dist-ssr
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -30,10 +27,12 @@ coverage
 *.sw?
 
 package-lock.json
-yarn.lock
 
 .VSCodeCounter
-src-tauri/target
-
 # Turborepo
 .turbo
+
+# Elegant Router
+apps/*/src/router/elegant/
+apps/*/src/typings/elegant-router.d.ts
+
