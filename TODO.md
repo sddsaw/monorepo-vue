@@ -77,4 +77,5 @@
 - [ ] highlight.io 埋点
 - [ ] 错误监控 + 性能
     - [ ] Matomo 自托管 → 用户行为 + 自定义埋点，免费
-    - [ ] Sentry 自托管 → 错误监控 + 性能，免费
+    - [ ] Sentry 自托管 → 错误监控 + 性能，免费 https://github.com/getsentry/sentry-javascript
+            pnpm add @sentry/vue

@@ -116,6 +116,8 @@ declare namespace Env {
     readonly VITE_OBS_SECRET_ACCESS_KEY: string
     /** 火山引擎 TOS 终端节点 */
     readonly VITE_OBS_ENDPOINT: string
+    /** Sentry DSN */
+    readonly VITE_SENTRY_DSN?: string
   }
 }
 
