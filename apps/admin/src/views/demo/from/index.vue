@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { SchemaFormOptions } from '@sa/components'
 import { SchemaForm } from '@sa/components'
+import { vTrack } from '@sa/directives'
 import { useNaiveForm, useResetReactive } from '@sa/hooks'
+import { trackEvent } from '@sa/utils'
+
 // ==========================================
 // 1. SchemaForm 响应式表单数据源定义
 // ==========================================
@@ -238,9 +241,11 @@ async function handleValidate() {
   try {
     await validate()
     window.$message?.success('表单校验通过！')
+    trackEvent('form_validate_success', { username: formData.username })
   }
   catch {
     window.$message?.error('表单校验失败，请检查输入项')
+    trackEvent('form_validate_failed')
   }
 }
 
@@ -287,7 +292,7 @@ function handleReset() {
 
           <template #action>
             <NSpace justify="end">
-              <NButton @click="handleReset">
+              <NButton v-track="'form_reset_click'" @click="handleReset">
                 重置表单
               </NButton>
               <NButton type="primary" @click="handleValidate">

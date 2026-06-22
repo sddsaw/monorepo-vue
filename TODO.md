@@ -73,9 +73,8 @@
   - [ ] 对项目中使用的 Echarts 进行封装，严格采用 **按需引入（Import on Demand）** 模式（仅引入实际用到的 CanvasRenderer、LineChart、GridComponent 等），禁止 `import * as echarts` 全量引入，控制 vendor.js 大小
 
 - [] time文件不对
-
-- [ ] highlight.io 埋点
+- [] 访问浏览器判断，非谷歌提示，并提供下载安装包。全局消息提示
 - [ ] 错误监控 + 性能
-    - [ ] Matomo 自托管 → 用户行为 + 自定义埋点，免费
+    - [ ] umami 自托管 → 用户行为 + 自定义埋点，免费
     - [ ] Sentry 自托管 → 错误监控 + 性能，免费 https://github.com/getsentry/sentry-javascript
             pnpm add @sentry/vue

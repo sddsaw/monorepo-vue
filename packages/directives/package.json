@@ -1,0 +1,28 @@
+{
+  "name": "@sa/directives",
+  "version": "2.3.1",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./src/*"
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
+  "peerDependencies": {
+    "vue": "catalog:"
+  },
+  "dependencies": {
+    "@sa/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "vue": "catalog:"
+  }
+}

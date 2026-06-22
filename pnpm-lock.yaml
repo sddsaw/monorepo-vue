@@ -230,6 +230,9 @@ importers:
       '@sa/components':
         specifier: workspace:*
         version: link:../../packages/components
+      '@sa/directives':
+        specifier: workspace:*
+        version: link:../../packages/directives
       '@sa/hooks':
         specifier: workspace:*
         version: link:../../packages/hooks
@@ -572,6 +575,16 @@ importers:
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.6.0
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.34(typescript@6.0.3)
+
+  packages/directives:
+    dependencies:
+      '@sa/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
       vue:
         specifier: 'catalog:'
         version: 3.5.34(typescript@6.0.3)

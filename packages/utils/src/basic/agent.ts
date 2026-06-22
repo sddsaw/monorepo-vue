@@ -21,3 +21,19 @@ export function isPC(): boolean {
   // 反向判断：如果都不是移动设备，则认为是PC端
   return !isMobile && !isTouchScreen
 }
+
+const CHROME_REGEXP = /chrome|crios/
+const EXCLUDE_REGEXP = /edg|opr|micromessenger|qqbrowser|baiduboxapp|baidubrowser|ucbrowser|360ee|360se/
+
+/**
+ * 检测当前浏览器是否为 Google Chrome (排除了 Edge, Opera, QQ, 微信, 百度, UC, 360 等其他 Chromium 内核浏览器)
+ * @returns 返回 true 表示是 Chrome，false 表示不是
+ */
+export function isChrome(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return false
+  }
+
+  const ua = navigator.userAgent.toLowerCase()
+  return CHROME_REGEXP.test(ua) && !EXCLUDE_REGEXP.test(ua)
+}

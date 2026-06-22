@@ -118,6 +118,10 @@ declare namespace Env {
     readonly VITE_OBS_ENDPOINT: string
     /** Sentry DSN */
     readonly VITE_SENTRY_DSN?: string
+    /** Umami 网站 ID */
+    readonly VITE_UMAMI_WEBSITE_ID?: string
+    /** Umami 统计脚本 URL */
+    readonly VITE_UMAMI_SCRIPT_URL?: string
   }
 }
 
