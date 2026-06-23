@@ -1,10 +1,10 @@
 import { cac } from 'cac'
 import { blue, lightGreen } from 'kolorist'
 import { version } from '../package.json'
-import { cleanup, release, updateIcons, updatePkg } from './commands'
+import { checkIcons, cleanup, release, updateIcons, updatePkg } from './commands'
 import { loadCliOptions } from './config'
 
-type Command = 'cleanup' | 'update-pkg' | 'release' | 'update-icons'
+type Command = 'cleanup' | 'update-pkg' | 'release' | 'update-icons' | 'check-icons'
 
 type CommandAction<A extends object> = (args?: A) => Promise<void> | void
 
@@ -60,6 +60,12 @@ export async function setupCli() {
       desc: 'update local icons from @iconify/json',
       action: async () => {
         await updateIcons()
+      },
+    },
+    'check-icons': {
+      desc: 'check for remote icons used in code or packages',
+      action: async () => {
+        await checkIcons()
       },
     },
 

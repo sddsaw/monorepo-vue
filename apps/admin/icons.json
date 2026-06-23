@@ -5,7 +5,17 @@
     "format-horizontal-align-left",
     "format-horizontal-align-right",
     "pin-off-outline",
-    "pin-outline"
+    "pin-outline",
+    "magnify-plus-outline",
+    "magnify-minus-outline",
+    "rotate-left",
+    "rotate-right",
+    "flip-horizontal",
+    "flip-vertical",
+    "restore",
+    "cloud-upload",
+    "drag",
+    "refresh"
   ],
   "ant-design": [
     "bar-chart-outlined",
@@ -13,13 +23,16 @@
     "trademark-circle-outlined",
     "close-outlined",
     "column-width-outlined",
-    "line-outlined"
+    "line-outlined",
+    "reload-outlined",
+    "setting-outlined"
   ],
   "carbon": [
     "document-download"
   ],
   "ph": [
-    "sign-out"
+    "sign-out",
+    "user-circle"
   ],
   "material-symbols": [
     "sunny",
@@ -28,5 +41,38 @@
   ],
   "heroicons": [
     "language"
+  ],
+  "line-md": [
+    "menu-fold-left",
+    "menu-unfold-left",
+    "menu-fold-right",
+    "menu-unfold-right"
+  ],
+  "gridicons": [
+    "fullscreen",
+    "fullscreen-exit"
+  ],
+  "majesticons": [
+    "color-swatch-line"
+  ],
+  "fluent": [
+    "alert-24-regular",
+    "info-24-filled",
+    "warning-24-filled",
+    "sparkle-24-filled",
+    "person-feedback-24-filled",
+    "person-chat-24-filled",
+    "ribbon-24-filled",
+    "calendar-clock-24-filled",
+    "code-24-filled",
+    "clipboard-task-24-filled"
+  ],
+  "octicon": [
+    "pin-16",
+    "pin-slash-16"
+  ],
+  "ic": [
+    "round-plus",
+    "round-delete"
   ]
 }
