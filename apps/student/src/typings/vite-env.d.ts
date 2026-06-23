@@ -109,6 +109,12 @@ declare namespace Env {
     readonly VITE_PROXY_LOG?: CommonType.YesOrNo
     /** The launch editor */
     readonly VITE_DEVTOOLS_LAUNCH_EDITOR?: import('vite-plugin-vue-devtools').VitePluginVueDevToolsOptions['launchEditor']
+    /** Sentry DSN */
+    readonly VITE_SENTRY_DSN?: string
+    /** Umami website id */
+    readonly VITE_UMAMI_WEBSITE_ID?: string
+    /** Umami script url */
+    readonly VITE_UMAMI_SCRIPT_URL?: string
   }
 }
 

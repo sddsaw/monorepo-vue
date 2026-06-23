@@ -24,6 +24,7 @@
     "unplugin-icons": "23.0.1",
     "unplugin-vue-components": "32.0.0",
     "vite": "catalog:",
+    "vite-plugin-compression2": "catalog:",
     "vite-plugin-progress": "0.0.7",
     "vite-plugin-svg-icons": "2.0.1",
     "vite-plugin-vue-devtools": "8.1.2",

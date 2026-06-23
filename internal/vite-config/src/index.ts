@@ -68,7 +68,7 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
         appName,
         routerOptions,
         componentResolvers,
-      }),
+      }, configEnv.command === 'build'),
       define: {
         BUILD_TIME: JSON.stringify(buildTime),
       },

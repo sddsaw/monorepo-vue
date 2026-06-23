@@ -3,6 +3,7 @@ import type { CreateViteConfigOptions, ViteEnv } from './types.js'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { compression } from 'vite-plugin-compression2'
 import progress from 'vite-plugin-progress'
 import vueRootValidator from 'vite-plugin-vue-transition-root-validator'
 import {
@@ -18,6 +19,7 @@ export function setupVitePlugins(
   buildTime: string,
   root: string,
   options?: CreateViteConfigOptions,
+  isBuild?: boolean,
 ) {
   const plugins: PluginOption[] = [
     vue(),
@@ -39,6 +41,16 @@ export function setupVitePlugins(
         brotliSize: true,
         filename: `../../dist/visualizer/${options?.appName || 'app'}.html`,
       }) as PluginOption,
+    )
+  }
+
+  if (isBuild) {
+    plugins.push(
+      compression({
+        algorithm: 'brotliCompress',
+        exclude: [/\.(br)$/, /\.(gz)$/],
+        threshold: 10240,
+      }),
     )
   }
 

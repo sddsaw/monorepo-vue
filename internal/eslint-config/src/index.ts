@@ -74,6 +74,96 @@ export function createESLintConfig(options: ESLintConfigOptions = {}): ReturnTyp
         'import/consistent-type-specifier-style': 'off',
       },
     },
+    {
+      files: ['packages/utils/src/**/*.{ts,vue}', '**/packages/utils/src/**/*.{ts,vue}'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: [
+                  '@sa/components',
+                  '@sa/components/*',
+                  '@sa/hooks',
+                  '@sa/hooks/*',
+                  '@sa/axios',
+                  '@sa/axios/*',
+                  '@sa/materials',
+                  '@sa/materials/*',
+                  '@apps/*',
+                ],
+                message: 'Low-level utility package `@sa/utils` cannot import from high-level packages (components, hooks, axios, materials, apps).',
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      files: ['packages/axios/src/**/*.{ts,vue}', '**/packages/axios/src/**/*.{ts,vue}'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: [
+                  '@sa/components',
+                  '@sa/components/*',
+                  '@sa/hooks',
+                  '@sa/hooks/*',
+                  '@sa/materials',
+                  '@sa/materials/*',
+                  '@apps/*',
+                ],
+                message: 'Low-level API package `@sa/axios` cannot import from high-level packages (components, hooks, materials, apps).',
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      files: ['packages/hooks/src/**/*.{ts,vue}', '**/packages/hooks/src/**/*.{ts,vue}'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: [
+                  '@sa/components',
+                  '@sa/components/*',
+                  '@sa/materials',
+                  '@sa/materials/*',
+                  '@apps/*',
+                ],
+                message: 'Low-level hooks package `@sa/hooks` cannot import from high-level packages (components, materials, apps).',
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      files: ['packages/components/src/**/*.{ts,vue}', '**/packages/components/src/**/*.{ts,vue}'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: [
+                  '@apps/*',
+                ],
+                message: 'Shared components package `@sa/components` cannot import from applications (`@apps/*`).',
+              },
+            ],
+          },
+        ],
+      },
+    },
     ...overrides,
   )
 }

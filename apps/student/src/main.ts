@@ -1,8 +1,9 @@
+import { initSentry, initUmami } from '@sa/utils'
 import { setupVueRootValidator } from 'vite-plugin-vue-transition-root-validator/client'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { setupAppVersionNotification, setupDayjs, setupIconifyOffline, setupLoading, setupNProgress } from './plugins'
-import { setupRouter } from './router'
+import { router, setupRouter } from './router'
 import { setupStore } from './store'
 import './plugins/assets'
 
@@ -20,6 +21,23 @@ async function setupApp() {
   setupStore(app)
 
   await setupRouter(app)
+
+  // A. Initialize Umami analytics
+  initUmami({
+    websiteId: import.meta.env.VITE_UMAMI_WEBSITE_ID || '',
+    scriptUrl: import.meta.env.VITE_UMAMI_SCRIPT_URL,
+  })
+
+  // B. Initialize Sentry crash reporting
+  initSentry(app, router, {
+    dsn: import.meta.env.VITE_SENTRY_DSN || '',
+    environment: import.meta.env.MODE,
+    release: BUILD_TIME,
+    enableReplay: import.meta.env.PROD,
+    sentryConfig: {
+      tracesSampleRate: import.meta.env.PROD ? 0.2 : 0.0,
+    },
+  })
 
   setupAppVersionNotification()
 
