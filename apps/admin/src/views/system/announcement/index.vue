@@ -473,7 +473,7 @@ const columns: DataTableColumns<NoticeItem> = [
         <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 border-b border-gray-100 pb-3 text-12px text-gray-400 dark:border-gray-800">
           <span>
             类型：
-            <NTag size="small" :type="typeOptions.find(o => o.value === activeNotice?.type)?.type as any" bordered="false">
+            <NTag size="small" :type="typeOptions.find(o => o.value === activeNotice?.type)?.type as any" :bordered="false">
               {{ typeOptions.find(o => o.value === activeNotice?.type)?.label }}
             </NTag>
           </span>
