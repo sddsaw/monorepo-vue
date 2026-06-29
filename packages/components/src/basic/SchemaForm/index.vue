@@ -18,6 +18,8 @@ export interface SchemaFormProps extends /* @vue-ignore */ Omit<FormProps, 'rule
   xGap?: number | string
   /** 网格纵向间距，默认 0 */
   yGap?: number | string
+  /** 响应式模式，默认 'screen' */
+  responsive?: 'screen' | 'self'
 }
 
 /**
@@ -34,6 +36,7 @@ const props = withDefaults(
     cols: 24,
     xGap: 16,
     yGap: 0,
+    responsive: 'screen',
   },
 )
 
@@ -54,7 +57,7 @@ const rules = computed(() =>
 
 // 提取用于传递给 NForm 的属性（过滤掉组件自身的配置属性）
 const formAttrs = computed(() => {
-  const { cols, options, xGap, yGap, ...rest } = props
+  const { cols, options, xGap, yGap, responsive, ...rest } = props
   return rest
 })
 
@@ -89,7 +92,7 @@ defineExpose({
 
 <template>
   <NForm ref="formRef" :model="model" :rules="rules" v-bind="{ ...formAttrs, ...$attrs }">
-    <NGrid :cols="props.cols" :x-gap="props.xGap" :y-gap="props.yGap" item-responsive>
+    <NGrid :cols="props.cols" :x-gap="props.xGap" :y-gap="props.yGap" :responsive="props.responsive" item-responsive>
       <NFormItemGi
         v-for="(item, index) in props.options"
         :key="item.value || index"

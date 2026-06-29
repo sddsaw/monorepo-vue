@@ -148,16 +148,21 @@ function handleClearTab() {
 function handleViewAll() {
   window.$message?.info('正在前往消息中心查看全部历史消息（功能开发中...）')
 }
+
+// 控制通知中心悬浮气泡的显示状态，用于在展示通知中心时禁用 Tooltip
+const showPopover = ref(false)
 </script>
 
 <template>
-  <NPopover trigger="click" placement="bottom-end" :width="360" :z-index="99" content-style="padding: 0;">
+  <NPopover v-model:show="showPopover" trigger="click" placement="bottom-end" :width="360" :z-index="99" content-style="padding: 0;">
     <template #trigger>
-      <ButtonIcon tooltip-content="消息通知">
-        <NBadge :value="totalUnreadCount" :max="99" :show-zero="false">
-          <SvgIcon icon="fluent:alert-24-regular" class="hover-bell-swing text-icon-large" />
-        </NBadge>
-      </ButtonIcon>
+      <div>
+        <ButtonIcon :tooltip-content="showPopover ? '' : '消息通知'">
+          <NBadge :value="totalUnreadCount" :max="99" :show-zero="false">
+            <SvgIcon icon="fluent:alert-24-regular" class="hover-bell-swing text-icon-large" />
+          </NBadge>
+        </ButtonIcon>
+      </div>
     </template>
 
     <DarkModeContainer class="shadow-card w-360px flex flex-col overflow-hidden rounded-8px">

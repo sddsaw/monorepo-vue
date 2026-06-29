@@ -1,18 +1,5 @@
 import { createViteConfig } from '@internal/vite-config'
 
-const routeTitleMap: Record<string, string> = {
-  'login': '登录',
-  '403': '无权限',
-  '404': '页面不存在',
-  '500': '服务器错误',
-  'iframe-page': '外链页面',
-  'home': '首页',
-  'demo': '演示页面',
-  'demo_from': '表单封装',
-  'demo_infinite-scroll': '滚动加载封装',
-  'demo_rich-editor': '富文本封装',
-}
-
 export default createViteConfig({
   appName: 'admin',
   port: 9527,
@@ -31,7 +18,7 @@ export default createViteConfig({
     onRouteMetaGen(routeName) {
       const constantRoutes = ['login', '403', '404', '500']
       const meta: Record<string, any> = {
-        title: routeTitleMap[routeName] || routeName,
+        title: routeName,
       }
       if (constantRoutes.includes(routeName)) {
         meta.constant = true

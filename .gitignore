@@ -33,6 +33,6 @@ package-lock.json
 .turbo
 
 # Elegant Router
-apps/*/src/router/elegant/
-apps/*/src/typings/elegant-router.d.ts
+# apps/*/src/router/elegant/
+# apps/*/src/typings/elegant-router.d.ts
 

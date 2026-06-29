@@ -25,7 +25,17 @@
     "column-width-outlined",
     "line-outlined",
     "reload-outlined",
-    "setting-outlined"
+    "setting-outlined",
+    "notification-outlined",
+    "database-outlined",
+    "menu-outlined",
+    "user-outlined",
+    "team-outlined",
+    "edit-outlined",
+    "download-outlined",
+    "monitor-outlined",
+    "line-chart-outlined",
+    "apartment-outlined"
   ],
   "carbon": [
     "document-download"
