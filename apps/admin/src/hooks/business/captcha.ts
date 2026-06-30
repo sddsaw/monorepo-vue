@@ -38,7 +38,7 @@ export function useCaptcha() {
     return true
   }
 
-  async function getCaptcha(phone: string) {
+  async function getCaptcha(phone: string, sendCaptchaApi?: (phone: string) => Promise<any>) {
     const valid = isPhoneValid(phone)
 
     if (!valid || loading.value) {
@@ -47,16 +47,27 @@ export function useCaptcha() {
 
     startLoading()
 
-    // request
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500)
-    })
+    try {
+      if (sendCaptchaApi) {
+        await sendCaptchaApi(phone)
+      }
+      else {
+        // request
+        await new Promise((resolve) => {
+          setTimeout(resolve, 500)
+        })
+      }
 
-    window.$message?.success?.('验证码发送成功')
+      window.$message?.success?.('验证码发送成功')
 
-    start()
-
-    endLoading()
+      start()
+    }
+    catch (error) {
+      console.error(error)
+    }
+    finally {
+      endLoading()
+    }
   }
 
   return {
