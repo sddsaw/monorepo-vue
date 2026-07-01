@@ -13,6 +13,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppProvider: typeof import('@sa/components/business/AppProvider/index.vue')['default']
+    AuthOrity: typeof import('./../components/common/AuthOrity/index.vue')['default']
     ButtonIcon: typeof import('@sa/components/basic/ButtonIcon/index.vue')['default']
     CountTo: typeof import('@sa/components/basic/CountTo/index.vue')['default']
     DarkModeContainer: typeof import('@sa/components/basic/DarkModeContainer/index.vue')['default']
@@ -84,6 +85,7 @@ declare module 'vue' {
 // For TSX support
 declare global {
   const AppProvider: typeof import('@sa/components/business/AppProvider/index.vue')['default']
+  const AuthOrity: typeof import('./../components/common/AuthOrity/index.vue')['default']
   const ButtonIcon: typeof import('@sa/components/basic/ButtonIcon/index.vue')['default']
   const CountTo: typeof import('@sa/components/basic/CountTo/index.vue')['default']
   const DarkModeContainer: typeof import('@sa/components/basic/DarkModeContainer/index.vue')['default']
