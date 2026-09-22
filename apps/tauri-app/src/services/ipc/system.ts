@@ -1,3 +1,4 @@
+import { logger } from '../../plugins/logger'
 import { isTauri } from '../../plugins/tauri'
 
 export interface SystemInfo {
@@ -30,4 +31,27 @@ export async function getSystemInfo(): Promise<SystemInfo> {
   }
   const { invoke } = await import('@tauri-apps/api/core')
   return invoke<SystemInfo>('get_system_info')
+}
+
+/**
+ * 获取本地日志存储路径
+ */
+export async function getLogDir(): Promise<string> {
+  if (!isTauri()) {
+    return '/mock/logs/app.log'
+  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  return invoke<string>('get_log_dir')
+}
+
+/**
+ * 在系统文件管理器中打开日志目录
+ */
+export async function openLogDir(): Promise<void> {
+  if (!isTauri()) {
+    logger.warn('在 Web 模拟模式下不支持打开系统本地文件目录')
+    return
+  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  await invoke('open_log_dir')
 }

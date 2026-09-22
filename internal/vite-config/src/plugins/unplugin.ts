@@ -61,13 +61,20 @@ export function setupUnplugin(viteEnv: ViteEnv, root: string, extraResolvers: an
         ...extraResolvers,
       ],
     }),
-    createSvgIconsPlugin({
-      iconDirs: [localIconPath],
-      symbolId: `${VITE_ICON_LOCAL_PREFIX}-[dir]-[name]`,
-      inject: 'body-last',
-      customDomId: '__SVG_ICON_LOCAL__',
-    }),
+    setupSvgIconsPlugin(viteEnv, root),
   ]
 
   return plugins
+}
+
+export function setupSvgIconsPlugin(viteEnv: ViteEnv, root: string): PluginOption {
+  const localIconPath = path.join(root, 'src/assets/svg-icon')
+  const prefix = viteEnv.VITE_ICON_LOCAL_PREFIX || 'local-icon'
+
+  return createSvgIconsPlugin({
+    iconDirs: [localIconPath],
+    symbolId: `${prefix}-[dir]-[name]`,
+    inject: 'body-last',
+    customDomId: '__SVG_ICON_LOCAL__',
+  })
 }

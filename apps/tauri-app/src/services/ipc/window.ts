@@ -26,7 +26,11 @@ export async function openNewWindow(options: WindowOpenOptions): Promise<void> {
       const targetUrl = options.url.includes('#')
         ? options.url
         : `/#${options.url.startsWith('/') ? options.url : `/${options.url}`}`
-      window.open(targetUrl, options.label, `width=${options.width || 800},height=${options.height || 600}`)
+      const width = options.width || 800
+      const height = options.height || 600
+      const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2))
+      const top = Math.max(0, Math.round((window.screen.availHeight - height) / 2))
+      window.open(targetUrl, options.label, `width=${width},height=${height},left=${left},top=${top}`)
     }
     return
   }

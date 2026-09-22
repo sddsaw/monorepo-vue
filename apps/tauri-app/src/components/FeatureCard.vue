@@ -1,36 +1,45 @@
 <script setup lang="ts">
+import { SvgIcon } from '@sa/components'
+
 defineProps<{
   title: string
   description: string
   tag?: string
-  tagType?: 'success' | 'warning' | 'info' | 'error'
+  icon?: string
 }>()
 </script>
 
 <template>
-  <div class="flex flex-col border border-[#e2e8f0] rounded-xl bg-white p-5 shadow-sm transition-all duration-200 dark:border-[#27272a] dark:bg-[#18181c] hover:shadow-md">
-    <div class="mb-3 flex items-start justify-between">
-      <div>
-        <div class="flex items-center space-x-2">
-          <h3 class="text-sm text-[#0f172a] font-bold dark:text-[#f8fafc]">
+  <div class="group relative flex flex-col justify-between overflow-hidden border border-black/[0.06] rounded-xl bg-white/80 p-3 shadow-sm backdrop-blur-sm transition-all duration-300 dark:border-white/[0.08] dark:bg-[#18181c]/80 hover:shadow-black/[0.04] hover:shadow-lg hover:-translate-y-0.5 dark:hover:border-primary/30">
+    <!-- 卡片头部信息 -->
+    <div>
+      <div class="mb-2 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div v-if="icon || $slots.icon" class="h-7 w-7 flex items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform duration-300 group-hover:scale-110 dark:bg-primary/15 dark:text-primary">
+            <slot name="icon">
+              <SvgIcon v-if="icon" :icon="icon" class="text-base" />
+            </slot>
+          </div>
+          <h3 class="text-[13px] text-slate-800 font-bold tracking-tight dark:text-zinc-100">
             {{ title }}
           </h3>
-          <span
-            v-if="tag"
-            class="border border-blue-500/20 rounded-md bg-blue-500/10 px-2 py-0.5 text-[11px] text-blue-500 font-medium"
-          >
-            {{ tag }}
-          </span>
         </div>
-        <p class="mt-1 text-xs text-[#64748b] leading-relaxed dark:text-[#94a3b8]">
-          {{ description }}
-        </p>
+
+        <span
+          v-if="tag"
+          class="border border-primary/15 rounded bg-primary/8 px-2 py-1 text-[10px] text-primary font-semibold dark:border-primary/20 dark:bg-primary/15 dark:text-primary"
+        >
+          {{ tag }}
+        </span>
       </div>
-      <slot name="icon" />
+
+      <p class="text-xs text-slate-500 leading-relaxed dark:text-zinc-400">
+        {{ description }}
+      </p>
     </div>
 
-    <!-- 交互区域 -->
-    <div class="mt-auto border-t border-[#f1f5f9] pt-3 dark:border-[#27272a]/60">
+    <!-- 卡片交互操作区 -->
+    <div class="mt-3 border border-black/[0.04] rounded-lg bg-slate-50/60 p-3 transition-colors dark:border-white/[0.04] dark:bg-zinc-900/40">
       <slot />
     </div>
   </div>

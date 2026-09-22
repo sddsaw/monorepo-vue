@@ -1,12 +1,33 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import { setupIconifyOffline } from './plugins/iconify'
-import { setupRouter } from './router'
-import './styles/global.css'
-import 'virtual:uno.css'
+import {
+  setupAppVersionNotification,
+  setupDayjs,
+  setupDeepLink,
+  setupGlobalShortcuts,
+  setupIconifyOffline,
+  setupLoading,
+  setupNProgress,
+} from './plugins'
+import { router, setupRouter } from './router'
+import { setupStore } from './store'
+import './plugins/assets'
 
-setupIconifyOffline()
+async function setupApp() {
+  setupLoading()
+  setupNProgress()
+  setupIconifyOffline()
+  setupDayjs()
 
-const app = createApp(App)
-setupRouter(app)
-app.mount('#app')
+  const app = createApp(App)
+  setupStore(app)
+  await setupRouter(app)
+  setupAppVersionNotification()
+  app.mount('#app')
+
+  // 初始化桌面特性（全局快捷键与 Deep Link）
+  setupGlobalShortcuts()
+  setupDeepLink(router)
+}
+
+setupApp()

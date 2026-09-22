@@ -11,6 +11,7 @@ import {
   setupDevtoolsPlugin,
   setupElegantRouter,
   setupHtmlPlugin,
+  setupSvgIconsPlugin,
   setupUnocss,
   setupUnplugin,
 } from './plugins/index.js'
@@ -32,22 +33,15 @@ export function setupVitePlugins(
     vueRootValidator(),
   ]
 
-  // Web-only plugins: ElegantRouter, devtools, auto-imports, SVG icons, HTML injection
+  plugins.push(
+    setupElegantRouter(options?.routerOptions),
+    ...setupUnplugin(viteEnv, root, options?.componentResolvers),
+  )
+
   if (platform === 'web') {
     plugins.push(
       setupDevtoolsPlugin(viteEnv),
-      setupElegantRouter(options?.routerOptions),
-      ...setupUnplugin(viteEnv, root, options?.componentResolvers),
       setupHtmlPlugin(buildTime),
-    )
-  }
-  else if (platform === 'tauri') {
-    plugins.push(
-      Components({
-        dts: 'src/typings/components.d.ts',
-        types: [{ from: 'vue-router', names: ['RouterLink', 'RouterView'] }],
-        resolvers: options?.componentResolvers || [],
-      }),
     )
   }
 

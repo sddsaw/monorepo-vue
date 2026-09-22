@@ -20,6 +20,8 @@
         "resizable": true,
         "fullscreen": false,
         "decorations": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
         "center": true
       }
     ],
@@ -37,5 +39,18 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": ["soybean"]
+      }
+    },
+    "updater": {
+      "endpoints": [
+        "https://github.com/soybeanjs/soybean-admin/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDExMTExMTExMTExMTExMTEKUldTS3M0b25QbkJvV0VjVVRyZWV4QW9RWW9CZE0rMklsRld4TG1NTHZ5cTRrL2d6K3FqU295YmVhbg=="
+    }
   }
 }

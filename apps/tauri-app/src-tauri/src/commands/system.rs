@@ -21,3 +21,44 @@ pub fn get_system_info() -> AppResult<SystemInfo> {
         tauri_version: "2.x".to_string(),
     })
 }
+
+#[tauri::command]
+pub async fn get_log_dir(app: tauri::AppHandle) -> AppResult<String> {
+    use tauri::Manager;
+    let path = app.path().app_log_dir().map_err(|e| crate::error::AppError::Custom(e.to_string()))?;
+    Ok(path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+pub async fn open_log_dir(app: tauri::AppHandle) -> AppResult<()> {
+    use tauri::Manager;
+    let path = app.path().app_log_dir().map_err(|e| crate::error::AppError::Custom(e.to_string()))?;
+
+    if !path.exists() {
+        let _ = std::fs::create_dir_all(&path);
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
+    }
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new("explorer")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
+    }
+    #[cfg(target_os = "linux")]
+    {
+        std::process::Command::new("xdg-open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
+    }
+
+    Ok(())
+}

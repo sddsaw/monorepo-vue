@@ -1,0 +1,122 @@
+import { useBoolean } from '@sa/hooks'
+import { breakpointsTailwind, useBreakpoints, useEventListener } from '@vueuse/core'
+import { defineStore } from 'pinia'
+import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue'
+import { SetupStoreId } from '@/enum'
+import { isTauri } from '@/plugins/tauri'
+import { localStg } from '@/utils/storage'
+import { useRouteStore } from '../route'
+import { useThemeStore } from '../theme'
+
+export const useAppStore = defineStore(SetupStoreId.App, () => {
+  const themeStore = useThemeStore()
+  const routeStore = useRouteStore()
+  const scope = effectScope()
+  const breakpoints = useBreakpoints(breakpointsTailwind)
+  const { bool: themeDrawerVisible, setTrue: openThemeDrawer, setFalse: closeThemeDrawer } = useBoolean()
+  const { bool: reloadFlag, setBool: setReloadFlag } = useBoolean(true)
+  const { bool: fullContent, toggle: toggleFullContent } = useBoolean()
+  const { bool: contentXScrollable, setBool: setContentXScrollable } = useBoolean()
+  const { bool: siderCollapse, setBool: setSiderCollapse, toggle: toggleSiderCollapse } = useBoolean()
+  const {
+    bool: mixSiderFixed,
+    setBool: setMixSiderFixed,
+    toggle: toggleMixSiderFixed,
+  } = useBoolean(localStg.get('mixSiderFixed') === 'Y')
+
+  /** 是否运行在 Tauri 原生桌面环境 */
+  const inTauri = isTauri()
+
+  /** 应用标题 */
+  const title = ref<string>(import.meta.env.VITE_APP_TITLE || 'Soybean Desktop')
+
+  /** Is mobile layout */
+  const isMobile = breakpoints.smaller('sm')
+
+  /** locale - fixed to zh-CN */
+  const locale = ref<string>('zh-CN')
+
+  /**
+   * Reload page
+   *
+   * @param duration Duration time
+   */
+  async function reloadPage(duration = 300) {
+    setReloadFlag(false)
+
+    const d = themeStore.page.animate ? duration : 40
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, d)
+    })
+
+    setReloadFlag(true)
+    routeStore.resetRouteCache()
+  }
+
+  // watch store
+  scope.run(() => {
+    // watch isMobile, if is mobile, collapse sider
+    watch(
+      isMobile,
+      (newValue) => {
+        if (newValue) {
+          // backup theme setting before is mobile
+          localStg.set('backupThemeSettingBeforeIsMobile', {
+            layout: themeStore.layout.mode,
+            siderCollapse: siderCollapse.value,
+          })
+
+          themeStore.setThemeLayout('vertical')
+          setSiderCollapse(true)
+        }
+        else {
+          // when is not mobile, recover the backup theme setting
+          const backup = localStg.get('backupThemeSettingBeforeIsMobile')
+
+          if (backup) {
+            nextTick(() => {
+              themeStore.setThemeLayout(backup.layout)
+              setSiderCollapse(backup.siderCollapse)
+
+              localStg.remove('backupThemeSettingBeforeIsMobile')
+            })
+          }
+        }
+      },
+      { immediate: true },
+    )
+  })
+
+  // cache mixSiderFixed
+  useEventListener(window, 'beforeunload', () => {
+    localStg.set('mixSiderFixed', mixSiderFixed.value ? 'Y' : 'N')
+  })
+
+  /** On scope dispose */
+  onScopeDispose(() => {
+    scope.stop()
+  })
+
+  return {
+    inTauri,
+    title,
+    isMobile,
+    reloadFlag,
+    reloadPage,
+    fullContent,
+    locale,
+    themeDrawerVisible,
+    openThemeDrawer,
+    closeThemeDrawer,
+    toggleFullContent,
+    contentXScrollable,
+    setContentXScrollable,
+    siderCollapse,
+    setSiderCollapse,
+    toggleSiderCollapse,
+    mixSiderFixed,
+    setMixSiderFixed,
+    toggleMixSiderFixed,
+  }
+})

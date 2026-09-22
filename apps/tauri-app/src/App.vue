@@ -1,48 +1,47 @@
 <script setup lang="ts">
-import { darkTheme } from 'naive-ui'
-import { provide, ref, watchEffect } from 'vue'
+import type { WatermarkProps } from 'naive-ui'
+import { darkTheme, dateZhCN, NConfigProvider, zhCN } from 'naive-ui'
+import { computed } from 'vue'
+import { useThemeStore } from './store/modules/theme'
 
-const isDark = ref(false)
-
-// 响应式切换 HTML 的 dark class
-watchEffect(() => {
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-  }
-  else {
-    document.documentElement.classList.remove('dark')
-  }
+defineOptions({
+  name: 'App',
 })
 
-function toggleDark() {
-  isDark.value = !isDark.value
-}
+const themeStore = useThemeStore()
 
-provide('isDark', isDark)
-provide('toggleDark', toggleDark)
+const naiveDarkTheme = computed(() => (themeStore.darkMode ? darkTheme : undefined))
+
+const watermarkProps = computed<WatermarkProps>(() => {
+  return {
+    content: themeStore.watermarkContent,
+    cross: true,
+    fullscreen: true,
+    fontSize: 16,
+    lineHeight: 16,
+    width: 384,
+    height: 384,
+    xOffset: 12,
+    yOffset: 60,
+    rotate: -15,
+    zIndex: 9999,
+  }
+})
 </script>
 
 <template>
-  <NConfigProvider :theme="isDark ? darkTheme : null" class="h-full w-full">
-    <NMessageProvider>
-      <NDialogProvider>
-        <NNotificationProvider>
-          <div class="h-full w-full flex flex-col overflow-hidden bg-[#f8fafc] text-[#1e293b] dark:bg-[#121214] dark:text-[#f1f5f9]">
-            <!-- 全局路由挂载点 -->
-            <main class="flex-1 overflow-hidden">
-              <RouterView />
-            </main>
-          </div>
-        </NNotificationProvider>
-      </NDialogProvider>
-    </NMessageProvider>
+  <NConfigProvider
+    :theme="naiveDarkTheme"
+    :theme-overrides="themeStore.naiveTheme"
+    :locale="zhCN"
+    :date-locale="dateZhCN"
+    class="h-full"
+  >
+    <AppProvider>
+      <RouterView class="bg-layout" />
+      <NWatermark v-if="themeStore.watermark.visible" v-bind="watermarkProps" />
+    </AppProvider>
   </NConfigProvider>
 </template>
 
-<style>
-html, body, #app {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-</style>
+<style scoped></style>
