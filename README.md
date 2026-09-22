@@ -10,8 +10,7 @@
 soybean-admin/
 ├── apps/                  # 应用项目 (Applications)
 │   ├── admin/             # 管理员端后台 (@apps/admin)
-│   ├── student/           # 学生端后台 (@apps/student)
-│   └── teacher/           # 教师端后台 (@apps/teacher)
+│   └── tauri-app/         # 桌面客户端应用 (@apps/tauri-app)
 ├── packages/              # 共享模块/本地包 (Shared Packages)
 │   ├── components/        # 通用 Vue 组件库 (@sa/components)
 │   ├── utils/             # 通用工具库 (@sa/utils)
@@ -29,14 +28,14 @@ soybean-admin/
 ### 1. 本地开发 (Development)
 启动指定应用的本地开发服务器：
 ```bash
-# 启动管理员端
+# 启动管理员端后台 (Web)
 pnpm dev
 
-# 启动学生端
-pnpm dev:student
+# 启动桌面端 (Tauri)
+pnpm dev:tauri
 
-# 启动教师端
-pnpm dev:teacher
+# 启动桌面端 Web 界面预览
+pnpm dev:tauri:web
 ```
 
 ### 2. 代码检查 (Quality Verification)

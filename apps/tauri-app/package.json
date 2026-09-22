@@ -1,0 +1,45 @@
+{
+  "name": "@apps/tauri-app",
+  "type": "module",
+  "version": "2.3.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit --skipLibCheck",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "dev:tauri": "tauri dev",
+    "build:tauri": "tauri build"
+  },
+  "dependencies": {
+    "@iconify/vue": "catalog:",
+    "@sa/components": "workspace:*",
+    "@sa/hooks": "workspace:*",
+    "@sa/materials": "workspace:*",
+    "@sa/utils": "workspace:*",
+    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-dialog": "^2.2.0",
+    "@tauri-apps/plugin-fs": "^2.2.0",
+    "@tauri-apps/plugin-notification": "^2.2.1",
+    "@tauri-apps/plugin-shell": "^2.2.0",
+    "@vueuse/core": "catalog:",
+    "naive-ui": "catalog:",
+    "pinia": "catalog:",
+    "vue": "catalog:",
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@internal/eslint-config": "workspace:*",
+    "@internal/tsconfig": "workspace:*",
+    "@internal/vite-config": "workspace:*",
+    "@sa/uno-preset": "workspace:*",
+    "@tauri-apps/cli": "^2.2.7",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-vue-components": "32.0.0",
+    "vite": "catalog:",
+    "vue-tsc": "3.2.8"
+  }
+}

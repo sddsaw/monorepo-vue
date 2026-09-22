@@ -3,6 +3,7 @@ import type { CreateViteConfigOptions, ViteEnv } from './types.js'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import { visualizer } from 'rollup-plugin-visualizer'
+import Components from 'unplugin-vue-components/vite'
 import { compression } from 'vite-plugin-compression2'
 import progress from 'vite-plugin-progress'
 import vueRootValidator from 'vite-plugin-vue-transition-root-validator'
@@ -21,17 +22,34 @@ export function setupVitePlugins(
   options?: CreateViteConfigOptions,
   isBuild?: boolean,
 ) {
+  const platform = options?.platform ?? 'web'
+
   const plugins: PluginOption[] = [
     vue(),
     vueJsx(),
-    setupDevtoolsPlugin(viteEnv),
-    setupElegantRouter(options?.routerOptions),
     setupUnocss(viteEnv),
-    ...setupUnplugin(viteEnv, root, options?.componentResolvers),
     progress(),
-    setupHtmlPlugin(buildTime),
     vueRootValidator(),
   ]
+
+  // Web-only plugins: ElegantRouter, devtools, auto-imports, SVG icons, HTML injection
+  if (platform === 'web') {
+    plugins.push(
+      setupDevtoolsPlugin(viteEnv),
+      setupElegantRouter(options?.routerOptions),
+      ...setupUnplugin(viteEnv, root, options?.componentResolvers),
+      setupHtmlPlugin(buildTime),
+    )
+  }
+  else if (platform === 'tauri') {
+    plugins.push(
+      Components({
+        dts: 'src/typings/components.d.ts',
+        types: [{ from: 'vue-router', names: ['RouterLink', 'RouterView'] }],
+        resolvers: options?.componentResolvers || [],
+      }),
+    )
+  }
 
   if (viteEnv.VITE_VISUALIZER === 'Y') {
     plugins.push(
@@ -44,7 +62,7 @@ export function setupVitePlugins(
     )
   }
 
-  if (isBuild) {
+  if (isBuild && platform === 'web') {
     plugins.push(
       compression({
         algorithm: 'brotliCompress',

@@ -1,128 +1,62 @@
 import fs from 'node:fs'
-import { createRequire } from 'node:module'
 import path from 'node:path'
-import { getIconData } from '@iconify/utils'
 import consola from 'consola'
+import {
+  buildLocalIconCollections,
+  getAppDirectories,
+  getIconifyJsonDir,
+  IconCollectionRepository,
+  scanAppIcons,
+  serializeJson,
+} from '../shared/icons'
 
-interface IconConfig {
-  [prefix: string]: string[]
-}
-
+/** Generate exact local Iconify manifests from icons referenced in application source code. */
 export async function updateIcons() {
   const rootDir = process.cwd()
-  const appsDir = path.resolve(rootDir, 'apps')
+  const appDirectories = getAppDirectories(rootDir)
 
-  if (!fs.existsSync(appsDir)) {
-    consola.error('Cannot find apps directory at:', appsDir)
+  if (appDirectories.length === 0) {
+    consola.error('Cannot find applications under:', path.join(rootDir, 'apps'))
+    process.exitCode = 1
     return
   }
 
-  const apps = fs.readdirSync(appsDir).filter((file) => {
-    const stat = fs.statSync(path.join(appsDir, file))
-    return stat.isDirectory()
-  })
+  const repository = new IconCollectionRepository(getIconifyJsonDir(rootDir))
+  let hasErrors = false
 
-  consola.info(`Scanning apps: ${apps.join(', ')}`)
+  for (const appPath of appDirectories) {
+    const appName = path.basename(appPath)
+    const scanResult = scanAppIcons(rootDir, appPath, repository)
 
-  // Cache for collections to avoid repeated disk reads and JSON parsing
-  const collectionCache = new Map<string, any>()
-  const localRequire = createRequire(import.meta.url)
+    if (scanResult.invalidOccurrences.length > 0) {
+      hasErrors = true
+      consola.error(`[${appName}] Found invalid Iconify icon references:`)
+      for (const occurrence of scanResult.invalidOccurrences) {
+        consola.error(`- ${occurrence.iconId} at ${occurrence.file}:${occurrence.line} (${occurrence.reason})`)
+      }
+      continue
+    }
 
-  let iconifyJsonDir = ''
-  try {
-    const iconifyPackageJsonPath = localRequire.resolve('@iconify/json/package.json')
-    iconifyJsonDir = path.join(path.dirname(iconifyPackageJsonPath), 'json')
-  }
-  catch {
-    // Fallback if require.resolve fails (e.g. relative to rootDir)
-    iconifyJsonDir = path.resolve(rootDir, 'node_modules/@iconify/json/json')
-  }
-
-  for (const app of apps) {
-    const appPath = path.join(appsDir, app)
+    const localCollections = buildLocalIconCollections(scanResult.config, repository)
     const iconsConfigPath = path.join(appPath, 'icons.json')
+    const localIconsPath = path.join(appPath, 'src', 'plugins', 'local-icons.json')
 
-    if (!fs.existsSync(iconsConfigPath)) {
-      continue
-    }
+    fs.mkdirSync(path.dirname(localIconsPath), { recursive: true })
+    writeGeneratedFile(iconsConfigPath, serializeJson(scanResult.config))
+    writeGeneratedFile(localIconsPath, serializeJson(localCollections))
 
-    consola.info(`Processing icons for app: ${app}...`)
-
-    let config: IconConfig
-    try {
-      config = JSON.parse(fs.readFileSync(iconsConfigPath, 'utf-8'))
-    }
-    catch (error) {
-      consola.error(`Failed to parse icons.json for app ${app}:`, error)
-      continue
-    }
-
-    const collections: any[] = []
-
-    for (const [prefix, iconNames] of Object.entries(config)) {
-      if (!Array.isArray(iconNames)) {
-        consola.warn(`Invalid icon names list for prefix "${prefix}" in app "${app}"`)
-        continue
-      }
-
-      // Check cache first
-      let rawCollection = collectionCache.get(prefix)
-
-      if (!rawCollection) {
-        const collectionJsonPath = path.join(iconifyJsonDir, `${prefix}.json`)
-
-        if (!fs.existsSync(collectionJsonPath)) {
-          consola.error(`Icon collection JSON file not found: ${collectionJsonPath}`)
-          continue
-        }
-
-        try {
-          rawCollection = JSON.parse(fs.readFileSync(collectionJsonPath, 'utf-8'))
-          collectionCache.set(prefix, rawCollection)
-        }
-        catch (error) {
-          consola.error(`Failed to parse collection file ${prefix}.json:`, error)
-          continue
-        }
-      }
-
-      const subset: any = {
-        prefix,
-        icons: {},
-      }
-
-      if (rawCollection.width)
-        subset.width = rawCollection.width
-      if (rawCollection.height)
-        subset.height = rawCollection.height
-
-      for (const name of iconNames) {
-        const iconData = getIconData(rawCollection, name)
-        if (iconData) {
-          subset.icons[name] = iconData
-        }
-        else {
-          consola.warn(`Icon "${name}" not found in collection "${prefix}" for app "${app}"`)
-        }
-      }
-
-      if (Object.keys(subset.icons).length > 0) {
-        collections.push(subset)
-      }
-    }
-
-    if (collections.length > 0) {
-      const outputDir = path.join(appPath, 'src', 'plugins')
-      if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true })
-      }
-
-      const outputPath = path.join(outputDir, 'local-icons.json')
-      fs.writeFileSync(outputPath, JSON.stringify(collections, null, 2), 'utf-8')
-      consola.success(`Successfully generated ${outputPath} for app: ${app}`)
-    }
-    else {
-      consola.warn(`No icons to write for app: ${app}`)
-    }
+    const iconCount = Object.values(scanResult.config).reduce((total, names) => total + names.length, 0)
+    consola.success(`[${appName}] Generated ${iconCount} local icons from source usage.`)
   }
+
+  if (hasErrors)
+    process.exitCode = 1
+}
+
+/** Write a generated file only when its content changed. */
+function writeGeneratedFile(filePath: string, content: string) {
+  if (fs.existsSync(filePath) && fs.readFileSync(filePath, 'utf8') === content)
+    return
+
+  fs.writeFileSync(filePath, content, 'utf8')
 }

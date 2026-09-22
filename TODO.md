@@ -27,9 +27,13 @@
   - [x] 删除 `vue-i18n` 依赖及相关的 `locales` 语言包文件
   - [x] 简化路由 meta 中与多语言相关的配置
 
-- [ ] **7. 定期更新 package 依赖**
+- [ ] **7. 定期更新 package 依赖与引入自动化更新机器人**
   - [x] 根目录已配置 `pnpm update-pkg` (基于 `@sa/scripts` 自带的更新命令)
-  - [ ] 可配合使用 `pnpm update -i` (交互式更新) 或配置 `taze` / `npm-check-updates` 工具
+  - [ ] 引入 **Renovate Bot** 自动化依赖更新：
+    - [ ] 原生支持 `pnpm-workspace.yaml` 中的 `catalog:` 集中管理版本
+    - [ ] 配置依赖分组规则（Vue 全家桶、UnoCSS、代码规范工具集等），避免大量碎片 PR
+    - [ ] 针对 `@types/*` 等小补丁更新，在 CI 检查通过后支持安全自动合并（Auto-merge）
+    - [ ] 设置调度窗口（如每周一凌晨检查），避免日常开发受打扰
 
 ---
 
@@ -54,14 +58,14 @@
   - [x] 已在 [pnpm-workspace.yaml](file:///Users/zhouenbo/soybean-admin/pnpm-workspace.yaml) 中关闭了 `shamefullyHoist: true` (改为 `false`)
   - [x] 重新安装依赖并完整编译通过，确保了没有隐式使用的幽灵依赖，极大规范了安全和规范性
 
-- [ ] **14. simple-git-hooks 增加 `pre-push` 钩子进行强类型校验**
-  - [ ] 在 `package.json` 的 `simple-git-hooks` 中配置 `"pre-push": "pnpm typecheck"`，确保只有在类型检查完全通过的情况下才能推送到远程分支，防止破坏 CI/CD 编译流程
+- [x] **14. simple-git-hooks 增加 `pre-push` 钩子进行强类型校验**
+  - [x] 在 `package.json` 的 `simple-git-hooks` 中配置 `"pre-push": "pnpm typecheck"`，确保只有在类型检查完全通过的情况下才能推送到远程分支，防止破坏 CI/CD 编译流程
 
 - [ ] **15. 提取并统一管理各应用的 Mock 接口服务网关**
   - [ ] 针对 `apps/*` 下多端重复定义的 `.env.test` 的 Mock 接口地址，将其收拢到 `internal/vite-config` 或者全局集中配置中，方便后续统一切换测试服、Apifox、预发服和生产服接口
 
-- [ ] **16. 在生产环境打包时开启 Gzip/Brotli 静态资源自动压缩**
-  - [ ] 在 `internal/vite-config` 中引入并配置 `vite-plugin-compression` 或在 Rollup 中设置压缩策略，在生产环境构建时自动生成 `.gz`/`.br` 静态资源文件，降低 Nginx 在线实时压缩对 CPU 的消耗，进一步提升网站的首屏加载性能
+- [x] **16. 在生产环境打包时开启 Gzip/Brotli 静态资源自动压缩**
+  - [x] 在 `internal/vite-config` 中引入并配置 `vite-plugin-compression2`，在 Web 生产环境构建时自动生成 `.br` 静态资源文件，降低 Nginx 在线实时压缩对 CPU 的消耗，进一步提升网站的首屏加载性能
 
 - [ ] **17. 引入 Dependency Cruiser 强制模块架构边界约束**
   - [ ] 在 Monorepo 中配置 [Dependency Cruiser](https://github.com/sverweij/dependency-cruiser) 或 ESLint 规则，禁止低层级包（如 `packages/utils`）反向导入高层级包（如 `packages/components` 或 `apps/*`），防止意外产生循环依赖或架构耦合
@@ -72,9 +76,24 @@
 - [ ] **19. Echarts 图表库按需引入与打包体积深度优化**
   - [ ] 对项目中使用的 Echarts 进行封装，严格采用 **按需引入（Import on Demand）** 模式（仅引入实际用到的 CanvasRenderer、LineChart、GridComponent 等），禁止 `import * as echarts` 全量引入，控制 vendor.js 大小
 
-- [] time文件不对
-- [] 访问浏览器判断，非谷歌提示，并提供下载安装包。全局消息提示
-- [ ] 错误监控 + 性能
+- [ ] **20. 搭建分层自动化测试体系 (Testing Pyramid)**
+  - [ ] **Phase 1: 纯逻辑基础库单测 (Vitest)**
+    - 为 `@sa/utils`（WebSocket 状态机、文件转换、常用工具函数）、`@sa/color`（颜色模型与对比度算法）、`@sa/axios`（无感刷新队列、重试适配器）引入 Vitest 单元测试
+  - [ ] **Phase 2: 共享组件与 Hooks 测试 (Vitest + @vue/test-utils + happy-dom)**
+    - 为 `@sa/hooks`（`useCaptcha`、`useTable` 等）和核心组件（`SvgIcon` 离线降级、`SchemaForm` 动态联动等）编写组件渲染与交互测试
+  - [ ] **Phase 3: 主应用核心链路 E2E 测试 (Playwright)**
+    - 针对 `apps/admin` 关键流程编写端到端测试用例：登录鉴权、动态路由守卫、主题暗黑模式切换
+  - [ ] **Turbo 流水线接入**：
+    - 在 `turbo.json` 中配置 `test` 任务管道与缓存策略，各包统一配置 `"test": "vitest run"` 脚本
+
+- [ ] **21. 搭建基础 CI/CD 质量流水线 (.github/workflows/ci.yml)**
+  - [ ] 在 GitHub Actions 中建立自动化门禁，在 PR 和推送时并行执行 `pnpm lint`、`pnpm typecheck`、`pnpm test` 和 `pnpm build`
+  - [ ] 与 Renovate Bot 结合形成安全闭环，对绿灯通过的 Patch 依赖自动合入
+
+- [ ] **22. 补充事项**
+  - [ ] time文件校验
+  - [ ] 访问浏览器判断，非谷歌提示，并提供下载安装包。全局消息提示
+  - [ ] 错误监控 + 性能埋点体系
     - [ ] umami 自托管 → 用户行为 + 自定义埋点，免费
-    - [ ] Sentry 自托管 → 错误监控 + 性能，免费 https://github.com/getsentry/sentry-javascript
-            pnpm add @sentry/vue
+    - [ ] Sentry 自托管 → 错误监控 + 性能，免费（`@sentry/vue`）
+

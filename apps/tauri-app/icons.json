@@ -1,0 +1,46 @@
+{
+  "ant-design": [
+    "reload-outlined",
+    "setting-outlined"
+  ],
+  "gridicons": [
+    "fullscreen",
+    "fullscreen-exit"
+  ],
+  "ic": [
+    "round-delete",
+    "round-plus"
+  ],
+  "line-md": [
+    "menu-fold-left",
+    "menu-fold-right"
+  ],
+  "material-symbols": [
+    "hdr-auto",
+    "nightlight-rounded",
+    "sunny"
+  ],
+  "mdi": [
+    "cloud-upload",
+    "drag",
+    "flip-horizontal",
+    "flip-vertical",
+    "help-circle",
+    "magnify-minus-outline",
+    "magnify-plus-outline",
+    "pin",
+    "pin-off",
+    "refresh",
+    "restore",
+    "rotate-left",
+    "rotate-right"
+  ],
+  "octicon": [
+    "pin-16",
+    "pin-slash-16"
+  ],
+  "ph": [
+    "caret-double-left-bold",
+    "caret-double-right-bold"
+  ]
+}

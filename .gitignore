@@ -32,6 +32,10 @@ package-lock.json
 # Turborepo
 .turbo
 
+# Tauri
+**/src-tauri/target/
+**/src-tauri/gen/
+
 # Elegant Router
 # apps/*/src/router/elegant/
 # apps/*/src/typings/elegant-router.d.ts

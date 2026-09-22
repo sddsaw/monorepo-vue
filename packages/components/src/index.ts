@@ -23,7 +23,6 @@ import WaveBg from './basic/WaveBg/index.vue'
 import AppProvider from './business/AppProvider/index.vue'
 import ExceptionBase from './business/ExceptionBase/index.vue'
 import FileUpload from './business/FileUpload/index.vue'
-import LangSwitch from './business/LangSwitch/index.vue'
 import SoybeanAvatar from './business/SoybeanAvatar/index.vue'
 import TableColumnSetting from './business/TableColumnSetting/index.vue'
 import TableHeaderOperation from './business/TableHeaderOperation/index.vue'
@@ -42,7 +41,6 @@ export {
   IconTooltip,
   IframeContainer,
   InfiniteScroll,
-  LangSwitch,
   LookForward,
   MenuToggler,
   PinToggler,

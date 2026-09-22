@@ -36,9 +36,7 @@ class ObsUploadAdapter {
     }
   }
 
-  abort(): void {
-    console.warn('Upload aborted.')
-  }
+  abort(): void {}
 }
 
 export function ObsUploadAdapterPlugin(editor: Editor) {

@@ -34,11 +34,13 @@
     "nprogress": "catalog:",
     "pinia": "catalog:",
     "tailwind-merge": "catalog:",
+    "vue": "catalog:",
     "vue-draggable-plus": "catalog:",
     "vue-router": "catalog:"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",
-    "@internal/vite-config": "workspace:*"
+    "@internal/vite-config": "workspace:*",
+    "sass": "catalog:"
   }
 }

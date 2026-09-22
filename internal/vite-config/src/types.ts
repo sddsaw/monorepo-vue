@@ -31,6 +31,14 @@ export interface ScssOptions {
 export interface CreateViteConfigOptions {
   // --- Soybean Specific Options ---
   appName?: string
+
+  /**
+   * Target platform for the application.
+   * - `'web'` (default): Standard SPA with ElegantRouter, HTML plugin, devtools, auto-imports, etc.
+   * - `'tauri'`: Tauri desktop application with stripped-down plugins and Tauri-specific build defaults.
+   */
+  platform?: 'web' | 'tauri'
+
   port?: number
   previewPort?: number
   routerOptions?: ElegantRouterOptions

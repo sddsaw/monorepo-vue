@@ -1,6 +1,8 @@
 {
   "name": "@sa/color",
+  "type": "module",
   "version": "2.3.1",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.ts"
   },
@@ -12,6 +14,7 @@
     }
   },
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },

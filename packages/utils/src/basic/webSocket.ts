@@ -549,7 +549,7 @@ export class WebSocketClient {
   public sendBinary(data: ArrayBuffer | Blob | ArrayBufferView, queue: boolean = true): boolean {
     if (this.isOpen()) {
       try {
-        this.websocket!.send(data)
+        this.websocket!.send(data as Parameters<WebSocket['send']>[0])
         return true
       }
       catch (error) {

@@ -8,7 +8,6 @@ const defaultOptions: CliOption = {
     '**/dist',
     '**/package-lock.json',
     '**/yarn.lock',
-    '**/pnpm-lock.yaml',
     '**/node_modules',
     '!node_modules/**',
   ],

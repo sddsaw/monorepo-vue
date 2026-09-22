@@ -18,6 +18,7 @@ import { setupVitePlugins } from './plugins.js'
 export function createViteConfig(options?: CreateViteConfigOptions) {
   return defineConfig((configEnv: ConfigEnv): UserConfig => {
     const root = process.cwd()
+    const platform = options?.platform ?? 'web'
 
     // 加载当前环境的环境变量与构建时间
     const viteEnv = loadEnv(configEnv.mode, root) as unknown as ViteEnv
@@ -29,8 +30,6 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
       appName = 'app',
       port,
       previewPort,
-      routerOptions,
-      componentResolvers,
       scss,
       base,
       css: customCss = {},
@@ -64,11 +63,7 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
         },
       },
       css: cssConfig,
-      plugins: setupVitePlugins(viteEnv, buildTime, root, {
-        appName,
-        routerOptions,
-        componentResolvers,
-      }, configEnv.command === 'build'),
+      plugins: setupVitePlugins(viteEnv, buildTime, root, options, configEnv.command === 'build'),
       define: {
         BUILD_TIME: JSON.stringify(buildTime),
       },
@@ -137,6 +132,47 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
           },
         },
       },
+    }
+
+    // Tauri 平台特化覆盖
+    if (platform === 'tauri') {
+      const tauriHost = process.env.TAURI_DEV_HOST
+
+      Object.assign(defaultConfig, {
+        // Tauri 需要保留 Rust 端错误信息的可见性
+        clearScreen: false,
+        // Tauri 环境变量前缀
+        envPrefix: ['VITE_', 'TAURI_ENV_*'],
+      })
+
+      // 覆盖 Tauri 专有的 server 配置
+      defaultConfig.server = defu({
+        port: port || 9530,
+        strictPort: true,
+        host: tauriHost || '0.0.0.0',
+        open: false,
+        hmr: tauriHost
+          ? {
+              protocol: 'ws',
+              host: tauriHost,
+              port: (port || 9530) + 1,
+            }
+          : undefined,
+        watch: {
+          ignored: ['**/src-tauri/**'],
+        },
+      }, defaultConfig.server)
+
+      // 覆盖 Tauri 专有的 build 配置
+      defaultConfig.build = defu({
+        outDir: './dist',
+        target: process.env.TAURI_ENV_PLATFORM === 'windows' ? 'chrome105' : 'safari15',
+        minify: !process.env.TAURI_ENV_DEBUG ? 'esbuild' as const : false,
+        sourcemap: !!process.env.TAURI_ENV_DEBUG,
+      }, defaultConfig.build)
+
+      // Tauri prod 模式下不需要 drop console，调试信息对桌面端有价值
+      defaultConfig.esbuild = {}
     }
 
     // 用户覆盖或额外配置对象

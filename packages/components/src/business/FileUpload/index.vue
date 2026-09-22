@@ -256,8 +256,7 @@ async function handleBeforeUpload(data: {
     try {
       return props.beforeUpload(file.file)
     }
-    catch (error) {
-      console.warn(error)
+    catch {
       message.error('文件验证失败')
       return false
     }

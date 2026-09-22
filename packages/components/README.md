@@ -50,7 +50,6 @@ packages/components/
     │   ├── AppProvider/index.vue (AppProvider, 39行) ──────────────── 全局注入
     │   ├── ExceptionBase/index.vue (ExceptionBase, 49行) ──────────── 异常页面
     │   ├── FileUpload/index.vue (FileUpload, 365行) ───────────────── 存储直传
-    │   ├── LangSwitch/index.vue (LangSwitch, 65行) ────────────────── 语言切换
     │   ├── SoybeanAvatar/index.vue (SoybeanAvatar, 18行) ──────────── 头像组件
     │   ├── TableColumnSetting/index.vue (TableColumnSetting, 124行) ─ 表格列设置
     │   ├── TableHeaderOperation/index.vue (TableHeaderOperation, 78行) 表格操作区
@@ -95,7 +94,6 @@ packages/components/
 | **AppProvider** | `src/business/AppProvider` | 全局顶层注入容器，包装并注册了 Naive UI 的 `LoadingBar`、`Dialog`、`Message` 和 `Notification` 实例到 `window` 上。 |
 | **ExceptionBase** | `src/business/ExceptionBase` | 通用的异常状态页组件，统一封装了 `403` / `404` / `500` 状态的 SVG 样式插画和一键返回首页动作。 |
 | **FileUpload** | `src/business/FileUpload` | **文件/图片直传组件**，封装了火山引擎 TOS (OBS 协议) 客户端直传逻辑，内置文件格式限制、大小限制、文件选择和进度反馈等核心能力。 |
-| **LangSwitch** | `src/business/LangSwitch` | 国际化语言切换下拉菜单，暴露了 `changeLang` 事件供业务逻辑消费。 |
 | **SoybeanAvatar** | `src/business/SoybeanAvatar` | 头像组件，预置了圆角和背景兜底逻辑。 |
 | **TableColumnSetting** | `src/business/TableColumnSetting` | **表格列控制与排序挂件**，提供复选展示、拖拽排序（通过 `vue-draggable-plus`）和列左右固定功能。 |
 | **TableHeaderOperation** | `src/business/TableHeaderOperation` | **表格标准头部操作区**，预置了新增、批量删除、刷新和列设置控制入口。 |
