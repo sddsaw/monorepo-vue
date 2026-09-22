@@ -1,5 +1,6 @@
 mod commands;
 mod error;
+mod menu;
 mod tray;
 
 use tauri::Manager;
@@ -42,13 +43,41 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_deep_link::init())
-        // 5. 初始化桌面系统托盘
+        // 5. 初始化桌面系统菜单与托盘
         .setup(|app| {
             #[cfg(desktop)]
             {
+                let app_menu = menu::init_menu(app.handle())?;
+                app.set_menu(app_menu)?;
                 tray::create_tray(app.handle())?;
             }
             Ok(())
+        })
+        // 6. 统一监听菜单事件
+        .on_menu_event(|app, event| {
+            match event.id.as_ref() {
+                "open_logs" => {
+                    let handle = app.clone();
+                    tauri::async_runtime::spawn(async move {
+                        let _ = commands::open_log_dir(handle).await;
+                    });
+                }
+                "preferences" => {
+                    use tauri::Emitter;
+                    let _ = app.emit("open-settings", ());
+                }
+                #[cfg(debug_assertions)]
+                "devtools" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        if window.is_devtools_open() {
+                            let _ = window.close_devtools();
+                        } else {
+                            let _ = window.open_devtools();
+                        }
+                    }
+                }
+                _ => {}
+            }
         })
         // 6. 拦截主窗口点击红叉事件，实现隐藏至托盘
         .on_window_event(|window, event| {

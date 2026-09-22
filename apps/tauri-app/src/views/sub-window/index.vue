@@ -78,11 +78,11 @@ async function handleCloseSelf() {
 </script>
 
 <template>
-  <div class="h-full flex flex-col select-none bg-[#f8fafc] text-slate-800 dark:bg-[#121215] dark:text-zinc-100">
+  <div class="h-full flex flex-col bg-[#f8fafc] text-slate-800 dark:bg-[#121215] dark:text-zinc-100">
     <!-- 顶部原生拖拽安全标题栏 -->
     <div
       data-tauri-drag-region
-      class="h-9 flex shrink-0 items-center justify-between border-b border-black/[0.05] px-3 dark:border-white/[0.05]"
+      class="h-9 flex shrink-0 select-none items-center justify-between border-b border-black/[0.05] px-3 dark:border-white/[0.05]"
       :class="[isTauri() && isMac ? 'pl-[76px]' : '']"
     >
       <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium dark:text-zinc-400">
