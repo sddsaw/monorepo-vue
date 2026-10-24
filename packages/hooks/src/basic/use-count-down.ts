@@ -9,31 +9,23 @@ import { computed, onScopeDispose, ref } from 'vue'
  */
 export default function useCountDown(initialSeconds: number) {
   const remainingSeconds = ref(0)
+  let endTime = 0
 
   const count = computed(() => Math.ceil(remainingSeconds.value))
 
   const isCounting = computed(() => remainingSeconds.value > 0)
 
   const { pause, resume } = useRafFn(
-    ({ delta }) => {
-      // delta: milliseconds elapsed since the last frame.
+    () => {
+      const remaining = (endTime - Date.now()) / 1000
 
-      // If countdown already reached zero or below, ensure it's 0 and stop.
-      if (remainingSeconds.value <= 0) {
+      if (remaining <= 0) {
         remainingSeconds.value = 0
         pause()
         return
       }
 
-      // Calculate seconds passed since the last frame.
-      const secondsPassed = delta / 1000
-      remainingSeconds.value -= secondsPassed
-
-      // If countdown has finished after decrementing.
-      if (remainingSeconds.value <= 0) {
-        remainingSeconds.value = 0
-        pause()
-      }
+      remainingSeconds.value = remaining
     },
     { immediate: false }, // The timer does not start automatically.
   )
@@ -44,12 +36,14 @@ export default function useCountDown(initialSeconds: number) {
    * @param [updatedSeconds] - Optionally, start with a new duration. Default is `initialSeconds`
    */
   function start(updatedSeconds: number = initialSeconds) {
+    endTime = Date.now() + updatedSeconds * 1000
     remainingSeconds.value = updatedSeconds
     resume()
   }
 
   /** Stops the countdown and resets the remaining time to 0. */
   function stop() {
+    endTime = 0
     remainingSeconds.value = 0
     pause()
   }

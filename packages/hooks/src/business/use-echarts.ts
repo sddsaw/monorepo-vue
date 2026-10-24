@@ -155,12 +155,13 @@ export default function useEcharts<T extends ECOption>(
   }
 
   function setOptions(options: T) {
+    Object.assign(chartOptions, options)
     chart.value?.setOption(options)
   }
 
   /** render chart */
   async function render() {
-    if (isRendered())
+    if (!domRef.value || isRendered())
       return
 
     const chartTheme = darkMode.value ? 'dark' : 'light'
@@ -203,6 +204,10 @@ export default function useEcharts<T extends ECOption>(
   async function renderChartBySize(w: number, h: number) {
     initialSize.width = w
     initialSize.height = h
+
+    // can not render chart when size is invalid
+    if (!canRender())
+      return
 
     // resize chart
     if (isRendered()) {

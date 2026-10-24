@@ -60,7 +60,7 @@ export default function createHookRequest<ResponseData, ApiData, State extends R
     startLoading()
 
     request(config).then((res) => {
-      if (res.data) {
+      if (!res.error) {
         data.value = res.data as MappedType<R, T>
       }
       else {
@@ -78,6 +78,7 @@ export default function createHookRequest<ResponseData, ApiData, State extends R
   } as HookRequestInstance<ResponseData, ApiData, State>
 
   hookRequest.cancelAllRequest = request.cancelAllRequest
+  hookRequest.state = request.state
 
   return hookRequest
 }
