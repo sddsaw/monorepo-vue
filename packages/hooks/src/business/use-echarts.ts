@@ -125,6 +125,11 @@ export default function useEcharts<T extends ECOption>(
     onDestroy,
   } = hooks
 
+  /** whether chart can be rendered */
+  function canRender() {
+    return Boolean(domRef.value && initialSize.width > 0 && initialSize.height > 0)
+  }
+
   /** is chart rendered */
   function isRendered() {
     return Boolean(domRef.value && chart.value)

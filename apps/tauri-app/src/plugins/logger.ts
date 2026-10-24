@@ -29,7 +29,7 @@ function formatMessage(message: string, data?: LogData): string {
 
 function createLogMethod<T extends string | Error = string>(level: LogLevel) {
   return async (message: T, data?: LogData): Promise<void> => {
-    const text = message instanceof Error ? (message.stack || message.message) : message
+    const text: string = message instanceof Error ? (message.stack || message.message) : message
     if (isTauri()) {
       const logPlugin = await getTauriLogPlugin()
       await logPlugin[level](formatMessage(text, data))

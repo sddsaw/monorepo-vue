@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { CubicBezierPoints, EasingFunction } from '@vueuse/core'
 import { TransitionPresets, useTransition } from '@vueuse/core'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, shallowRef, watch } from 'vue'
 
 defineOptions({
   name: 'CountTo',
@@ -35,13 +36,20 @@ interface Props {
 }
 
 const source = ref(props.startValue)
+const duration = ref(props.duration)
+const easing = shallowRef<EasingFunction | CubicBezierPoints>(
+  props.useEasing ? TransitionPresets[props.transition] : TransitionPresets.linear,
+)
 
-const transition = computed(() => (props.useEasing ? TransitionPresets[props.transition] : undefined))
+watch([() => props.duration, () => props.useEasing, () => props.transition], () => {
+  duration.value = props.duration
+  easing.value = props.useEasing ? TransitionPresets[props.transition] : TransitionPresets.linear
+})
 
 const outputValue = useTransition(source, {
   disabled: false,
-  duration: () => props.duration,
-  transition,
+  duration,
+  easing,
 })
 
 const value = computed(() => formatValue(outputValue.value))
