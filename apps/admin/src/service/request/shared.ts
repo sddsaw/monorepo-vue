@@ -32,13 +32,17 @@ export async function handleExpiredRequest(state: RequestInstanceState) {
     state.refreshTokenPromise = handleRefreshToken()
   }
 
-  const success = await state.refreshTokenPromise
-
-  setTimeout(() => {
-    state.refreshTokenPromise = null
-  }, 1000)
-
-  return success
+  try {
+    return await state.refreshTokenPromise
+  }
+  catch {
+    return false
+  }
+  finally {
+    setTimeout(() => {
+      state.refreshTokenPromise = null
+    }, 1000)
+  }
 }
 
 export function showErrorMsg(state: RequestInstanceState, message: string) {
