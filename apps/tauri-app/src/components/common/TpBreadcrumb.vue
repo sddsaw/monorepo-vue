@@ -22,7 +22,13 @@ function copyLocation() {
 </script>
 
 <template>
-  <div class="h-26px flex items-center justify-between px-3 text-xs bg-[#1e1e1e] border-b border-[#2d2d2d] text-gray-400 select-none">
+  <div
+    :style="{
+      backgroundColor: 'var(--wb-editor-bg, #1e1e1e)',
+      borderColor: 'var(--wb-border-color, #2d2d2d)',
+    }"
+    class="h-26px flex items-center justify-between px-3 text-xs border-b text-gray-400 select-none"
+  >
     <div class="flex items-center gap-1.5 overflow-hidden truncate">
       <!-- 文件名 -->
       <span class="flex items-center gap-1 text-gray-300 font-medium shrink-0">

@@ -1,0 +1,155 @@
+{
+  "$schema": "https://ate-standards.org/schemas/tp-v2.json",
+  "metadata": {
+    "device": "SOC-ATE-9200-PRO",
+    "revision": "Rev-B3",
+    "package": "BGA-256",
+    "testerPlatform": "Advantest V93000 / Teradyne UltraFLEX",
+    "createdAt": "2026-10-24T18:00:00Z",
+    "author": "ATE Test Engineering Dept",
+    "totalTestCount": 7,
+    "targetSiteCount": 4
+  },
+  "testSuites": [
+    {
+      "name": "OS_Continuity_Suite",
+      "description": "管脚静电保护二极管开短路特性验证 (Open/Short Continuity)",
+      "items": [
+        {
+          "id": "TC_001",
+          "name": "OS_Ground_Clamp_Diode",
+          "testType": "Continuity",
+          "pinGroup": "ALL_IO_PINS",
+          "forceCurrent": -100,
+          "voltageClamp": 1.5,
+          "loLimit": -0.85,
+          "hiLimit": -0.2,
+          "unit": "V",
+          "settlingTimeMs": 2.5
+        },
+        {
+          "id": "TC_002",
+          "name": "OS_Power_Clamp_Diode",
+          "testType": "Continuity",
+          "pinGroup": "ALL_IO_PINS",
+          "forceCurrent": 100,
+          "voltageClamp": 1.5,
+          "loLimit": 0.2,
+          "hiLimit": 0.85,
+          "unit": "V",
+          "settlingTimeMs": 2.5
+        },
+        {
+          "id": "TC_003",
+          "name": "OS_Differential_Pairs",
+          "testType": "Continuity",
+          "pinGroup": "PCIE_TX_RX_PINS",
+          "forceCurrent": -200,
+          "voltageClamp": 2.0,
+          "loLimit": -0.9,
+          "hiLimit": -0.3,
+          "unit": "V",
+          "settlingTimeMs": 3.0
+        }
+      ]
+    },
+    {
+      "name": "Static_Current_IDDQ_Suite",
+      "description": "高压与待机稳态漏电流测试 (IDDQ Static Supply Current)",
+      "items": [
+        {
+          "id": "TC_101",
+          "name": "IDDQ_Standby_Mode",
+          "testType": "Iddq",
+          "vccVolt": 3.3,
+          "maxCurrentUa": 50,
+          "settlingTimeMs": 15,
+          "preconditionPattern": "pat_standby_reset_vector",
+          "sampleCount": 16,
+          "passFailCount": 0
+        },
+        {
+          "id": "TC_102",
+          "name": "IDDQ_Deep_Sleep_VddCore",
+          "testType": "Iddq",
+          "vccVolt": 1.05,
+          "maxCurrentUa": 12.5,
+          "settlingTimeMs": 25,
+          "preconditionPattern": "pat_deepsleep_entry_seq",
+          "sampleCount": 32,
+          "passFailCount": 0
+        }
+      ]
+    },
+    {
+      "name": "DC_Parametric_Suite",
+      "description": "高精度单管脚直流驱动能力与灌拉电流测试 (PMU DC Parametric)",
+      "items": [
+        {
+          "id": "TC_201",
+          "name": "VOH_VOL_Driver_Check",
+          "testType": "PmuForce",
+          "channel": "PMU_CH_04",
+          "forceType": "Current",
+          "forceValue": 8.0,
+          "measureType": "Voltage",
+          "voltageClamp": 3.6,
+          "currentRange": "20mA",
+          "loLimit": 2.4,
+          "hiLimit": 3.3,
+          "unit": "V"
+        },
+        {
+          "id": "TC_202",
+          "name": "Input_Leakage_Current_IIH",
+          "testType": "PmuForce",
+          "channel": "PMU_CH_12",
+          "forceType": "Voltage",
+          "forceValue": 3.3,
+          "measureType": "Current",
+          "voltageClamp": 3.6,
+          "currentRange": "2uA",
+          "loLimit": -0.5,
+          "hiLimit": 0.5,
+          "unit": "uA"
+        }
+      ]
+    }
+  ],
+  "pinGroups": {
+    "GPIO_BUS": [
+      { "pinName": "GPIO_0", "channel": 101, "type": "BIDIR", "group": "GPIO_BUS", "dclType": "HV_DCL", "comment": "双向 GPIO 引脚 0" },
+      { "pinName": "GPIO_1", "channel": 102, "type": "BIDIR", "group": "GPIO_BUS", "dclType": "HV_DCL", "comment": "双向 GPIO 引脚 1" },
+      { "pinName": "GPIO_2", "channel": 103, "type": "BIDIR", "group": "GPIO_BUS", "dclType": "HV_DCL", "comment": "双向 GPIO 引脚 2" },
+      { "pinName": "GPIO_3", "channel": 104, "type": "BIDIR", "group": "GPIO_BUS", "dclType": "HV_DCL", "comment": "双向 GPIO 引脚 3" }
+    ],
+    "POWER_BUS": [
+      { "pinName": "VDD_CORE", "channel": 201, "type": "POWER", "group": "POWER_BUS", "dclType": "DPS_1V0", "comment": "芯片内核供电 1.05V" },
+      { "pinName": "VDD_IO", "channel": 202, "type": "POWER", "group": "POWER_BUS", "dclType": "DPS_3V3", "comment": "IO 外设供电 3.3V" },
+      { "pinName": "VSS_GND", "channel": 203, "type": "GROUND", "group": "POWER_BUS", "dclType": "GND_RELAY", "comment": "总参考接地" }
+    ]
+  },
+  "categories": [
+    {
+      "name": "Standard_TTL_CMOS_Levels",
+      "specSets": [
+        {
+          "name": "Typical_3V3_Spec",
+          "specs": [
+            { "param": "VIH", "min": 2.0, "typ": 2.4, "max": 3.6, "unit": "V", "comment": "输入高电平门槛" },
+            { "param": "VIL", "min": -0.3, "typ": 0.4, "max": 0.8, "unit": "V", "comment": "输入低电平门槛" },
+            { "param": "VOH", "min": 2.8, "typ": 3.1, "max": 3.3, "unit": "V", "comment": "输出高电平驱动电压" },
+            { "param": "VOL", "min": 0.0, "typ": 0.2, "max": 0.4, "unit": "V", "comment": "输出低电平驱动电压" }
+          ]
+        },
+        {
+          "name": "Low_Voltage_1V8_Spec",
+          "specs": [
+            { "param": "VIH", "min": 1.2, "typ": 1.4, "max": 1.98, "unit": "V", "comment": "1.8V 低压域输入高电平" },
+            { "param": "VIL", "min": -0.3, "typ": 0.2, "max": 0.45, "unit": "V", "comment": "1.8V 低压域输入低电平" }
+          ]
+        }
+      ]
+    }
+  ]
+}

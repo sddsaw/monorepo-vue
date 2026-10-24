@@ -16,7 +16,14 @@ const currentTab = computed(() => tpStore.activeTab)
     :component-key="currentTab.componentKey"
     :data-path="currentTab.dataPath"
   />
-  <div v-else class="h-26px flex items-center px-3 text-xs bg-[#1e1e1e] border-b border-[#2d2d2d] text-gray-500 font-mono select-none">
+  <div
+    v-else
+    :style="{
+      backgroundColor: 'var(--wb-editor-bg, #1e1e1e)',
+      borderColor: 'var(--wb-border-color, #2d2d2d)',
+    }"
+    class="h-26px flex items-center px-3 text-xs border-b text-gray-500 font-mono select-none"
+  >
     {{ tpStore.fileName ? `${tpStore.fileName} (无打开标签页)` : '未载入文件' }}
   </div>
 </template>

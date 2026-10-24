@@ -130,6 +130,56 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
         await loadFile(selected)
       }
     }
+    else if (typeof document !== 'undefined') {
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = '.json'
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0]
+        if (file) {
+          const reader = new FileReader()
+          reader.onload = () => {
+            loadFile(file.name, reader.result as string)
+          }
+          reader.readAsText(file)
+        }
+      }
+      input.click()
+    }
+  }
+
+  /** 载入内置的芯片测试样例数据进行全流程快速联调 */
+  async function loadSampleData() {
+    try {
+      const resp = await fetch('/test_assets/Sample_Chip_ATE_TP.json')
+      if (resp.ok) {
+        const json = await resp.json()
+        await loadFile('/workspace/chips/Sample_Chip_ATE_TP.json', JSON.stringify(json))
+        return
+      }
+    }
+    catch {
+      // 容错回退
+    }
+
+    const fallback = {
+      testSuites: [
+        {
+          name: 'OS_Continuity_Suite',
+          items: [
+            { id: 'TC_001', name: 'OS_Ground_Clamp_Diode', testType: 'Continuity', pinGroup: 'ALL_IO_PINS', forceCurrent: -100, voltageClamp: 1.5, loLimit: -0.85, hiLimit: -0.2, unit: 'V', settlingTimeMs: 2.5 },
+            { id: 'TC_002', name: 'OS_Power_Clamp_Diode', testType: 'Continuity', pinGroup: 'ALL_IO_PINS', forceCurrent: 100, voltageClamp: 1.5, loLimit: 0.2, hiLimit: 0.85, unit: 'V', settlingTimeMs: 2.5 },
+          ],
+        },
+        {
+          name: 'Static_Current_IDDQ_Suite',
+          items: [
+            { id: 'TC_101', name: 'IDDQ_Standby_Mode', testType: 'Iddq', vccVolt: 3.3, maxCurrentUa: 50, settlingTimeMs: 15, preconditionPattern: 'pat_standby_reset_vector', sampleCount: 16, passFailCount: 0 },
+          ],
+        },
+      ],
+    }
+    await loadFile('/workspace/chips/Sample_Chip_ATE_TP.json', JSON.stringify(fallback))
   }
 
   /** 【取数据】：顺着 dataPath 路径只切出当前测试项微量数据 (2KB) */
@@ -259,6 +309,7 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     validationResult,
     loadFile,
     chooseAndOpenFile,
+    loadSampleData,
     getItemData,
     updateItemField,
     openTab,

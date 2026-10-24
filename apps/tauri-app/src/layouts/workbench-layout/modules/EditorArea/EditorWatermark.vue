@@ -21,7 +21,7 @@ const shortcuts = [
     <h3 class="text-base font-bold text-gray-300 mb-1">ATE Test Program Studio</h3>
     <p class="text-xs text-gray-500 mb-6">芯片测试程序可视化配置与分析工作台</p>
 
-    <div class="mb-6">
+    <div class="mb-6 flex items-center gap-3">
       <button
         type="button"
         @click="tpStore.chooseAndOpenFile"
@@ -29,6 +29,15 @@ const shortcuts = [
       >
         <SvgIcon icon="ri:folder-open-line" class="text-14px" />
         打开本地测试 JSON 文件
+      </button>
+
+      <button
+        type="button"
+        @click="tpStore.loadSampleData"
+        class="px-4 py-2 bg-[#2d2d2d] hover:bg-[#3e3e42] text-gray-200 border border-[#444] rounded text-xs font-semibold shadow transition-colors cursor-pointer flex items-center gap-2"
+      >
+        <SvgIcon icon="ri:cpu-line" class="text-14px text-blue-400" />
+        载入演示测试程序
       </button>
     </div>
 

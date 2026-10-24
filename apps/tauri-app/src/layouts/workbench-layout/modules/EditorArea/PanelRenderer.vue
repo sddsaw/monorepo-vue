@@ -26,7 +26,10 @@ const MatchedComponent = computed(() => {
 </script>
 
 <template>
-  <div class="size-full overflow-auto bg-[#1e1e1e]">
+  <div
+    :style="{ backgroundColor: 'var(--wb-editor-bg, #1e1e1e)' }"
+    class="size-full overflow-auto"
+  >
     <ComponentErrorBoundary
       :node-id="params.nodeId"
       :node-label="params.label"

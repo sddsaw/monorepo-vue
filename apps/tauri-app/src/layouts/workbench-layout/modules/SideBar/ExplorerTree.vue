@@ -98,13 +98,22 @@ const displayTree = computed(() => {
     <div class="flex-1 overflow-auto p-1.5">
       <div v-if="displayTree.length === 0" class="p-4 text-center text-gray-500 text-xs">
         <div class="mb-2">📄 暂未打开测试文件</div>
-        <button
-          type="button"
-          @click="tpStore.chooseAndOpenFile"
-          class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-11px transition-colors cursor-pointer"
-        >
-          打开本地 JSON
-        </button>
+        <div class="flex flex-col gap-2">
+          <button
+            type="button"
+            @click="tpStore.chooseAndOpenFile"
+            class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-11px transition-colors cursor-pointer"
+          >
+            打开本地 JSON
+          </button>
+          <button
+            type="button"
+            @click="tpStore.loadSampleData"
+            class="px-2.5 py-1 bg-[#2d2d2d] hover:bg-[#3e3e42] text-gray-200 border border-[#444] rounded text-11px transition-colors cursor-pointer"
+          >
+            载入演示测试程序
+          </button>
+        </div>
       </div>
 
       <NTree
