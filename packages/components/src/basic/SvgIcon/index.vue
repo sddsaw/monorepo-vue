@@ -56,11 +56,7 @@ const renderLocalIcon = computed(() => Boolean(props.localIcon || !props.icon))
       <use :xlink:href="symbolId" fill="currentColor" />
     </svg>
   </template>
-  <Icon v-else-if="normalizedIcon" :icon="normalizedIcon" v-bind="bindAttrs">
-    <svg aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs">
-      <use :xlink:href="symbolId" fill="currentColor" />
-    </svg>
-  </Icon>
+  <Icon v-else-if="normalizedIcon" :icon="normalizedIcon" v-bind="bindAttrs" />
 </template>
 
 <style scoped></style>

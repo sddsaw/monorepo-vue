@@ -5,8 +5,16 @@ import { onMounted, ref } from 'vue'
 import FeatureCard from '@/components/FeatureCard.vue'
 import { logger } from '@/plugins/logger'
 import { emitAppEvent, useAppEventListener } from '@/services/events'
-import { getSystemInfo, greet, openNewWindow, type SystemInfo } from '@/services/ipc'
-import { openLogDir } from '@/services/ipc/system'
+import {
+  confirmDialog,
+  getSystemInfo,
+  greet,
+  openFileDialog,
+  openLogDir,
+  openNewWindow,
+  sendDesktopNotification,
+  type SystemInfo,
+} from '@/services/ipc'
 import { getStoreValue, setStoreValue } from '@/services/store'
 import { useAppStore, useAuthStore, useThemeStore } from '@/store'
 
@@ -139,8 +147,7 @@ async function handleOpenDialog() {
   }
 
   try {
-    const { open } = await import('@tauri-apps/plugin-dialog')
-    const file = await open({
+    const file = await openFileDialog({
       multiple: false,
       directory: false,
       title: '请选择一个文件',
@@ -162,8 +169,7 @@ async function handleAskDialog() {
   }
 
   try {
-    const { ask } = await import('@tauri-apps/plugin-dialog')
-    const confirmed = await ask('确定要执行此核心系统操作吗？', {
+    const confirmed = await confirmDialog('确定要执行此核心系统操作吗？', {
       title: 'Soybean Desktop 确认',
       kind: 'info',
     })
@@ -187,23 +193,12 @@ async function handleSendNotification() {
   }
 
   try {
-    const {
-      isPermissionGranted,
-      requestPermission,
-      sendNotification,
-    } = await import('@tauri-apps/plugin-notification')
+    const sent = await sendDesktopNotification({
+      title: 'Soybean Desktop',
+      body: '🎉 桌面系统通知投递成功！原生通知中心交互正常。',
+    })
 
-    let hasPermission = await isPermissionGranted()
-    if (!hasPermission) {
-      const permission = await requestPermission()
-      hasPermission = permission === 'granted'
-    }
-
-    if (hasPermission) {
-      sendNotification({
-        title: 'Soybean Desktop',
-        body: '🎉 桌面系统通知投递成功！原生通知中心交互正常。',
-      })
+    if (sent) {
       message.success('通知已发送至操作系统通知中心')
     }
     else {

@@ -3,7 +3,13 @@ import { SvgIcon } from '@sa/components'
 import { computed, onMounted, ref } from 'vue'
 import AppUpdaterModal from '@/components/AppUpdaterModal.vue'
 import { isTauri } from '@/plugins/tauri'
-import { openLogDir } from '@/services/ipc/system'
+import {
+  closeCurrentWindow,
+  isCurrentWindowMaximized,
+  minimizeCurrentWindow,
+  openLogDir,
+  toggleCurrentWindowMaximize,
+} from '@/services/ipc'
 
 defineOptions({
   name: 'DesktopTools',
@@ -26,8 +32,7 @@ async function checkMaximized() {
   if (!isTauri())
     return
   try {
-    const { getCurrentWindow } = await import('@tauri-apps/api/window')
-    isMaximized.value = await getCurrentWindow().isMaximized()
+    isMaximized.value = await isCurrentWindowMaximized()
   }
   catch {}
 }
@@ -35,16 +40,13 @@ async function checkMaximized() {
 async function handleMinimize() {
   if (!isTauri())
     return
-  const { getCurrentWindow } = await import('@tauri-apps/api/window')
-  await getCurrentWindow().minimize()
+  await minimizeCurrentWindow()
 }
 
 async function handleToggleMaximize() {
   if (!isTauri())
     return
-  const { getCurrentWindow } = await import('@tauri-apps/api/window')
-  await getCurrentWindow().toggleMaximize()
-  await checkMaximized()
+  isMaximized.value = await toggleCurrentWindowMaximize()
 }
 
 async function handleClose() {
@@ -52,8 +54,7 @@ async function handleClose() {
     window.close()
     return
   }
-  const { getCurrentWindow } = await import('@tauri-apps/api/window')
-  await getCurrentWindow().close()
+  await closeCurrentWindow()
 }
 
 onMounted(() => {

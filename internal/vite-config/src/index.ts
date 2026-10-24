@@ -103,9 +103,9 @@ export function createViteConfig(options?: CreateViteConfigOptions) {
                 return
 
               const matchRules: [string, string[]][] = [
+                ['vue', ['vue', '@vue', 'vue-router', 'pinia']],
                 ['echarts', ['echarts', 'zrender']],
                 ['ckeditor', ['ckeditor', '@ckeditor']],
-                ['vue', ['vue', 'vue-router', 'pinia']],
                 ['ui', ['naive-ui']],
                 [
                   'vendor-utils',

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { SaButton } from '@sa/components'
 import { computed } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 import CardData from './modules/card-data.vue'
@@ -19,9 +18,6 @@ const gap = computed(() => (appStore.isMobile ? 0 : 16))
     <NAlert title="提示" type="warning">
       {{ '为了方便大家开发和更新合并，我们对main分支的代码进行了精简，只保留了首页菜单，其余内容已移至example分支进行维护。预览地址显示的内容即为example分支的内容。' }}
     </NAlert>
-    <NCard title="Workspace Component Library Test">
-      <SaButton label="Button from @sa/components Library" />
-    </NCard>
     <HeaderBanner />
     <CardData />
     <NGrid :x-gap="gap" :y-gap="16" responsive="screen" item-responsive>

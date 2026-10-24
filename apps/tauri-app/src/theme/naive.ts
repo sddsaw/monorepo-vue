@@ -12,8 +12,8 @@ export function createNaiveTheme(settings: App.Theme.ThemeSetting): GlobalThemeO
   return {
     common: {
       primaryColor: themeColor,
-      primaryColorHover: '#747bff',
-      primaryColorPressed: '#535bf2',
+      primaryColorHover: '#1a8ad6',
+      primaryColorPressed: '#0062a3',
       primaryColorSuppl: themeColor,
       infoColor: otherColor.info,
       successColor: otherColor.success,

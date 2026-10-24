@@ -2,6 +2,8 @@
  * 跨窗口事件总线支持的事件名称与 Payload 类型定义
  */
 export interface AppEventPayloads {
+  /** 打开设置抽屉 */
+  'open-settings': void
   /** 退出登录广播 */
   'auth:logout': void
   /** 主题模式变更广播 */

@@ -1,57 +1,52 @@
 import { useLoading } from '@sa/hooks'
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { SetupStoreId } from '@/enum'
 import { useRouterPush } from '@/hooks/common/router'
 import { fetchGetUserInfo, fetchLogin } from '@/service/api'
-import { getStoreValue, setStoreValue } from '@/services/store'
 import { localStg } from '@/utils/storage'
 import { useDictStore } from '../dict'
 import { useRouteStore } from '../route'
 import { useTabStore } from '../tab'
-import { clearAuthStorage, getToken } from './shared'
+import { clearAuthStorage, getToken, setAuthTokens } from './shared'
+
+const DEFAULT_USER_INFO: Api.Auth.UserInfo = {
+  userId: '1',
+  userName: 'VSCode Developer',
+  roles: ['R_SUPER'],
+  buttons: [],
+}
 
 export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
-  const route = useRoute()
   const authStore = useAuthStore()
   const routeStore = useRouteStore()
   const tabStore = useTabStore()
-  const { toLogin, redirectFromLogin } = useRouterPush(false)
+  const { redirectFromLogin } = useRouterPush(false)
   const { loading: loginLoading, startLoading, endLoading } = useLoading()
 
-  const token = ref('')
+  const token = ref('desktop-token')
 
-  const userInfo: Api.Auth.UserInfo = reactive({
-    userId: '',
-    userName: '',
-    roles: [],
-    buttons: [],
-  })
+  const userInfo: Api.Auth.UserInfo = reactive({ ...DEFAULT_USER_INFO })
 
   /** is super role in static route */
   const isStaticSuper = computed(() => {
     const { VITE_AUTH_ROUTE_MODE, VITE_STATIC_SUPER_ROLE } = import.meta.env
 
-    return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE)
+    return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE || 'R_SUPER')
   })
 
   /** Is login */
-  const isLogin = computed(() => Boolean(token.value))
+  const isLogin = computed(() => true)
 
   /** Reset auth store */
   async function resetStore() {
     recordUserId()
 
-    clearAuthStorage()
-    await setStoreValue('token', '')
-    await setStoreValue('refreshToken', '')
+    await clearAuthStorage()
 
     authStore.$reset()
-
-    if (!route.meta.constant) {
-      await toLogin()
-    }
+    Object.assign(userInfo, DEFAULT_USER_INFO)
+    token.value = 'desktop-token'
 
     tabStore.cacheTabs()
     routeStore.resetStore()
@@ -133,11 +128,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function loginByToken(loginToken: Api.Auth.LoginToken) {
-    // 1. stored in the localStorage, the later requests need it in headers
-    localStg.set('token', loginToken.token)
-    localStg.set('refreshToken', loginToken.refreshToken)
-    await setStoreValue('token', loginToken.token)
-    await setStoreValue('refreshToken', loginToken.refreshToken)
+    // 1. Persist tokens through the platform-specific auth storage.
+    await setAuthTokens(loginToken.token, loginToken.refreshToken)
 
     // 2. get user info
     const pass = await getUserInfo()
@@ -168,21 +160,18 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function initUserInfo() {
-    let maybeToken = getToken()
-    if (!maybeToken) {
-      maybeToken = (await getStoreValue<string>('token', '')) || ''
-      if (maybeToken) {
-        localStg.set('token', maybeToken)
-      }
-    }
+    const maybeToken = await getToken()
 
     if (maybeToken) {
       token.value = maybeToken
       const pass = await getUserInfo()
 
       if (!pass) {
-        resetStore()
+        Object.assign(userInfo, DEFAULT_USER_INFO)
       }
+    }
+    else {
+      Object.assign(userInfo, DEFAULT_USER_INFO)
     }
   }
 

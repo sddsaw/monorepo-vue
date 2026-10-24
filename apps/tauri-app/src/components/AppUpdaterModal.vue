@@ -15,7 +15,7 @@ async function handleCheckUpdate(silent = false) {
   try {
     const res = await checkForAppUpdates()
     updateInfo.value = res
-    if (res.hasUpdate) {
+    if (res.status === 'available' || res.status === 'latest' || res.status === 'error') {
       showModal.value = true
     }
     else if (!silent) {
@@ -60,8 +60,48 @@ defineExpose({
     :closable="!downloading"
   >
     <div class="space-y-3">
+      <!-- 检查失败 -->
+      <template v-if="updateInfo?.status === 'error'">
+        <div class="py-3 text-center space-y-2">
+          <div class="text-3xl">
+            ⚠️
+          </div>
+          <div class="text-sm text-slate-800 font-bold dark:text-zinc-100">
+            更新检查失败
+          </div>
+          <div class="text-xs text-slate-400 dark:text-zinc-400">
+            {{ updateInfo.errorMessage || '更新服务暂时不可用，请稍后重试。' }}
+          </div>
+          <div class="pt-2">
+            <NButton block type="primary" @click="showModal = false">
+              我知道了
+            </NButton>
+          </div>
+        </div>
+      </template>
+
+      <!-- 当前环境不支持自动更新 -->
+      <template v-else-if="updateInfo?.status === 'unsupported'">
+        <div class="py-3 text-center space-y-2">
+          <div class="text-3xl">
+            ℹ️
+          </div>
+          <div class="text-sm text-slate-800 font-bold dark:text-zinc-100">
+            当前环境不支持自动更新
+          </div>
+          <div class="text-xs text-slate-400 dark:text-zinc-400">
+            请在桌面应用中检查更新。
+          </div>
+          <div class="pt-2">
+            <NButton block type="primary" @click="showModal = false">
+              我知道了
+            </NButton>
+          </div>
+        </div>
+      </template>
+
       <!-- 发现新版本 -->
-      <template v-if="updateInfo?.hasUpdate">
+      <template v-else-if="updateInfo?.hasUpdate">
         <div class="flex items-center gap-3">
           <div class="h-10 w-10 flex items-center justify-center rounded-lg bg-green-500/10 text-xl text-green-500">
             🚀
@@ -133,7 +173,7 @@ defineExpose({
             当前已是最新版本
           </div>
           <div class="text-xs text-slate-400 dark:text-zinc-400">
-            当前版本 v{{ updateInfo?.currentVersion || '0.1.0' }}，暂无新更新可用。
+            当前版本 v{{ updateInfo?.currentVersion || 'unknown' }}，暂无新更新可用。
           </div>
           <div class="pt-2">
             <NButton

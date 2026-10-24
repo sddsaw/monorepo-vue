@@ -17,6 +17,7 @@
     "user-outlined"
   ],
   "carbon": [
+    "application-web",
     "catalog",
     "center-to-fit",
     "chat",

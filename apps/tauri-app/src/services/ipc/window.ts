@@ -13,6 +13,32 @@ export interface WindowOpenOptions {
   height?: number
 }
 
+async function getCurrentTauriWindow() {
+  const { getCurrentWindow } = await import('@tauri-apps/api/window')
+  return getCurrentWindow()
+}
+
+export async function isCurrentWindowMaximized(): Promise<boolean> {
+  if (!isTauri())
+    return false
+
+  return (await getCurrentTauriWindow()).isMaximized()
+}
+
+export async function minimizeCurrentWindow(): Promise<void> {
+  if (isTauri())
+    await (await getCurrentTauriWindow()).minimize()
+}
+
+export async function toggleCurrentWindowMaximize(): Promise<boolean> {
+  if (!isTauri())
+    return false
+
+  const window = await getCurrentTauriWindow()
+  await window.toggleMaximize()
+  return window.isMaximized()
+}
+
 /**
  * 打开或激活指定原生窗口
  */
@@ -53,7 +79,6 @@ export async function closeCurrentWindow(): Promise<void> {
     window.close()
     return
   }
-  const { getCurrentWindow } = await import('@tauri-apps/api/window')
-  const win = getCurrentWindow()
+  const win = await getCurrentTauriWindow()
   await win.close()
 }

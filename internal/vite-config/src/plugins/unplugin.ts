@@ -3,7 +3,6 @@ import type { ViteEnv } from '../types.js'
 import fs from 'node:fs'
 import path from 'node:path'
 import AutoImport from 'unplugin-auto-import/vite'
-import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
@@ -25,12 +24,7 @@ function createSharedComponentsResolver(root: string) {
 }
 
 export function setupUnplugin(viteEnv: ViteEnv, root: string, extraResolvers: any[] = []) {
-  const { VITE_ICON_PREFIX, VITE_ICON_LOCAL_PREFIX } = viteEnv
-
-  const localIconPath = path.join(root, 'src/assets/svg-icon')
-
-  /** The name of the local icon collection */
-  const collectionName = VITE_ICON_LOCAL_PREFIX.replace(`${VITE_ICON_PREFIX}-`, '')
+  const { VITE_ICON_PREFIX = 'icon' } = viteEnv
 
   const plugins: PluginOption[] = [
     AutoImport({
@@ -44,10 +38,6 @@ export function setupUnplugin(viteEnv: ViteEnv, root: string, extraResolvers: an
     }),
     Icons({
       compiler: 'vue3',
-      customCollections: {
-        [collectionName]: FileSystemIconLoader(localIconPath, svg =>
-          svg.replace(/^<svg\s/, '<svg width="1em" height="1em" ')),
-      },
       scale: 1,
       defaultClass: 'inline-block',
     }),
@@ -56,7 +46,7 @@ export function setupUnplugin(viteEnv: ViteEnv, root: string, extraResolvers: an
       types: [{ from: 'vue-router', names: ['RouterLink', 'RouterView'] }],
       resolvers: [
         NaiveUiResolver(),
-        IconsResolver({ customCollections: [collectionName], componentPrefix: VITE_ICON_PREFIX }),
+        IconsResolver({ componentPrefix: VITE_ICON_PREFIX }),
         createSharedComponentsResolver(root),
         ...extraResolvers,
       ],

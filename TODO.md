@@ -73,8 +73,8 @@
 - [ ] **18. 静态图片资源无损压缩与 WebP 自动化转换**
   - [ ] 随着开发推进，各应用 `src/assets` 中的图片资源可能增多，建议集成 `vite-plugin-imagemin`（或使用本地 Sharp 脚本），在生产构建时自动对图片进行无损压缩并生成 WebP 格式，减小打包总体积
 
-- [ ] **19. Echarts 图表库按需引入与打包体积深度优化**
-  - [ ] 对项目中使用的 Echarts 进行封装，严格采用 **按需引入（Import on Demand）** 模式（仅引入实际用到的 CanvasRenderer、LineChart、GridComponent 等），禁止 `import * as echarts` 全量引入，控制 vendor.js 大小
+- [x] **19. Echarts 图表库按需引入与打包体积深度优化**
+  - [x] 对项目中使用的 Echarts 进行封装，严格采用 **按需引入（Import on Demand）** 模式（仅引入实际用到的 CanvasRenderer、LineChart、GridComponent 等），禁止 `import * as echarts` 全量引入，控制 vendor.js 大小
 
 - [ ] **20. 搭建分层自动化测试体系 (Testing Pyramid)**
   - [ ] **Phase 1: 纯逻辑基础库单测 (Vitest)**

@@ -1,6 +1,6 @@
 [package]
 name = "tauri-app"
-version = "0.1.0"
+version = "2.3.1"
 description = "Soybean Admin Tauri Desktop Application"
 authors = ["Soybean Admin Team"]
 edition = "2021"
@@ -29,3 +29,4 @@ log = "0.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
+tauri-plugin-opener = "2.5.5"

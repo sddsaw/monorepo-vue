@@ -3,7 +3,6 @@ import type { RequestInstanceState } from './type'
 import { BACKEND_ERROR_CODE, createFlatRequest, createRequest } from '@sa/axios'
 import { useAuthStore } from '@/store/modules/auth'
 import { getServiceBaseURL } from '@/utils/service'
-import { localStg } from '@/utils/storage'
 import { getAuthorization, handleExpiredRequest, showErrorMsg } from './shared'
 
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y'
@@ -25,7 +24,7 @@ export const request = createFlatRequest(
       return response.data.data
     },
     async onRequest(config) {
-      const Authorization = getAuthorization()
+      const Authorization = await getAuthorization()
       Object.assign(config.headers, { Authorization })
 
       return config
@@ -88,7 +87,7 @@ export const request = createFlatRequest(
       if (expiredTokenCodes.includes(responseCode)) {
         const success = await handleExpiredRequest(request.state)
         if (success) {
-          const Authorization = getAuthorization()
+          const Authorization = await getAuthorization()
           Object.assign(response.config.headers, { Authorization })
 
           return instance.request(response.config) as Promise<AxiosResponse>
@@ -138,8 +137,7 @@ export const demoRequest = createRequest(
       const { headers } = config
 
       // set token
-      const token = localStg.get('token')
-      const Authorization = token ? `Bearer ${token}` : null
+      const Authorization = await getAuthorization()
       Object.assign(headers, { Authorization })
 
       return config

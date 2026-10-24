@@ -1,7 +1,13 @@
 use tauri::Manager;
 use crate::error::{AppError, AppResult};
 
+/// 允许在 WebView 中打开的内部窗口标签白名单
+const ALLOWED_WEBVIEW_LABELS: &[&str] = &["sub-window"];
+
 /// 打开或聚焦指定标签的原生窗口
+///
+/// - 内部路由（非 http(s)://）：在新 WebView 窗口中加载
+/// - 外部 URL（http(s)://）：通过系统默认浏览器打开，不在 WebView 中加载（安全考量）
 #[tauri::command]
 pub async fn open_new_window(
     app: tauri::AppHandle,
@@ -11,6 +17,26 @@ pub async fn open_new_window(
     width: Option<f64>,
     height: Option<f64>,
 ) -> AppResult<()> {
+    let is_external = url.starts_with("http://") || url.starts_with("https://");
+
+    // 外部 URL 直接在系统浏览器中打开，不创建 WebView 窗口
+    if is_external {
+        use tauri_plugin_opener::OpenerExt;
+        app.opener()
+            .open_url(&url, None::<&str>)
+            .map_err(|e| AppError::Url(format!("无法打开外部链接: {}", e)))?;
+        return Ok(());
+    }
+
+    // 内部窗口标签校验：仅允许白名单内的标签
+    if !ALLOWED_WEBVIEW_LABELS.contains(&label.as_str()) {
+        log::warn!("拒绝创建非白名单窗口: label={}", label);
+        return Err(AppError::Window(format!(
+            "窗口标签 \"{}\" 不在允许列表中",
+            label
+        )));
+    }
+
     // 若该窗口已存在，则直接将其激活并聚焦到前台
     if let Some(window) = app.get_webview_window(&label) {
         let _ = window.show();
@@ -19,12 +45,8 @@ pub async fn open_new_window(
         return Ok(());
     }
 
-    let webview_url = if url.starts_with("http://") || url.starts_with("https://") {
-        tauri::WebviewUrl::External(url.parse().map_err(|e| AppError::Url(format!("{:?}", e)))?)
-    } else {
-        let clean_path = url.trim_start_matches('/');
-        tauri::WebviewUrl::App(clean_path.into())
-    };
+    let clean_path = url.trim_start_matches('/');
+    let webview_url = tauri::WebviewUrl::App(clean_path.into());
 
     let w = width.unwrap_or(800.0);
     let h = height.unwrap_or(600.0);
@@ -69,3 +91,4 @@ pub async fn open_new_window(
 
     Ok(())
 }
+

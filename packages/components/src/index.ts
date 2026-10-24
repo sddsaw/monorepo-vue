@@ -1,3 +1,4 @@
+import { defineAsyncComponent } from 'vue'
 // Basic components
 import BetterScroll from './basic/BetterScroll/index.vue'
 import ButtonIcon from './basic/ButtonIcon/index.vue'
@@ -12,9 +13,6 @@ import LookForward from './basic/LookForward/index.vue'
 import MenuToggler from './basic/MenuToggler/index.vue'
 import PinToggler from './basic/PinToggler/index.vue'
 import ReloadButton from './basic/ReloadButton/index.vue'
-import RichEditor from './basic/RichEditor/index.vue'
-import SaButton from './basic/SaButton/index.vue'
-import SchemaForm from './basic/SchemaForm/index.vue'
 import SvgIcon from './basic/SvgIcon/index.vue'
 import SystemLogo from './basic/SystemLogo/index.vue'
 import WaveBg from './basic/WaveBg/index.vue'
@@ -22,11 +20,15 @@ import WaveBg from './basic/WaveBg/index.vue'
 // Business components
 import AppProvider from './business/AppProvider/index.vue'
 import ExceptionBase from './business/ExceptionBase/index.vue'
-import FileUpload from './business/FileUpload/index.vue'
 import SoybeanAvatar from './business/SoybeanAvatar/index.vue'
-import TableColumnSetting from './business/TableColumnSetting/index.vue'
-import TableHeaderOperation from './business/TableHeaderOperation/index.vue'
 import ThemeSchemaSwitch from './business/ThemeSchemaSwitch/index.vue'
+
+// Heavy components - lazy loaded to avoid cascading module loading on first screen
+const FileUpload = defineAsyncComponent(() => import('./business/FileUpload/index.vue'))
+const SchemaForm = defineAsyncComponent(() => import('./basic/SchemaForm/index.vue'))
+const TableColumnSetting = defineAsyncComponent(() => import('./business/TableColumnSetting/index.vue'))
+const TableHeaderOperation = defineAsyncComponent(() => import('./business/TableHeaderOperation/index.vue'))
+const RichEditor = defineAsyncComponent(() => import('./basic/RichEditor/index.vue'))
 
 export {
   AppProvider,
@@ -46,7 +48,6 @@ export {
   PinToggler,
   ReloadButton,
   RichEditor,
-  SaButton,
   SchemaForm,
   SoybeanAvatar,
   SvgIcon,

@@ -2,16 +2,16 @@
   "name": "默认预设",
   "desc": "Soybean 默认主题预设",
   "version": "1.0.0",
-  "themeScheme": "light",
+  "themeScheme": "dark",
   "grayscale": false,
   "colourWeakness": false,
   "recommendColor": false,
-  "themeColor": "#646cff",
+  "themeColor": "#007acc",
   "otherColor": {
-    "info": "#2080f0",
-    "success": "#52c41a",
-    "warning": "#faad14",
-    "error": "#f5222d"
+    "info": "#007acc",
+    "success": "#388a34",
+    "warning": "#cca700",
+    "error": "#f14c4c"
   },
   "themeRadius": 6,
   "isInfoFollowPrimary": true,

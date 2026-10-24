@@ -34,7 +34,6 @@ packages/components/
     │   ├── MenuToggler/index.vue (MenuToggler, 57行) ──────────────── 菜单折叠
     │   ├── PinToggler/index.vue (PinToggler, 31行) ────────────────── 面板固定
     │   ├── ReloadButton/index.vue (ReloadButton, 24行) ────────────── 刷新按钮
-    │   ├── SaButton/index.vue (SaButton, 15行) ────────────────────── 专属按钮
     │   ├── SvgIcon/index.vue (SvgIcon, 54行) ──────────────────────── 图标组件
     │   ├── SystemLogo/index.vue (SystemLogo, 166行) ──────────────── 系统 Logo
     │   ├── WaveBg/index.vue (WaveBg, 61行) ────────────────────────── 波浪背景
@@ -81,7 +80,6 @@ packages/components/
 | **MenuToggler** | `src/basic/MenuToggler` | 侧边栏菜单展开/收起切换按钮，支持内置的折叠图标动画。 |
 | **PinToggler** | `src/basic/PinToggler` | 面板钉住（固定）状态切换按钮。 |
 | **ReloadButton** | `src/basic/ReloadButton` | 触发重新加载的刷新按钮，在加载状态下支持旋转动画。 |
-| **SaButton** | `src/basic/SaButton` | 强制为 `primary` 类型的基础按钮。 |
 | **SchemaForm** | `src/basic/SchemaForm` | **高度配置化表单组件**，支持通过 JSON 配置项一键渲染完整的 Naive UI 表单、内置表单校验、异步选项加载和响应式布局。 |
 | **SvgIcon** | `src/basic/SvgIcon` | 统一图标渲染器，支持 Iconify 线上图标与本地 SVG 矢量图标。 |
 | **SystemLogo** | `src/basic/SystemLogo` | 系统的 SVG Logo 矢量组件，使用 CSS 变量自适应主题色。 |

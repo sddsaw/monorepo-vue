@@ -1,16 +1,16 @@
 /** Default theme settings */
 export const themeSettings: App.Theme.ThemeSetting = {
-  themeScheme: 'light',
+  themeScheme: 'dark',
   grayscale: false,
   colourWeakness: false,
   recommendColor: false,
-  themeColor: '#646cff',
+  themeColor: '#007acc',
   themeRadius: 6,
   otherColor: {
-    info: '#2080f0',
-    success: '#52c41a',
-    warning: '#faad14',
-    error: '#f5222d',
+    info: '#007acc',
+    success: '#388a34',
+    warning: '#cca700',
+    error: '#f14c4c',
   },
   isInfoFollowPrimary: true,
   layout: {
@@ -59,7 +59,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
   },
   watermark: {
     visible: false,
-    text: 'SoybeanAdmin',
+    text: 'VSCode',
     enableUserName: false,
     enableTime: false,
     timeFormat: 'YYYY-MM-DD HH:mm',
@@ -68,7 +68,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
     light: {
       colors: {
         'container': 'rgb(255, 255, 255)',
-        'layout': 'rgb(247, 250, 252)',
+        'layout': 'rgb(243, 243, 243)',
         'inverted': 'rgb(0, 20, 40)',
         'base-text': 'rgb(31, 31, 31)',
       },
@@ -80,9 +80,9 @@ export const themeSettings: App.Theme.ThemeSetting = {
     },
     dark: {
       colors: {
-        'container': 'rgb(28, 28, 28)',
-        'layout': 'rgb(18, 18, 18)',
-        'base-text': 'rgb(224, 224, 224)',
+        'container': 'rgb(30, 30, 30)',
+        'layout': 'rgb(24, 24, 24)',
+        'base-text': 'rgb(204, 204, 204)',
       },
     },
   },
@@ -93,4 +93,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
  *
  * If publish new version, use `overrideThemeSettings` to override certain theme settings
  */
-export const overrideThemeSettings: Partial<App.Theme.ThemeSetting> = {}
+export const overrideThemeSettings: Partial<App.Theme.ThemeSetting> = {
+  themeScheme: 'dark',
+  themeColor: '#007acc',
+}

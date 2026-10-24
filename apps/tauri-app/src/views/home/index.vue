@@ -1,50 +1,65 @@
 <script setup lang="ts">
-import { SaButton } from '@sa/components'
-import { computed } from 'vue'
-import { useAppStore } from '@/store/modules/app'
-import CardData from './modules/card-data.vue'
-import CreativityBanner from './modules/creativity-banner.vue'
-import HeaderBanner from './modules/header-banner.vue'
-import LineChart from './modules/line-chart.vue'
-import PieChart from './modules/pie-chart.vue'
-import ProjectNews from './modules/project-news.vue'
+import VscodeFooter from './modules/vscode-footer.vue'
+import VscodeHeader from './modules/vscode-header.vue'
+import VscodeHelp from './modules/vscode-help.vue'
+import VscodeRecent from './modules/vscode-recent.vue'
+import VscodeStart from './modules/vscode-start.vue'
+import VscodeWalkthroughs from './modules/vscode-walkthroughs.vue'
 
-const appStore = useAppStore()
-
-const gap = computed(() => (appStore.isMobile ? 0 : 16))
+defineOptions({
+  name: 'HomeView',
+})
 </script>
 
 <template>
-  <NSpace vertical :size="16">
-    <NAlert title="提示" type="warning">
-      {{ '为了方便大家开发和更新合并，我们对main分支的代码进行了精简，只保留了首页菜单，其余内容已移至example分支进行维护。预览地址显示的内容即为example分支的内容。' }}
-    </NAlert>
-    <NCard title="Workspace Component Library Test">
-      <SaButton label="Button from @sa/components Library" />
-    </NCard>
-    <HeaderBanner />
-    <CardData />
-    <NGrid :x-gap="gap" :y-gap="16" responsive="screen" item-responsive>
-      <NGi span="24 s:24 m:14">
-        <NCard :bordered="false" class="card-wrapper">
-          <LineChart />
-        </NCard>
-      </NGi>
-      <NGi span="24 s:24 m:10">
-        <NCard :bordered="false" class="card-wrapper">
-          <PieChart />
-        </NCard>
-      </NGi>
-    </NGrid>
-    <NGrid :x-gap="gap" :y-gap="16" responsive="screen" item-responsive>
-      <NGi span="24 s:24 m:14">
-        <ProjectNews />
-      </NGi>
-      <NGi span="24 s:24 m:10">
-        <CreativityBanner />
-      </NGi>
-    </NGrid>
-  </NSpace>
+  <div class="vscode-welcome-page size-full min-h-[calc(100vh-120px)] flex justify-center overflow-y-auto p-4 md:p-8">
+    <div class="welcome-container max-w-1040px w-full flex flex-col justify-between py-2">
+      <!-- 1. VS Code Header -->
+      <VscodeHeader />
+
+      <!-- 2. Main Content Grid (Two Columns) -->
+      <div class="grid grid-cols-1 gap-8 pt-6 md:grid-cols-2 lg:gap-12">
+        <!-- Left Column: Start & Recent -->
+        <div class="flex flex-col">
+          <VscodeStart />
+          <VscodeRecent />
+        </div>
+
+        <!-- Right Column: Walkthroughs & Help -->
+        <div class="flex flex-col">
+          <VscodeWalkthroughs />
+          <VscodeHelp />
+        </div>
+      </div>
+
+      <!-- 3. VS Code Footer -->
+      <VscodeFooter />
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.vscode-welcome-page {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #cccccc;
+  background-color: #1e1e1e;
+}
+
+/* Subtle scrollbar */
+.vscode-welcome-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.vscode-welcome-page::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.vscode-welcome-page::-webkit-scrollbar-thumb {
+  background: #3e3e42;
+  border-radius: 4px;
+}
+
+.vscode-welcome-page::-webkit-scrollbar-thumb:hover {
+  background: #505054;
+}
+</style>

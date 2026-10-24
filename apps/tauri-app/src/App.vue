@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { WatermarkProps } from 'naive-ui'
-import { listen } from '@tauri-apps/api/event'
 import { darkTheme, dateZhCN, NConfigProvider, zhCN } from 'naive-ui'
-import { computed, onMounted } from 'vue'
-import { isTauri } from './plugins/tauri'
+import { computed } from 'vue'
+import { useAppEventListener } from './services/events'
 import { useAppStore } from './store/modules/app'
 import { useThemeStore } from './store/modules/theme'
 
@@ -14,12 +13,8 @@ defineOptions({
 const appStore = useAppStore()
 const themeStore = useThemeStore()
 
-onMounted(async () => {
-  if (isTauri()) {
-    await listen('open-settings', () => {
-      appStore.openThemeDrawer()
-    })
-  }
+useAppEventListener('open-settings', () => {
+  appStore.openThemeDrawer()
 })
 
 const naiveDarkTheme = computed(() => (themeStore.darkMode ? darkTheme : undefined))
