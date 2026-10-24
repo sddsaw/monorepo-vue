@@ -5,7 +5,10 @@ const tpStore = useTpStore()
 </script>
 
 <template>
-  <footer class="h-22px flex items-center justify-between px-3 text-11px bg-[#007acc] text-white select-none shrink-0 font-sans">
+  <footer
+    :style="{ backgroundColor: 'var(--wb-statusbar-bg, #007acc)' }"
+    class="h-22px flex items-center justify-between px-3 text-11px text-white select-none shrink-0 font-sans"
+  >
     <!-- 左侧状态项 -->
     <div class="flex items-center gap-3">
       <!-- Git 分支 -->

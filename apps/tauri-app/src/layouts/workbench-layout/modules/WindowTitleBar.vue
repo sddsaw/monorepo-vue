@@ -33,7 +33,12 @@ async function handleClose() {
 <template>
   <header
     data-tauri-drag-region
-    class="h-35px flex items-center justify-between px-3 text-xs bg-[#2d2d2d] border-b border-[#1e1e1e] select-none text-gray-300"
+    :style="{
+      backgroundColor: 'var(--wb-titlebar-bg, #2d2d2d)',
+      borderColor: 'var(--wb-border-color, #1e1e1e)',
+      color: 'var(--wb-text-color, #cccccc)',
+    }"
+    class="h-35px flex items-center justify-between px-3 text-xs border-b select-none"
   >
     <!-- 左侧：macOS 避让红绿灯 / Windows 菜单栏 -->
     <div class="flex items-center gap-3" :class="[isMac ? 'pl-16' : '']">

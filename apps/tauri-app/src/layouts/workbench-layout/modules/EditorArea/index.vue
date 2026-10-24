@@ -103,7 +103,10 @@ watch(
 </script>
 
 <template>
-  <div class="size-full overflow-hidden relative bg-[#1e1e1e]">
+  <div
+    :style="{ backgroundColor: 'var(--wb-editor-bg, #1e1e1e)' }"
+    class="size-full overflow-hidden relative"
+  >
     <!-- 空白水印 (当没有打开任何测试项时呈现) -->
     <EditorWatermark v-if="!hasTabs" />
 
@@ -119,10 +122,10 @@ watch(
 
 <style>
 .dockview-theme-dark {
-  --dv-activegroup-visiblepanel-tab-background-color: #1e1e1e;
-  --dv-tabs-and-actions-container-background-color: #252526;
-  --dv-drag-over-background-color: rgba(0, 122, 204, 0.25);
-  --dv-separator-border: #2d2d2d;
+  --dv-activegroup-visiblepanel-tab-background-color: var(--wb-editor-bg, #1e1e1e);
+  --dv-tabs-and-actions-container-background-color: var(--wb-sidebar-bg, #252526);
+  --dv-drag-over-background-color: var(--dv-drag-over-background-color, rgba(0, 122, 204, 0.25));
+  --dv-separator-border: var(--wb-border-color, #2d2d2d);
   --dv-tabs-container-height: 35px;
 }
 </style>

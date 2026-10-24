@@ -33,8 +33,12 @@ function startResize(e: MouseEvent) {
 
 <template>
   <section
-    :style="{ height: `${panelHeight}px` }"
-    class="flex flex-col bg-[#1e1e1e] border-t border-[#2d2d2d] select-none relative shrink-0 text-xs"
+    :style="{
+      height: `${panelHeight}px`,
+      backgroundColor: 'var(--wb-bottompanel-bg, #1e1e1e)',
+      borderColor: 'var(--wb-border-color, #2d2d2d)',
+    }"
+    class="flex flex-col border-t select-none relative shrink-0 text-xs"
   >
     <!-- 上边缘拖拽调节高度手柄 -->
     <div
@@ -45,7 +49,13 @@ function startResize(e: MouseEvent) {
     />
 
     <!-- 顶部选项卡栏 -->
-    <div class="h-28px flex items-center justify-between px-3 border-b border-[#2d2d2d] bg-[#252526] text-gray-400">
+    <div
+      :style="{
+        backgroundColor: 'var(--wb-sidebar-bg, #252526)',
+        borderColor: 'var(--wb-border-color, #2d2d2d)',
+      }"
+      class="h-28px flex items-center justify-between px-3 border-b text-gray-400"
+    >
       <div class="flex items-center gap-4">
         <button
           type="button"

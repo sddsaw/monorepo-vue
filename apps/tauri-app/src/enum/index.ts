@@ -7,4 +7,5 @@ export enum SetupStoreId {
   Dict = 'dict-store',
   Tp = 'tp-store',
   WorkbenchLayout = 'workbench-layout-store',
+  WorkbenchTheme = 'workbench-theme-store',
 }
