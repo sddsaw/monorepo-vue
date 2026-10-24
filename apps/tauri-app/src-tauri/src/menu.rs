@@ -9,28 +9,47 @@ pub fn init_menu<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>
     let app_name = &pkg_info.name;
 
     let about_text = format!("关于 {}", app_name);
+    #[cfg(target_os = "macos")]
     let hide_text = format!("隐藏 {}", app_name);
     let quit_text = format!("退出 {}", app_name);
 
-    // 1. macOS 应用主菜单 (App Menu)
-    let app_menu = Submenu::with_items(
-        app,
-        app_name,
-        true,
-        &[
-            &PredefinedMenuItem::about(app, Some(&about_text), None)?,
-            &PredefinedMenuItem::separator(app)?,
-            &MenuItem::with_id(app, "preferences", "偏好设置...", true, Some("CmdOrCtrl+,"))?,
-            &PredefinedMenuItem::separator(app)?,
-            &PredefinedMenuItem::services(app, Some("服务"))?,
-            &PredefinedMenuItem::separator(app)?,
-            &PredefinedMenuItem::hide(app, Some(&hide_text))?,
-            &PredefinedMenuItem::hide_others(app, Some("隐藏其他"))?,
-            &PredefinedMenuItem::show_all(app, Some("全部显示"))?,
-            &PredefinedMenuItem::separator(app)?,
-            &PredefinedMenuItem::quit(app, Some(&quit_text))?,
-        ],
-    )?;
+    // 1. 应用主菜单 (App Menu，按平台条件编译 macOS 专属项)
+    let about_item = PredefinedMenuItem::about(app, Some(&about_text), None)?;
+    let sep1 = PredefinedMenuItem::separator(app)?;
+    let preferences_item = MenuItem::with_id(app, "preferences", "偏好设置...", true, Some("CmdOrCtrl+,"))?;
+    let sep2 = PredefinedMenuItem::separator(app)?;
+    #[cfg(target_os = "macos")]
+    let services_item = PredefinedMenuItem::services(app, Some("服务"))?;
+    #[cfg(target_os = "macos")]
+    let sep3 = PredefinedMenuItem::separator(app)?;
+    #[cfg(target_os = "macos")]
+    let hide_item = PredefinedMenuItem::hide(app, Some(&hide_text))?;
+    #[cfg(target_os = "macos")]
+    let hide_others_item = PredefinedMenuItem::hide_others(app, Some("隐藏其他"))?;
+    #[cfg(target_os = "macos")]
+    let show_all_item = PredefinedMenuItem::show_all(app, Some("全部显示"))?;
+    #[cfg(target_os = "macos")]
+    let sep4 = PredefinedMenuItem::separator(app)?;
+    let quit_item = PredefinedMenuItem::quit(app, Some(&quit_text))?;
+
+    let mut app_menu_items: Vec<&dyn tauri::menu::IsMenuItem<R>> = vec![
+        &about_item,
+        &sep1,
+        &preferences_item,
+        &sep2,
+    ];
+    #[cfg(target_os = "macos")]
+    {
+        app_menu_items.push(&services_item);
+        app_menu_items.push(&sep3);
+        app_menu_items.push(&hide_item);
+        app_menu_items.push(&hide_others_item);
+        app_menu_items.push(&show_all_item);
+        app_menu_items.push(&sep4);
+    }
+    app_menu_items.push(&quit_item);
+
+    let app_menu = Submenu::with_items(app, app_name, true, &app_menu_items)?;
 
     // 2. 编辑菜单 (Edit - 必须保留以保证复制/粘贴/剪切等原生快捷键)
     let edit_menu = Submenu::with_items(

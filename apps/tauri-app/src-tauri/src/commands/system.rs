@@ -14,11 +14,11 @@ pub fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-pub fn get_system_info() -> AppResult<SystemInfo> {
+pub async fn get_system_info() -> AppResult<SystemInfo> {
     Ok(SystemInfo {
         os: std::env::consts::OS.to_string(),
         arch: std::env::consts::ARCH.to_string(),
-        tauri_version: "2.x".to_string(),
+        tauri_version: tauri::VERSION.to_string(),
     })
 }
 
@@ -32,33 +32,17 @@ pub async fn get_log_dir(app: tauri::AppHandle) -> AppResult<String> {
 #[tauri::command]
 pub async fn open_log_dir(app: tauri::AppHandle) -> AppResult<()> {
     use tauri::Manager;
+    use tauri_plugin_opener::OpenerExt;
+
     let path = app.path().app_log_dir().map_err(|e| crate::error::AppError::Custom(e.to_string()))?;
 
     if !path.exists() {
-        let _ = std::fs::create_dir_all(&path);
+        std::fs::create_dir_all(&path).map_err(|e| crate::error::AppError::Io(e.to_string()))?;
     }
 
-    #[cfg(target_os = "macos")]
-    {
-        std::process::Command::new("open")
-            .arg(&path)
-            .spawn()
-            .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
-    }
-    #[cfg(target_os = "windows")]
-    {
-        std::process::Command::new("explorer")
-            .arg(&path)
-            .spawn()
-            .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
-    }
-    #[cfg(target_os = "linux")]
-    {
-        std::process::Command::new("xdg-open")
-            .arg(&path)
-            .spawn()
-            .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
-    }
+    app.opener()
+        .open_path(path.to_string_lossy().as_ref(), None::<&str>)
+        .map_err(|e| crate::error::AppError::Io(e.to_string()))?;
 
     Ok(())
 }
