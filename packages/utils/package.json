@@ -4,7 +4,12 @@
   "version": "2.3.1",
   "sideEffects": false,
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./analytics": "./src/business/analytics.ts",
+    "./crypto": "./src/business/crypto.ts",
+    "./oss": "./src/business/object-storage-client.ts",
+    "./sentry": "./src/business/sentry.ts",
+    "./storage": "./src/business/storage.ts"
   },
   "typesVersions": {
     "*": {

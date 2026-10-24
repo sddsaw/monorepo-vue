@@ -1,10 +1,24 @@
+import { emitAppEvent } from '../services/events'
 import { logger } from './logger'
-import { isTauri } from './tauri'
+import { isMacOS, isTauri } from './tauri'
+
+let windowShortcutBound = false
 
 /**
- * 注册桌面端全局快捷键
+ * 注册桌面端全局快捷键与跨平台窗口内快捷键（兼容 macOS 与 Windows）
  */
 export async function setupGlobalShortcuts(): Promise<void> {
+  // Windows / Linux 无顶部原生应用菜单栏，绑定 Ctrl+, 打开偏好设置抽屉以对齐 macOS Cmd+, 体验
+  if (!windowShortcutBound && typeof window !== 'undefined' && !isMacOS()) {
+    windowShortcutBound = true
+    window.addEventListener('keydown', (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === ',') {
+        e.preventDefault()
+        void emitAppEvent('open-settings', undefined)
+      }
+    })
+  }
+
   if (!isTauri()) {
     logger.debug('当前为 Web 环境，跳过全局快捷键注册')
     return

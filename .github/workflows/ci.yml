@@ -1,0 +1,72 @@
+name: Monorepo & Tauri Dual-Platform CI
+
+on:
+  push:
+    branches: [main, master, taui]
+  pull_request:
+    branches: [main, master, taui]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-quality:
+    name: Frontend Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify Package & Tauri Version Consistency
+        run: |
+          ROOT_VER=$(node -p "require('./package.json').version")
+          TAURI_PKG_VER=$(node -p "require('./apps/tauri-app/package.json').version")
+          TAURI_CONF_VER=$(node -p "require('./apps/tauri-app/src-tauri/tauri.conf.json').version")
+          if [ "$ROOT_VER" != "$TAURI_PKG_VER" ] || [ "$ROOT_VER" != "$TAURI_CONF_VER" ]; then
+            echo "Version mismatch: root=$ROOT_VER, tauri-pkg=$TAURI_PKG_VER, tauri-conf=$TAURI_CONF_VER"
+            exit 1
+          fi
+
+      - name: Run ESLint
+        run: pnpm lint
+
+      - name: Run TypeScript Typecheck
+        run: pnpm typecheck
+
+      - name: Build Workspace
+        run: pnpm build
+
+  tauri-native-check:
+    name: Tauri Rust Check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cargo Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/tauri-app/src-tauri
+
+      - name: Run Cargo Check (macOS & Windows Compatibility)
+        run: cargo check --manifest-path apps/tauri-app/src-tauri/Cargo.toml --locked

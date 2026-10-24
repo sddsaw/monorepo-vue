@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { SvgIcon } from '@sa/components'
+import { useEventListener } from '@vueuse/core'
 import { computed, onMounted, ref } from 'vue'
 import AppUpdaterModal from '@/components/AppUpdaterModal.vue'
-import { isTauri } from '@/plugins/tauri'
+import { isMacOS, isTauri } from '@/plugins/tauri'
 import {
   closeCurrentWindow,
   isCurrentWindowMaximized,
@@ -18,11 +19,7 @@ defineOptions({
 const updaterModalRef = ref<InstanceType<typeof AppUpdaterModal> | null>(null)
 const isMaximized = ref(false)
 
-const isMac = computed(() => {
-  if (typeof navigator === 'undefined')
-    return false
-  return /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent)
-})
+const isMac = computed(() => isMacOS())
 
 const showWindowControls = computed(() => {
   return isTauri() && !isMac.value
@@ -36,6 +33,9 @@ async function checkMaximized() {
   }
   catch {}
 }
+
+// 监听窗口尺寸变化（如 Windows Aero Snap 贴边最大化或双击标题栏），实时同步最大化图标状态
+useEventListener(window, 'resize', checkMaximized)
 
 async function handleMinimize() {
   if (!isTauri())

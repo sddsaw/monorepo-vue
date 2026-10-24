@@ -1,6 +1,7 @@
 import type { DownloadEvent, Update } from '@tauri-apps/plugin-updater'
 import { version as packageVersion } from '../../../package.json'
 import { isTauri } from '../../plugins/tauri'
+import { restartApp } from '../ipc/system'
 
 export type UpdateCheckStatus = 'available' | 'latest' | 'unsupported' | 'error'
 export type UpdateHandle = Pick<Update, 'downloadAndInstall'>
@@ -97,6 +98,5 @@ export async function installAppUpdate(
   })
 
   // 重启应用以应用更新
-  const { relaunch } = await import('@tauri-apps/plugin-process')
-  await relaunch()
+  await restartApp()
 }

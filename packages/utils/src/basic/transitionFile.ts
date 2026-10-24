@@ -58,6 +58,8 @@ export function base64ToFile(base64: string, filename: string, type = 'image/png
  * @param blob - 要转换的Blob对象
  * @param filename - 文件名
  * @param options - 可选的文件选项，包含type和lastModified
+ * @param options.type - 文件 MIME 类型
+ * @param options.lastModified - 文件最后修改时间戳
  * @returns 返回File对象
  */
 export function blobToFile(blob: Blob, filename: string, options?: { type?: string, lastModified?: number }): File {
@@ -154,21 +156,28 @@ export interface VideoInfo {
  */
 export async function getVideoInfo(videoUrl: string): Promise<VideoInfo> {
   return new Promise((resolve, reject) => {
-    let video = document.createElement('video')
+    let video: HTMLVideoElement | null = document.createElement('video')
 
     const cleanup = () => {
+      if (!video)
+        return
       video.removeEventListener('loadedmetadata', onLoadedMetadata)
       video.removeEventListener('seeked', onSeeked)
       video.removeEventListener('error', onError)
-      // @ts-ignore 忽略类型
-      video = undefined
+      video.removeAttribute('src')
+      video.load()
+      video = null
     }
 
     const onLoadedMetadata = () => {
-      video.currentTime = 2 // 跳到视频的第2秒画面
+      if (video) {
+        video.currentTime = 2 // 跳到视频的第2秒画面
+      }
     }
 
     const onSeeked = async () => {
+      if (!video)
+        return
       try {
         // 1. 获取基本视频信息
         const duration = video.duration // 视频时长（秒）
@@ -188,8 +197,8 @@ export async function getVideoInfo(videoUrl: string): Promise<VideoInfo> {
             fileSize = Number.parseInt(res.headers.get('content-length') || '0', 10)
           }
         }
-        catch (e) {
-          console.warn('无法获取文件大小:', e)
+        catch {
+          // 忽略 HEAD 请求跨域或无 Content-Length 异常
         }
 
         // 3. 获取首帧图片
@@ -197,7 +206,7 @@ export async function getVideoInfo(videoUrl: string): Promise<VideoInfo> {
         canvas.width = videoWidth
         canvas.height = videoHeight
         const ctx = canvas.getContext('2d')
-        if (ctx) {
+        if (ctx && video) {
           ctx.drawImage(video, 0, 0, videoWidth, videoHeight)
         }
         const firstFrame = canvas.toDataURL('image/jpeg') // 转成 Base64 图片
@@ -269,8 +278,7 @@ export function extractFileName(url: string | undefined | null): string {
     // 确保最后一段不是空字符串（如以斜杠结尾的URL）
     return lastSegment || ''
   }
-  catch (error) {
-    console.error('提取文件名出错:', error)
+  catch {
     return ''
   }
 };

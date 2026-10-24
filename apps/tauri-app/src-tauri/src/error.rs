@@ -17,13 +17,34 @@ pub enum AppError {
     Custom(String),
 }
 
-// 序列化为结构化字符串供前端 IPC 获取
+impl AppError {
+    pub fn code(&self) -> &'static str {
+        match self {
+            Self::Window(_) => "WINDOW_ERROR",
+            Self::Io(_) => "IO_ERROR",
+            Self::Url(_) => "URL_ERROR",
+            Self::Custom(_) => "CUSTOM_ERROR",
+        }
+    }
+}
+
+#[derive(Serialize)]
+struct ErrorPayload<'a> {
+    code: &'a str,
+    message: String,
+}
+
+// 序列化为结构化错误对象 { code, message } 供前端 IPC 按错误类型精准处理
 impl Serialize for AppError {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
-        serializer.serialize_str(self.to_string().as_str())
+        let payload = ErrorPayload {
+            code: self.code(),
+            message: self.to_string(),
+        };
+        payload.serialize(serializer)
     }
 }
 

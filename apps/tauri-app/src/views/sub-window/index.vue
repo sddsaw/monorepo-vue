@@ -1,21 +1,44 @@
 <script setup lang="ts">
 import { SvgIcon } from '@sa/components'
+import { useEventListener } from '@vueuse/core'
 import { NButton, useMessage } from 'naive-ui'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { logger } from '@/plugins/logger'
-import { isTauri } from '@/plugins/tauri'
+import { isMacOS, isTauri } from '@/plugins/tauri'
 import { emitAppEvent, useAppEventListener } from '@/services/events'
-import { closeCurrentWindow } from '@/services/ipc'
+import {
+  closeCurrentWindow,
+  isCurrentWindowMaximized,
+  minimizeCurrentWindow,
+  toggleCurrentWindowMaximize,
+} from '@/services/ipc'
 
 const message = useMessage()
 const timeStr = ref(new Date().toLocaleTimeString())
-let timer: any = null
+const isMaximized = ref(false)
+let timer: ReturnType<typeof setInterval> | null = null
 
-const isMac = computed(() => {
-  if (typeof navigator === 'undefined')
-    return false
-  return /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent)
-})
+const isMac = computed(() => isMacOS())
+const showWindowControls = computed(() => isTauri() && !isMac.value)
+
+async function checkMaximized() {
+  if (!isTauri())
+    return
+  try {
+    isMaximized.value = await isCurrentWindowMaximized()
+  }
+  catch {}
+}
+
+useEventListener(window, 'resize', checkMaximized)
+
+async function handleMinimize() {
+  await minimizeCurrentWindow()
+}
+
+async function handleToggleMaximize() {
+  isMaximized.value = await toggleCurrentWindowMaximize()
+}
 
 const inputMsg = ref('Hello from SubWindow!')
 const messages = ref<Array<{ from: string, content: string, time: string, isSelf: boolean }>>([
@@ -28,6 +51,7 @@ const messages = ref<Array<{ from: string, content: string, time: string, isSelf
 ])
 
 onMounted(() => {
+  checkMaximized()
   timer = setInterval(() => {
     timeStr.value = new Date().toLocaleTimeString()
   }, 1000)
@@ -79,15 +103,43 @@ async function handleCloseSelf() {
 
 <template>
   <div class="h-full flex flex-col bg-[#f8fafc] text-slate-800 dark:bg-[#121215] dark:text-zinc-100">
-    <!-- 顶部原生拖拽安全标题栏 -->
+    <!-- 顶部原生拖拽安全标题栏（兼容 macOS 红绿灯内边距与 Windows/Linux 自绘控制按钮） -->
     <div
       data-tauri-drag-region
       class="h-9 flex shrink-0 select-none items-center justify-between border-b border-black/[0.05] px-3 dark:border-white/[0.05]"
       :class="[isTauri() && isMac ? 'pl-[76px]' : '']"
     >
-      <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium dark:text-zinc-400">
+      <div class="pointer-events-none flex items-center gap-1.5 text-xs text-slate-500 font-medium dark:text-zinc-400">
         <SvgIcon icon="carbon:window-overlay" class="text-sm text-[#646cff]" />
         <span>独立子窗口 · 数据与通信面板</span>
+      </div>
+
+      <!-- Windows / Linux 无边框子窗口控制按钮 -->
+      <div v-if="showWindowControls" class="flex items-center gap-1">
+        <button
+          type="button"
+          title="最小化"
+          class="h-6 w-6 flex items-center justify-center rounded text-slate-500 transition-colors active:scale-95 hover:bg-black/5 dark:text-zinc-400 hover:text-slate-800 dark:hover:bg-white/10 dark:hover:text-zinc-100"
+          @click.stop="handleMinimize"
+        >
+          <SvgIcon icon="carbon:subtract" class="text-xs" />
+        </button>
+        <button
+          type="button"
+          :title="isMaximized ? '还原' : '最大化'"
+          class="h-6 w-6 flex items-center justify-center rounded text-slate-500 transition-colors active:scale-95 hover:bg-black/5 dark:text-zinc-400 hover:text-slate-800 dark:hover:bg-white/10 dark:hover:text-zinc-100"
+          @click.stop="handleToggleMaximize"
+        >
+          <SvgIcon :icon="isMaximized ? 'carbon:center-to-fit' : 'carbon:maximize'" class="text-xs" />
+        </button>
+        <button
+          type="button"
+          title="关闭"
+          class="h-6 w-6 flex items-center justify-center rounded text-slate-500 transition-colors active:scale-95 hover:bg-red-500 dark:text-zinc-400 hover:text-white dark:hover:bg-red-500 dark:hover:text-white"
+          @click.stop="handleCloseSelf"
+        >
+          <SvgIcon icon="carbon:close" class="text-sm" />
+        </button>
       </div>
     </div>
 

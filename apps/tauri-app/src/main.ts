@@ -10,6 +10,7 @@ import {
   setupLoading,
   setupNProgress,
 } from './plugins'
+import { isMainWindow } from './plugins/tauri'
 import { router, setupRouter } from './router'
 import { setupStore } from './store'
 import { localStg } from './utils/storage'
@@ -25,12 +26,14 @@ async function setupApp() {
   setupStore(app)
   setupI18n(app, localStg.get('lang') || 'zh-CN')
   await setupRouter(app)
-  setupAppVersionNotification()
   app.mount('#app')
 
-  // 初始化桌面特性（全局快捷键与 Deep Link）
-  setupGlobalShortcuts()
-  setupDeepLink(router)
+  // 仅在主窗口初始化全局单例服务（避免 sub-window 等子窗口重复注册协议监听、全局热键与版本轮询）
+  if (await isMainWindow()) {
+    setupAppVersionNotification()
+    setupGlobalShortcuts()
+    setupDeepLink(router)
+  }
 }
 
 setupApp()

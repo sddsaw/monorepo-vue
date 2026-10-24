@@ -172,6 +172,10 @@ export function downloadFileUrl(
  * @param apiUrl - API地址
  * @param filename - 下载文件名
  * @param options - 请求配置
+ * @param options.method - HTTP 请求方法
+ * @param options.data - 请求体负载
+ * @param options.headers - 自定义请求头
+ * @param options.timeout - 超时时间（毫秒）
  */
 export async function downloadApiFile(
   apiUrl: string,

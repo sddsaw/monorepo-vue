@@ -1,8 +1,8 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capabilities scoped to trusted internal windows only",
-  "windows": ["main", "sub-window"],
+  "description": "Capabilities scoped to the primary main window",
+  "windows": ["main"],
   "permissions": [
     "core:default",
     "core:app:default",

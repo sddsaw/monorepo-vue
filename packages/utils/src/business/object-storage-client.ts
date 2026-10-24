@@ -1,10 +1,10 @@
 /**
  * 火山引擎 TOS 上传工具类
  *
- * 基于 @volcengine/tos-sdk 封装，提供文件上传及 URL 构建能力。
+ * 基于 @volcengine/tos-sdk 封装，提供按需异步加载 SDK、文件上传及 URL 构建能力。
  */
+import type TOS from '@volcengine/tos-sdk'
 import type { PutObjectInput } from '@volcengine/tos-sdk/dist/methods/object/putObject'
-import TOS from '@volcengine/tos-sdk'
 import { nanoid } from '../basic/nanoid'
 
 // ==================== 类型定义 ====================
@@ -20,7 +20,7 @@ export interface OBSConfig {
   bucket: string
 }
 
-interface UploadOptions {
+export interface UploadOptions {
   /** 文件对象 */
   file: File
   /** 文件路径（可选，不传则自动生成） */
@@ -31,7 +31,7 @@ interface UploadOptions {
   headers?: Record<string, string>
 }
 
-interface UploadResult {
+export interface UploadResult {
   /** 文件访问 URL */
   url: string
   /** 文件在存储桶中的路径 */
@@ -42,18 +42,20 @@ interface UploadResult {
 
 /** 统一错误包装：确保抛出的始终是 Error 实例 */
 function wrapError(message: string, error: unknown): Error {
-  console.error(`${message}:`, error)
-  return error instanceof Error ? error : new Error(message)
+  if (error instanceof Error) {
+    return new Error(`${message}: ${error.message}`)
+  }
+  return new Error(message)
 }
 
 // ==================== 核心类 ====================
 
 /**
- * 对象存储上传器
+ * 对象存储上传器（支持 TOS SDK 懒加载，避免污染首屏与基础工具包体积）
  */
 export class ObjectStorageUploader {
   private config: OBSConfig
-  private readonly obsClient: TOS
+  private obsClientPromise: Promise<TOS> | null = null
 
   constructor(
     config: Omit<OBSConfig, 'bucket'> & {
@@ -67,15 +69,29 @@ export class ObjectStorageUploader {
       region: 'cn-shanghai',
       ...(config ?? {}),
     }
+  }
 
-    // 初始化 TOS 客户端
-    this.obsClient = new TOS({
-      bucket: this.config.bucket,
-      accessKeyId: this.config.accessKeyId!,
-      accessKeySecret: this.config.accessKeySecret!,
-      region: this.config.region!,
-      requestTimeout: 0, // 关闭超时
-    })
+  /**
+   * 按需动态加载并初始化 TOS 客户端实例
+   */
+  private async getObsClient(): Promise<TOS> {
+    if (!this.obsClientPromise) {
+      this.obsClientPromise = import('@volcengine/tos-sdk')
+        .then(({ default: TOSClient }) => {
+          return new TOSClient({
+            bucket: this.config.bucket,
+            accessKeyId: this.config.accessKeyId!,
+            accessKeySecret: this.config.accessKeySecret!,
+            region: this.config.region!,
+            requestTimeout: 0, // 关闭超时
+          })
+        })
+        .catch((err) => {
+          this.obsClientPromise = null
+          throw err
+        })
+    }
+    return this.obsClientPromise
   }
 
   /**
@@ -88,6 +104,8 @@ export class ObjectStorageUploader {
     const fileKey = key || this.generateFileName(file.name)
 
     try {
+      const obsClient = await this.getObsClient()
+
       // 准备上传参数
       const uploadParams: PutObjectInput = {
         key: fileKey,
@@ -103,10 +121,9 @@ export class ObjectStorageUploader {
       }
 
       // 执行上传
-      const result = await this.obsClient.putObject(uploadParams)
+      const result = await obsClient.putObject(uploadParams)
       if (!this.isStatusSuccess(result?.statusCode)) {
-        console.error('TOS 上传错误:', result)
-        throw result
+        throw new Error(`TOS 响应状态码异常: ${result?.statusCode ?? 'unknown'}`)
       }
 
       return {

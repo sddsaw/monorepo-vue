@@ -8,13 +8,12 @@ import { getAuthorization, handleExpiredRequest, showErrorMsg } from './shared'
 
 const isHttpProxy = import.meta.env.DEV && import.meta.env.VITE_HTTP_PROXY === 'Y'
 const { baseURL, otherBaseURL } = getServiceBaseURL(import.meta.env, isHttpProxy)
+const apifoxToken = import.meta.env.VITE_APIFOX_TOKEN
 
 export const request = createFlatRequest(
   {
     baseURL,
-    headers: {
-      apifoxToken: 'XL299LiMEDZ0H5h3A29PxwQXdMJqWyY2',
-    },
+    headers: apifoxToken ? { apifoxToken } : {},
   },
   {
     defaultState: {

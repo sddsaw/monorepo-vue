@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { SvgIcon } from '@sa/components'
 import { NButton, useMessage } from 'naive-ui'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import FeatureCard from '@/components/FeatureCard.vue'
 import { logger } from '@/plugins/logger'
+import { isMacOS } from '@/plugins/tauri'
 import { emitAppEvent, useAppEventListener } from '@/services/events'
 import {
   confirmDialog,
+  formatIpcError,
   getSystemInfo,
   greet,
   openFileDialog,
@@ -24,6 +26,7 @@ const authStore = useAuthStore()
 
 const message = useMessage()
 const inTauri = appStore.inTauri
+const isMac = computed(() => isMacOS())
 
 /** 统一异步操作包装器，消除重复 try/catch/finally 样板代码 */
 async function runAsyncAction(
@@ -38,7 +41,7 @@ async function runAsyncAction(
     await action()
   }
   catch (err: unknown) {
-    message.error(`${errorPrefix}: ${err instanceof Error ? err.message : String(err)}`)
+    message.error(`${errorPrefix}: ${formatIpcError(err)}`)
   }
   finally {
     if (loadingRef) {
@@ -548,13 +551,13 @@ async function handleOpenWebWindow() {
         icon="carbon:keyboard"
       >
         <div class="text-xs space-y-2">
-          <!-- 拟物化键盘按键 -->
+          <!-- 拟物化键盘按键（自动适配 macOS 与 Windows 键位标识） -->
           <div class="flex items-center justify-between border border-black/[0.05] rounded-xl bg-white/70 p-3 dark:border-white/[0.05] dark:bg-zinc-800/50">
             <span class="text-slate-600 font-medium dark:text-zinc-300">全局唤醒热键:</span>
             <div class="flex items-center gap-1">
-              <kbd class="shadow-xs border border-slate-300 rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-700 font-bold font-mono dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">Option (⌥)</kbd>
+              <kbd class="shadow-xs border border-slate-300 rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-700 font-bold font-mono dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">{{ isMac ? 'Option (⌥)' : 'Alt' }}</kbd>
               <span class="text-slate-400">+</span>
-              <kbd class="shadow-xs border border-slate-300 rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-700 font-bold font-mono dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">Shift (⇧)</kbd>
+              <kbd class="shadow-xs border border-slate-300 rounded bg-slate-100 px-2 py-1 text-[11px] text-slate-700 font-bold font-mono dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">{{ isMac ? 'Shift (⇧)' : 'Shift' }}</kbd>
               <span class="text-slate-400">+</span>
               <kbd class="shadow-xs border border-[#646cff]/40 rounded bg-[#646cff]/10 px-2 py-1 text-[11px] text-[#646cff] font-bold font-mono dark:border-[#646cff]/50 dark:bg-[#646cff]/20 dark:text-[#818cf8]">S</kbd>
             </div>

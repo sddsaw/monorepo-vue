@@ -1,4 +1,5 @@
 import type { LazyStore } from '@tauri-apps/plugin-store'
+import { logger } from '../../plugins/logger'
 import { isTauri } from '../../plugins/tauri'
 
 const STORE_FILENAME = 'settings.json'
@@ -25,7 +26,9 @@ function scheduleStoreSave(store: LazyStore): void {
   }
   saveTimer = setTimeout(() => {
     saveTimer = null
-    void store.save()
+    store.save().catch((err) => {
+      logger.warn('持久化 Store 写盘失败', { error: String(err) })
+    })
   }, 120)
 }
 

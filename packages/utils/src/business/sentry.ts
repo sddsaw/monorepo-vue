@@ -13,6 +13,10 @@ export interface SentryOptions {
   release?: string
   /** 是否启用 Session Replay 录屏功能 (默认: false) */
   enableReplay?: boolean
+  /** Session Replay 是否脱敏所有文本 (默认: true，遵循默认隐私安全原则) */
+  maskAllText?: boolean
+  /** Session Replay 是否屏蔽所有媒体元素 (默认: true，遵循默认隐私安全原则) */
+  blockAllMedia?: boolean
   /** 额外的 Sentry 官方初始化配置项 */
   sentryConfig?: Partial<Parameters<typeof SentryType.init>[0]>
 }
@@ -24,7 +28,15 @@ export interface SentryOptions {
  * @param options 配置参数
  */
 export async function initSentry(app: App, router: Router, options: SentryOptions) {
-  const { dsn, environment, release, enableReplay, sentryConfig } = options
+  const {
+    dsn,
+    environment,
+    release,
+    enableReplay = false,
+    maskAllText = true,
+    blockAllMedia = true,
+    sentryConfig,
+  } = options
 
   // 1. 无 DSN 或处于本地开发环境，则不启用监控，彻底不加载 Sentry SDK
   if (!dsn || ['local', 'development'].includes(environment)) {
@@ -39,7 +51,7 @@ export async function initSentry(app: App, router: Router, options: SentryOption
     // 3. 组装插件列表
     const integrations = [
       router ? Sentry.browserTracingIntegration({ router }) : undefined,
-      enableReplay ? Sentry.replayIntegration({ maskAllText: false, blockAllMedia: false }) : undefined,
+      enableReplay ? Sentry.replayIntegration({ maskAllText, blockAllMedia }) : undefined,
     ].filter((i): i is NonNullable<typeof i> => !!i)
 
     // 4. 开启 Sentry 监控

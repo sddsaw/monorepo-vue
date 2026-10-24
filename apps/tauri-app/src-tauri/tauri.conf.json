@@ -26,7 +26,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: https: data:; font-src 'self' data:; connect-src ipc: http://ipc.localhost tauri: https:; media-src 'self'"
+      "csp": "default-src 'self' tauri: http://tauri.localhost https://tauri.localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: http://asset.localhost https://asset.localhost data: blob: https://soybeanjs.cn https://*.githubusercontent.com; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost tauri: http://tauri.localhost https://tauri.localhost https://mock.apifox.cn https://github.com https://*.githubusercontent.com http://localhost:* ws://localhost:*; media-src 'self' data: blob:"
     }
   },
   "bundle": {

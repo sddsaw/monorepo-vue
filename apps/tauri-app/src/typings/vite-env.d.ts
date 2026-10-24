@@ -122,6 +122,8 @@ declare namespace Env {
     readonly VITE_UMAMI_WEBSITE_ID?: string
     /** Umami 统计脚本 URL */
     readonly VITE_UMAMI_SCRIPT_URL?: string
+    /** Apifox Mock 鉴权 Token */
+    readonly VITE_APIFOX_TOKEN?: string
   }
 }
 

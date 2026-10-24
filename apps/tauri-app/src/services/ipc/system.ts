@@ -1,6 +1,37 @@
 import { logger } from '../../plugins/logger'
 import { isTauri } from '../../plugins/tauri'
 
+export type IpcErrorCode = 'WINDOW_ERROR' | 'IO_ERROR' | 'URL_ERROR' | 'CUSTOM_ERROR'
+
+export interface IpcError {
+  code: IpcErrorCode
+  message: string
+}
+
+export function isIpcError(err: unknown): err is IpcError {
+  return (
+    typeof err === 'object'
+    && err !== null
+    && 'code' in err
+    && 'message' in err
+    && typeof (err as IpcError).code === 'string'
+    && typeof (err as IpcError).message === 'string'
+  )
+}
+
+/**
+ * 格式化 IPC 异常或通用异常为可读文本
+ */
+export function formatIpcError(err: unknown): string {
+  if (isIpcError(err)) {
+    return `[${err.code}] ${err.message}`
+  }
+  if (err instanceof Error) {
+    return err.message
+  }
+  return String(err)
+}
+
 export interface SystemInfo {
   os: string
   arch: string
@@ -54,4 +85,16 @@ export async function openLogDir(): Promise<void> {
   }
   const { invoke } = await import('@tauri-apps/api/core')
   await invoke('open_log_dir')
+}
+
+/**
+ * 重启桌面应用程序
+ */
+export async function restartApp(): Promise<void> {
+  if (!isTauri()) {
+    window.location.reload()
+    return
+  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  await invoke('restart_app')
 }

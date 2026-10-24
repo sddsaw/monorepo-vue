@@ -55,6 +55,8 @@ interface Props {
   isDirectoryDnd?: boolean
   /** OBS 配置 */
   obsConfig?: Partial<OBSConfig>
+  /** 自定义上传适配器函数（若提供则优先于默认 OBS 上传器，实现与特定云厂商解耦） */
+  customUploader?: (file: File, onProgress?: (progress: number) => void) => Promise<{ url: string, key?: string }>
   /** 上传前的钩子 */
   beforeUpload?: (file: File) => boolean | Promise<boolean>
   /** 是否自动上传到 OBS（true=自动上传，false=只选择文件并通过事件传出） */
@@ -87,6 +89,7 @@ interface Emits {
 // 4. 依赖注入
 const uploadProvider = inject<{
   fetchConvertMovToMp4?: (formData: FormData) => Promise<{ error?: any, data: Blob }>
+  customUploader?: (file: File, onProgress?: (progress: number) => void) => Promise<{ url: string, key?: string }>
 }>('uploadProvider', {})
 
 const NFormItem = inject<FormItemInjection | null>('n-form-item', null)
@@ -235,8 +238,7 @@ async function handleBeforeUpload(data: {
       file.file = croppedFile
       file.thumbnailUrl = URL.createObjectURL(croppedFile)
     }
-    catch (error) {
-      console.error('图片裁剪失败:', error)
+    catch {
       message.error('图片处理失败，请重试')
       return false
     }
@@ -265,14 +267,18 @@ async function handleBeforeUpload(data: {
   return true
 }
 
-// 火山引擎 TOS 上传函数
+// 文件上传调度函数（优先使用 props.customUploader 或 uploadProvider.customUploader，回退至默认 OBS 上传器）
 async function uploadToOBS(
   file: File,
   onProgress?: (progress: number) => void,
 ): Promise<{
   url: string
-  key: string
+  key?: string
 }> {
+  const customFn = props.customUploader || uploadProvider?.customUploader
+  if (customFn) {
+    return customFn(file, onProgress)
+  }
   return uploader.value.upload({
     file,
     onProgress,

@@ -51,6 +51,7 @@ export function trackEvent(eventName: string, eventData?: UmamiEventPayload) {
   }
   else if (import.meta.env.DEV) {
     // 开发环境下输出友好的提示日志，便于调试埋点逻辑
+    // eslint-disable-next-line no-console
     console.log(`[Umami Analytics] 📊 Event Tracked: "${eventName}"`, eventData ?? '')
   }
 }
@@ -76,6 +77,7 @@ export function trackPageView(url: string, referrer?: string, websiteId?: string
     })
   }
   else if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console
     console.log(`[Umami Analytics] 🖥️ PageView Tracked: "${url}" (Referrer: "${referrer ?? 'Direct'}")`)
   }
 }
@@ -83,6 +85,8 @@ export function trackPageView(url: string, referrer?: string, websiteId?: string
 /**
  * 初始化 Umami 统计脚本 (仅在生产环境下动态挂载)
  * @param options 初始化选项
+ * @param options.websiteId 网站 ID
+ * @param options.scriptUrl 统计脚本 URL (默认: 'https://cloud.umami.is/script.js')
  */
 export function initUmami(options: {
   /** 网站 ID */
