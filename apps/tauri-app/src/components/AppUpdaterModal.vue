@@ -40,8 +40,14 @@ async function handleStartUpdate() {
       downloadProgress.value = p
     })
   }
-  catch {
+  catch (err: unknown) {
     downloading.value = false
+    updateInfo.value = {
+      ...updateInfo.value,
+      hasUpdate: false,
+      status: 'error',
+      errorMessage: err instanceof Error ? err.message : String(err),
+    }
   }
 }
 

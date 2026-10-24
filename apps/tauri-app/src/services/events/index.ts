@@ -4,11 +4,11 @@ import { isTauri } from '../../plugins/tauri'
 
 let webBroadcastChannel: BroadcastChannel | null = null
 
-function getWebBroadcastChannel(): BroadcastChannel {
+function getWebBroadcastChannel(): BroadcastChannel | null {
   if (!webBroadcastChannel && typeof BroadcastChannel !== 'undefined') {
     webBroadcastChannel = new BroadcastChannel('soybean_desktop_events')
   }
-  return webBroadcastChannel!
+  return webBroadcastChannel
 }
 
 /**
@@ -43,20 +43,22 @@ export function useAppEventListener<K extends AppEventName>(
   let unlistenFn: (() => void) | null = null
 
   if (isTauri()) {
-    import('@tauri-apps/api/event').then(({ listen }) => {
-      if (isDisposed)
-        return
-      listen<AppEventPayloads[K]>(eventName, (event) => {
-        handler(event.payload)
-      }).then((dispose) => {
-        if (isDisposed) {
-          dispose()
-        }
-        else {
-          unlistenFn = dispose
-        }
+    import('@tauri-apps/api/event')
+      .then(({ listen }) => {
+        if (isDisposed)
+          return
+        return listen<AppEventPayloads[K]>(eventName, (event) => {
+          handler(event.payload)
+        }).then((dispose) => {
+          if (isDisposed) {
+            dispose()
+          }
+          else {
+            unlistenFn = dispose
+          }
+        })
       })
-    })
+      .catch(() => {})
   }
   else {
     const channel = getWebBroadcastChannel()

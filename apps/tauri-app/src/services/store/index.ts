@@ -1,17 +1,32 @@
+import type { LazyStore } from '@tauri-apps/plugin-store'
 import { isTauri } from '../../plugins/tauri'
 
 const STORE_FILENAME = 'settings.json'
 
-let storePromise: Promise<any> | null = null
+let storePromise: Promise<LazyStore> | null = null
+let saveTimer: ReturnType<typeof setTimeout> | null = null
 
-async function getTauriStore() {
+async function getTauriStore(): Promise<LazyStore> {
   if (!storePromise) {
     storePromise = (async () => {
       const { LazyStore } = await import('@tauri-apps/plugin-store')
       return new LazyStore(STORE_FILENAME)
-    })()
+    })().catch((err) => {
+      storePromise = null
+      throw err
+    })
   }
   return storePromise
+}
+
+function scheduleStoreSave(store: LazyStore): void {
+  if (saveTimer) {
+    clearTimeout(saveTimer)
+  }
+  saveTimer = setTimeout(() => {
+    saveTimer = null
+    void store.save()
+  }, 120)
 }
 
 /**
@@ -45,7 +60,7 @@ export async function setStoreValue<T>(key: string, value: T): Promise<void> {
   if (isTauri()) {
     const store = await getTauriStore()
     await store.set(key, value)
-    await store.save()
+    scheduleStoreSave(store)
     return
   }
 
@@ -59,7 +74,7 @@ export async function deleteStoreValue(key: string): Promise<void> {
   if (isTauri()) {
     const store = await getTauriStore()
     await store.delete(key)
-    await store.save()
+    scheduleStoreSave(store)
     return
   }
 
