@@ -16,9 +16,11 @@ declare module 'vue' {
     AppUpdaterModal: typeof import('./../components/AppUpdaterModal.vue')['default']
     AuthOrity: typeof import('./../components/common/AuthOrity/index.vue')['default']
     ButtonIcon: typeof import('@sa/components/basic/ButtonIcon/index.vue')['default']
+    ComponentErrorBoundary: typeof import('./../components/common/ComponentErrorBoundary.vue')['default']
     ContinuityEditor: typeof import('./../components/business/test-flow/ContinuityEditor.vue')['default']
     DarkModeContainer: typeof import('@sa/components/basic/DarkModeContainer/index.vue')['default']
     ExceptionBase: typeof import('@sa/components/business/ExceptionBase/index.vue')['default']
+    FallbackJsonView: typeof import('./../components/common/FallbackJsonView.vue')['default']
     FeatureCard: typeof import('./../components/FeatureCard.vue')['default']
     FullScreen: typeof import('@sa/components/basic/FullScreen/index.vue')['default']
     IconAntDesignEnterOutlined: typeof import('~icons/ant-design/enter-outlined')['default']
@@ -81,6 +83,7 @@ declare module 'vue' {
     SvgIcon: typeof import('@sa/components/basic/SvgIcon/index.vue')['default']
     SystemLogo: typeof import('@sa/components/basic/SystemLogo/index.vue')['default']
     ThemeSchemaSwitch: typeof import('@sa/components/business/ThemeSchemaSwitch/index.vue')['default']
+    TpBreadcrumb: typeof import('./../components/common/TpBreadcrumb.vue')['default']
     WaveBg: typeof import('@sa/components/basic/WaveBg/index.vue')['default']
   }
 }
@@ -91,9 +94,11 @@ declare global {
   const AppUpdaterModal: typeof import('./../components/AppUpdaterModal.vue')['default']
   const AuthOrity: typeof import('./../components/common/AuthOrity/index.vue')['default']
   const ButtonIcon: typeof import('@sa/components/basic/ButtonIcon/index.vue')['default']
+  const ComponentErrorBoundary: typeof import('./../components/common/ComponentErrorBoundary.vue')['default']
   const ContinuityEditor: typeof import('./../components/business/test-flow/ContinuityEditor.vue')['default']
   const DarkModeContainer: typeof import('@sa/components/basic/DarkModeContainer/index.vue')['default']
   const ExceptionBase: typeof import('@sa/components/business/ExceptionBase/index.vue')['default']
+  const FallbackJsonView: typeof import('./../components/common/FallbackJsonView.vue')['default']
   const FeatureCard: typeof import('./../components/FeatureCard.vue')['default']
   const FullScreen: typeof import('@sa/components/basic/FullScreen/index.vue')['default']
   const IconAntDesignEnterOutlined: typeof import('~icons/ant-design/enter-outlined')['default']
@@ -156,5 +161,6 @@ declare global {
   const SvgIcon: typeof import('@sa/components/basic/SvgIcon/index.vue')['default']
   const SystemLogo: typeof import('@sa/components/basic/SystemLogo/index.vue')['default']
   const ThemeSchemaSwitch: typeof import('@sa/components/business/ThemeSchemaSwitch/index.vue')['default']
+  const TpBreadcrumb: typeof import('./../components/common/TpBreadcrumb.vue')['default']
   const WaveBg: typeof import('@sa/components/basic/WaveBg/index.vue')['default']
 }
