@@ -46,16 +46,25 @@ const componentMap = {
 // 缓存解析后的选项列表
 const localOptions = ref<OptionItem[]>([])
 
-// 独立的 watchEffect 用于解析每个项 of options 配置
-watchEffect(async () => {
+// 独立的 watchEffect 用于解析每个项的 options 配置，增加竞态过期清理守卫
+let optionReqId = 0
+watchEffect(async (onCleanup) => {
+  let cancelled = false
+  onCleanup(() => {
+    cancelled = true
+  })
+
   const optConfig = props.item.options
   if (Array.isArray(optConfig)) {
     localOptions.value = optConfig
   }
   else if (typeof optConfig === 'function') {
+    const reqId = ++optionReqId
     try {
       const res = await optConfig(props.formModel)
-      localOptions.value = res
+      if (!cancelled && reqId === optionReqId) {
+        localOptions.value = res
+      }
     }
     catch (err) {
       console.error(`Failed to load options for field: ${props.item.value}`, err)

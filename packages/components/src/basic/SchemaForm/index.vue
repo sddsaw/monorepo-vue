@@ -61,17 +61,17 @@ const formAttrs = computed(() => {
   return rest
 })
 
-// 监听配置项 options，自动初始化默认值且不覆盖已有内容
+// 监听配置项字段变化，自动初始化默认值且不覆盖已有内容（避免对含函数/VNode的 options 进行 deep 深度监听）
 watch(
-  () => props.options,
-  (newOptions) => {
-    newOptions.forEach((item) => {
+  () => props.options.map(item => item.value),
+  () => {
+    props.options.forEach((item) => {
       if (item.value && model.value[item.value] === undefined) {
         model.value[item.value] = item.defaultValue !== undefined ? item.defaultValue : null
       }
     })
   },
-  { immediate: true, deep: true },
+  { immediate: true },
 )
 
 /** 表单校验方法 */

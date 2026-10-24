@@ -40,8 +40,8 @@ const transition = computed(() => (props.useEasing ? TransitionPresets[props.tra
 
 const outputValue = useTransition(source, {
   disabled: false,
-  duration: props.duration,
-  transition: transition.value,
+  duration: () => props.duration,
+  transition,
 })
 
 const value = computed(() => formatValue(outputValue.value))
