@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core'
 import { computed } from 'vue'
+import LangSwitch from '@/components/common/lang-switch.vue'
 import { GLOBAL_HEADER_MENU_ID } from '@/constants/app'
 import { isTauri } from '@/plugins/tauri'
 import { useAppStore } from '@/store/modules/app'
@@ -54,7 +55,12 @@ const isMac = computed(() => {
     <div class="h-full flex-y-center justify-end" data-tauri-drag-region="false">
       <GlobalSearch v-if="themeStore.header.globalSearch.visible" />
       <FullScreen v-if="!appStore.isMobile" :full="isFullscreen" @click="toggle" />
-
+      <LangSwitch
+        v-if="themeStore.header.multilingual.visible"
+        :lang="appStore.locale"
+        :lang-options="appStore.localeOptions"
+        @change-lang="appStore.changeLocale"
+      />
       <ThemeSchemaSwitch
         :theme-schema="themeStore.themeScheme"
         :is-dark="themeStore.darkMode"

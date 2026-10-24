@@ -1,6 +1,7 @@
 import type { ElegantConstRoute, LastLevelRouteKey, RouteKey, RouteMap } from '@elegant-router/types'
 import type { RouteLocationNormalizedLoaded, RouteRecordRaw } from 'vue-router'
 import { useSvgIcon } from '@sa/components/hooks/icon'
+import { $t } from '@/locales'
 
 /**
  * Filter auth routes by roles
@@ -91,6 +92,36 @@ export function getGlobalMenusByAuthRoutes(routes: ElegantConstRoute[]) {
 }
 
 /**
+ * Update locale of global menus
+ *
+ * @param menus
+ */
+export function updateLocaleOfGlobalMenus(menus: App.Global.Menu[]) {
+  const result: App.Global.Menu[] = []
+
+  menus.forEach((menu) => {
+    const { i18nKey, label, children, key } = menu
+
+    const resolvedKey = (i18nKey || (key ? `route.${key}` : '')) as App.I18n.I18nKey
+    const translated = resolvedKey ? $t(resolvedKey) : ''
+    const newLabel = (translated && translated !== resolvedKey) ? translated : label
+
+    const newMenu: App.Global.Menu = {
+      ...menu,
+      label: newLabel,
+    }
+
+    if (children?.length) {
+      newMenu.children = updateLocaleOfGlobalMenus(children)
+    }
+
+    result.push(newMenu)
+  })
+
+  return result
+}
+
+/**
  * Get global menu by route
  *
  * @param route
@@ -99,13 +130,16 @@ function getGlobalMenuByBaseRoute(route: RouteLocationNormalizedLoaded | Elegant
   const { SvgIconVNode } = useSvgIcon()
 
   const { name, path } = route
-  const { title, icon = import.meta.env.VITE_MENU_ICON, localIcon, iconFontSize } = route.meta ?? {}
+  const { title, i18nKey, icon = import.meta.env.VITE_MENU_ICON, localIcon, iconFontSize } = route.meta ?? {}
 
-  const label = title!
+  const resolvedI18nKey = (i18nKey || (name ? `route.${String(name)}` : undefined)) as App.I18n.I18nKey | undefined
+  const translated = resolvedI18nKey ? $t(resolvedI18nKey) : ''
+  const label = (translated && translated !== resolvedI18nKey) ? translated : title!
 
   const menu: App.Global.Menu = {
     key: name as string,
     label,
+    i18nKey: resolvedI18nKey,
     routeKey: name as RouteKey,
     routePath: path as RouteMap[RouteKey],
     icon: SvgIconVNode({ icon, localIcon, fontSize: iconFontSize || 20 }),

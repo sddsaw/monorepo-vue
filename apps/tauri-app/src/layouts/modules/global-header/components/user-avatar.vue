@@ -3,6 +3,7 @@ import type { VNode } from 'vue'
 import { useSvgIcon } from '@sa/components/hooks/icon'
 import { computed } from 'vue'
 import { useRouterPush } from '@/hooks/common/router'
+import { $t } from '@/locales'
 import { useAuthStore } from '@/store/modules/auth'
 
 defineOptions({
@@ -33,7 +34,7 @@ type DropdownOption
 const options = computed(() => {
   const opts: DropdownOption[] = [
     {
-      label: '退出登录',
+      label: $t('common.logout'),
       key: 'logout',
       icon: SvgIconVNode({ icon: 'ph:sign-out', fontSize: 18 }),
     },
@@ -44,10 +45,10 @@ const options = computed(() => {
 
 function logout() {
   window.$dialog?.info({
-    title: '提示',
-    content: '确认退出登录吗？',
-    positiveText: '确认',
-    negativeText: '取消',
+    title: $t('common.tip'),
+    content: $t('common.logoutConfirm'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: () => {
       authStore.resetStore()
     },
@@ -67,7 +68,7 @@ function handleDropdown(key: DropdownKey) {
 
 <template>
   <NButton v-if="!authStore.isLogin" quaternary @click="loginOrRegister">
-    {{ '登录 / 注册' }}
+    {{ $t('page.login.common.loginOrRegister') }}
   </NButton>
   <NDropdown v-else placement="bottom" trigger="click" :options="options" @select="handleDropdown">
     <div>

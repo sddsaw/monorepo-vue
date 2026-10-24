@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
 import AppearanceSettings from './modules/appearance/index.vue'
 import ConfigOperation from './modules/config-operation.vue'
@@ -28,12 +29,12 @@ const drawerWidth = computed(() => {
 
 <template>
   <NDrawer v-model:show="appStore.themeDrawerVisible" display-directive="show" :width="drawerWidth">
-    <NDrawerContent title="主题配置" :native-scrollbar="false" closable>
+    <NDrawerContent :title="$t('theme.themeDrawerTitle')" :native-scrollbar="false" closable>
       <NTabs v-model:value="activeTab" type="segment" size="medium" class="mb-16px">
-        <NTab name="appearance" tab="外观" />
-        <NTab name="layout" tab="布局" />
-        <NTab name="general" tab="通用" />
-        <NTab name="preset" tab="预设" />
+        <NTab name="appearance" :tab="$t('theme.tabs.appearance')" />
+        <NTab name="layout" :tab="$t('theme.tabs.layout')" />
+        <NTab name="general" :tab="$t('theme.tabs.general')" />
+        <NTab name="preset" :tab="$t('theme.tabs.preset')" />
       </NTabs>
 
       <div class="min-h-400px">

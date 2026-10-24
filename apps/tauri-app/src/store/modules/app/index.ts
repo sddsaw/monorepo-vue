@@ -1,16 +1,21 @@
 import { useBoolean } from '@sa/hooks'
-import { breakpointsTailwind, useBreakpoints, useEventListener } from '@vueuse/core'
+import { breakpointsTailwind, useBreakpoints, useEventListener, useTitle } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { effectScope, nextTick, onScopeDispose, ref, watch } from 'vue'
 import { SetupStoreId } from '@/enum'
+import { $t, setDayjsLocale, setLocale } from '@/locales'
 import { isTauri } from '@/plugins/tauri'
+import { router } from '@/router'
+import { emitAppEvent, useAppEventListener } from '@/services/events'
 import { localStg } from '@/utils/storage'
 import { useRouteStore } from '../route'
+import { useTabStore } from '../tab'
 import { useThemeStore } from '../theme'
 
 export const useAppStore = defineStore(SetupStoreId.App, () => {
   const themeStore = useThemeStore()
   const routeStore = useRouteStore()
+  const tabStore = useTabStore()
   const scope = effectScope()
   const breakpoints = useBreakpoints(breakpointsTailwind)
   const { bool: themeDrawerVisible, setTrue: openThemeDrawer, setFalse: closeThemeDrawer } = useBoolean()
@@ -33,8 +38,54 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
   /** Is mobile layout */
   const isMobile = breakpoints.smaller('sm')
 
-  /** locale - fixed to zh-CN */
-  const locale = ref<string>('zh-CN')
+  const locale = ref<App.I18n.LangType>(localStg.get('lang') || 'zh-CN')
+
+  const localeOptions: App.I18n.LangOption[] = [
+    {
+      label: '中文',
+      key: 'zh-CN',
+    },
+    {
+      label: 'English',
+      key: 'en-US',
+    },
+  ]
+
+  function changeLocale(lang: App.I18n.LangType) {
+    if (locale.value === lang) {
+      return
+    }
+    locale.value = lang
+    setLocale(lang)
+    localStg.set('lang', lang)
+    emitAppEvent('locale:change', lang)
+  }
+
+  /** Update document title by locale */
+  function updateDocumentTitleByLocale() {
+    const { name, meta } = router.currentRoute.value
+    const { i18nKey, title: routeTitle } = meta
+
+    const resolvedKey = (i18nKey || (name ? `route.${String(name)}` : '')) as App.I18n.I18nKey
+    const translated = resolvedKey ? $t(resolvedKey) : ''
+    const documentTitle = (translated && translated !== resolvedKey) ? translated : routeTitle
+
+    if (documentTitle) {
+      useTitle(documentTitle)
+      if (inTauri) {
+        import('@tauri-apps/api/window')
+          .then(({ getCurrentWindow }) => getCurrentWindow().setTitle(documentTitle))
+          .catch(() => {})
+      }
+    }
+  }
+
+  function init() {
+    setLocale(locale.value)
+    setDayjsLocale(locale.value)
+  }
+
+  init()
 
   /**
    * Reload page
@@ -86,6 +137,29 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
       },
       { immediate: true },
     )
+
+    // watch locale
+    watch(locale, () => {
+      // update document title by locale
+      updateDocumentTitleByLocale()
+
+      // update global menus by locale
+      routeStore.updateGlobalMenusByLocale()
+
+      // update tabs by locale
+      tabStore.updateTabsByLocale()
+
+      // set dayjs locale
+      setDayjsLocale(locale.value)
+    })
+
+    // 监听跨窗口语言切换事件（同步子窗口语言状态）
+    useAppEventListener('locale:change', (newLang) => {
+      if (locale.value !== newLang) {
+        locale.value = newLang
+        setLocale(newLang)
+      }
+    })
   })
 
   // cache mixSiderFixed
@@ -106,6 +180,9 @@ export const useAppStore = defineStore(SetupStoreId.App, () => {
     reloadPage,
     fullContent,
     locale,
+    localeOptions,
+    changeLocale,
+    updateDocumentTitleByLocale,
     themeDrawerVisible,
     openThemeDrawer,
     closeThemeDrawer,

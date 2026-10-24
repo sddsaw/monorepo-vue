@@ -1,5 +1,6 @@
 import type { LastLevelRouteKey, RouteKey, RouteMap } from '@elegant-router/types'
 import type { Router } from 'vue-router'
+import { $t } from '@/locales'
 import { getRoutePath } from '@/router/elegant/transform'
 
 /**
@@ -61,12 +62,14 @@ export function getTabIdByRoute(route: App.Global.TabRoute) {
 export function getTabByRoute(route: App.Global.TabRoute) {
   const { name, path, fullPath = path, meta } = route
 
-  const { title, fixedIndexInTab } = meta
+  const { title, i18nKey, fixedIndexInTab } = meta
 
   // Get icon and localIcon from getRouteIcons function
   const { icon, localIcon } = getRouteIcons(route)
 
-  const label = title
+  const resolvedI18nKey = (i18nKey || (name ? `route.${String(name)}` : undefined)) as App.I18n.I18nKey | undefined
+  const translated = resolvedI18nKey ? $t(resolvedI18nKey) : ''
+  const label = (translated && translated !== resolvedI18nKey) ? translated : title
 
   const tab: App.Global.Tab = {
     id: getTabIdByRoute(route),
@@ -77,6 +80,7 @@ export function getTabByRoute(route: App.Global.TabRoute) {
     fixedIndex: fixedIndexInTab,
     icon,
     localIcon,
+    i18nKey: resolvedI18nKey,
   }
 
   return tab
@@ -113,7 +117,9 @@ export function getRouteIcons(route: App.Global.TabRoute) {
  */
 export function getDefaultHomeTab(router: Router, homeRouteName: LastLevelRouteKey) {
   const homeRoutePath = getRoutePath(homeRouteName)
-  const homeLabel = '首页'
+  const i18nKey = `route.${homeRouteName}` as App.I18n.I18nKey
+  const translated = $t(i18nKey)
+  const homeLabel = translated !== i18nKey ? translated : $t('route.home')
 
   let homeTab: App.Global.Tab = {
     id: getRoutePath(homeRouteName),
@@ -121,6 +127,7 @@ export function getDefaultHomeTab(router: Router, homeRouteName: LastLevelRouteK
     routeKey: homeRouteName,
     routePath: homeRoutePath,
     fullPath: homeRoutePath,
+    i18nKey,
   }
 
   const routes = router.getRoutes()
@@ -220,6 +227,31 @@ function updateTabsLabel(tabs: App.Global.Tab[]) {
   }))
 
   return updated
+}
+
+/**
+ * Update tab by i18n key
+ *
+ * @param tab
+ */
+export function updateTabByI18nKey(tab: App.Global.Tab) {
+  const { i18nKey, label, routeKey } = tab
+  const resolvedKey = (i18nKey || (routeKey ? `route.${routeKey}` : '')) as App.I18n.I18nKey
+  const translated = resolvedKey ? $t(resolvedKey) : ''
+
+  return {
+    ...tab,
+    label: (translated && translated !== resolvedKey) ? translated : label,
+  }
+}
+
+/**
+ * Update tabs by i18n key
+ *
+ * @param tabs
+ */
+export function updateTabsByI18nKey(tabs: App.Global.Tab[]) {
+  return tabs.map(tab => updateTabByI18nKey(tab))
 }
 
 /**

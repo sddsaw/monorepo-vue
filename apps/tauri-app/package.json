@@ -21,6 +21,7 @@
     "@sa/components": "workspace:*",
     "@sa/directives": "workspace:*",
     "@sa/hooks": "workspace:*",
+    "@sa/locales": "workspace:*",
     "@sa/materials": "workspace:*",
     "@sa/utils": "workspace:*",
     "@tauri-apps/api": "^2.2.0",
@@ -46,6 +47,7 @@
     "tailwind-merge": "catalog:",
     "vue": "catalog:",
     "vue-draggable-plus": "catalog:",
+    "vue-i18n": "catalog:",
     "vue-router": "catalog:"
   },
   "devDependencies": {

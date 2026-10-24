@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import SettingItem from '../../../components/setting-item.vue'
 
@@ -10,9 +11,13 @@ const themeStore = useThemeStore()
 </script>
 
 <template>
-  <NDivider>{{ '通用设置' }}</NDivider>
+  <NDivider>{{ $t('theme.general.title') }}</NDivider>
 
-  <SettingItem label="显示全局搜索按钮">
+  <SettingItem :label="$t('theme.general.multilingual.visible')">
+    <NSwitch v-model:value="themeStore.header.multilingual.visible" />
+  </SettingItem>
+
+  <SettingItem :label="$t('theme.general.globalSearch.visible')">
     <NSwitch v-model:value="themeStore.header.globalSearch.visible" />
   </SettingItem>
 </template>

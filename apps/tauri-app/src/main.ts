@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import { setupI18n } from './locales'
 import {
   setupAppVersionNotification,
   setupDayjs,
@@ -11,6 +12,7 @@ import {
 } from './plugins'
 import { router, setupRouter } from './router'
 import { setupStore } from './store'
+import { localStg } from './utils/storage'
 import './plugins/assets'
 
 async function setupApp() {
@@ -21,6 +23,7 @@ async function setupApp() {
 
   const app = createApp(App)
   setupStore(app)
+  setupI18n(app, localStg.get('lang') || 'zh-CN')
   await setupRouter(app)
   setupAppVersionNotification()
   app.mount('#app')

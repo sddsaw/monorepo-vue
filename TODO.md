@@ -22,10 +22,9 @@
   - [x] **决策**：保留 `axios`。经排查，`@sa/axios` 正在被 `apps/*` 广泛使用，而 `@sa/alova` 未被任何地方引用
   - [x] 清理/删除无用的 `packages/alova` 目录以简化代码库
 
-- [x] **6. 彻底去除多语言功能 (i18n)**
-  - [x] 全局搜索并替换 `$t('...')` 和 `t('...')` 为硬编码中文
-  - [x] 删除 `vue-i18n` 依赖及相关的 `locales` 语言包文件
-  - [x] 简化路由 meta 中与多语言相关的配置
+- [x] **6. 规范化引入多语言能力 (i18n)**
+  - [x] 抽离 Monorepo 共享包 `packages/locales` (`@sa/locales`)，统一沉淀中英文语言包、Naive UI/Dayjs 本地化映射与 i18n 响应式实例
+  - [x] `apps/admin` 与 `apps/tauri-app` 全面接入多语言体系（包含顶栏 LangSwitch 切换组件、响应式应用标题/菜单/标签栏与主题配置抽屉开关）
 
 - [ ] **7. 定期更新 package 依赖与引入自动化更新机器人**
   - [x] 根目录已配置 `pnpm update-pkg` (基于 `@sa/scripts` 自带的更新命令)
@@ -48,8 +47,8 @@
 - [x] **10. 开启构建体积可视化分析 (bundle visualizer)**
   - [x] 在 `internal/vite-config` 中配置 `rollup-plugin-visualizer`，方便排查各个子应用的构建体积瓶颈
 
-- [ ] **11. 开发 i18n 自动化移除脚本**
-  - [ ] 编写一个简单的 Node.js 脚本（使用 AST 或正则），读取 `zh-CN.json`，将项目中的 `t('xxx')` 和 `$t('xxx')` 自动替换为对应的中文文本，避免繁琐的人工全局替换
+- [x] **11. 完善并落地 i18n 多语言体系**
+  - [x] 已抽离 `@sa/locales` 架构，在中英文多端落地语言包与响应式切换，不再需要自动化移除脚本
 
 - [x] **12. 优化 Turbo 缓存输入（inputs），缩短类型检查/Lint 时间**
   - [x] 在 [turbo.json](file:///Users/zhouenbo/soybean-admin/turbo.json) 中为 `build`、`typecheck` 和 `lint` 任务细化了 `inputs` 范围（限制为源码及相关配置文件），避免无关文件（如 Markdown、图片等）变动导致缓存失效，成功实现了 56ms~67ms 的 FULL TURBO 极速缓存响应速度

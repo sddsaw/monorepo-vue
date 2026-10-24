@@ -227,6 +227,8 @@ declare namespace App {
       icon?: () => VNode
       /** The menu children */
       children?: Menu[]
+      /** The menu i18n key */
+      i18nKey?: App.I18n.I18nKey | null
       /** Index signature for NaiveUI MenuOption compatibility */
       [key: string]: unknown
     }
@@ -283,6 +285,8 @@ declare namespace App {
        * Local icon
        */
       localIcon?: string
+      /** I18n key */
+      i18nKey?: App.I18n.I18nKey | null
     }
 
     /** Form rule */
@@ -290,14 +294,6 @@ declare namespace App {
 
     /** The global dropdown key */
     type DropdownKey = 'closeCurrent' | 'closeOther' | 'closeLeft' | 'closeRight' | 'closeAll' | 'pin' | 'unpin'
-  }
-
-  namespace Locale {
-    type LangType = 'zh-CN'
-
-    interface Translate {
-      (key: string, ...args: any[]): string
-    }
   }
 
   /** Service namespace */
