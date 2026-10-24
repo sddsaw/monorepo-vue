@@ -115,7 +115,9 @@ pub fn run() {
             commands::get_log_dir,
             commands::open_log_dir,
             commands::restart_app,
-            commands::open_new_window
+            commands::open_new_window,
+            commands::read_file_content,
+            commands::save_file_content
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
