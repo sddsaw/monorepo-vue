@@ -183,7 +183,8 @@ const routeMap: RouteMap = {
   "system_dict": "/system/dict",
   "system_menu": "/system/menu",
   "system_role": "/system/role",
-  "system_user": "/system/user"
+  "system_user": "/system/user",
+  "workbench": "/workbench"
 };
 
 /**

@@ -215,5 +215,13 @@ export const generatedRoutes: GeneratedRoute[] = [
         }
       }
     ]
+  },
+  {
+    name: 'workbench',
+    path: '/workbench',
+    component: 'layout.base$view.workbench',
+    meta: {
+      title: 'workbench'
+    }
   }
 ];

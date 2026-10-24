@@ -384,6 +384,9 @@ importers:
       defu:
         specifier: 'catalog:'
         version: 6.1.7
+      dockview-vue:
+        specifier: ^1.15.0
+        version: 1.17.2
       echarts:
         specifier: 'catalog:'
         version: 6.0.0
@@ -3342,6 +3345,12 @@ packages:
   diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
+  dockview-core@1.17.2:
+    resolution: {integrity: sha512-eHMVEo4ckOc+ieFm5gSM/vE0niGojNQP/9z6l5JqGNqCcxWWnvu6PRTuTYIg5XCENpk1XIa/El/uIOOtTaafUw==}
+
+  dockview-vue@1.17.2:
+    resolution: {integrity: sha512-0WfqRAfofEUGRRYDTES8YewAsjYwLHy0bhtFw7FgFjqw6zgnXgYBOIHCykSVUX31v3XDdqRM49LXllLqG7zTxw==}
 
   dom-serializer@0.2.2:
     resolution: {integrity: sha512-2/xPb3ORsQ42nHYiSunXkDjPLBaEj/xTwUO4B7XCZQTRk7EBtTOPaygh10YAAh2OI1Qrp6NWfpAhzswj0ydt9g==}
@@ -9721,6 +9730,12 @@ snapshots:
       dequal: 2.0.3
 
   diff-sequences@29.6.3: {}
+
+  dockview-core@1.17.2: {}
+
+  dockview-vue@1.17.2:
+    dependencies:
+      dockview-core: 1.17.2
 
   dom-serializer@0.2.2:
     dependencies:

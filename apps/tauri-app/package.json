@@ -39,6 +39,7 @@
     "clipboard": "catalog:",
     "dayjs": "catalog:",
     "defu": "catalog:",
+    "dockview-vue": "^1.15.0",
     "echarts": "catalog:",
     "json5": "catalog:",
     "naive-ui": "catalog:",

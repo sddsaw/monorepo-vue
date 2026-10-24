@@ -38,6 +38,7 @@ declare module "@elegant-router/types" {
     "system_menu": "/system/menu";
     "system_role": "/system/role";
     "system_user": "/system/user";
+    "workbench": "/workbench";
   };
 
   /**
@@ -80,6 +81,7 @@ declare module "@elegant-router/types" {
     | "monitor"
     | "sub-window"
     | "system"
+    | "workbench"
   >;
 
   /**
@@ -114,6 +116,7 @@ declare module "@elegant-router/types" {
     | "system_menu"
     | "system_role"
     | "system_user"
+    | "workbench"
   >;
 
   /**
