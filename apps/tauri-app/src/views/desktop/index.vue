@@ -25,6 +25,28 @@ const authStore = useAuthStore()
 const message = useMessage()
 const inTauri = appStore.inTauri
 
+/** 统一异步操作包装器，消除重复 try/catch/finally 样板代码 */
+async function runAsyncAction(
+  action: () => Promise<void>,
+  errorPrefix: string,
+  loadingRef?: { value: boolean },
+) {
+  try {
+    if (loadingRef) {
+      loadingRef.value = true
+    }
+    await action()
+  }
+  catch (err: unknown) {
+    message.error(`${errorPrefix}: ${err instanceof Error ? err.message : String(err)}`)
+  }
+  finally {
+    if (loadingRef) {
+      loadingRef.value = false
+    }
+  }
+}
+
 async function handleLogout() {
   await authStore.resetStore()
   message.info('已安全退出登录')
@@ -38,33 +60,17 @@ const loadingGreet = ref(false)
 const loadingSysInfo = ref(false)
 
 async function handleGreet() {
-  try {
-    loadingGreet.value = true
-    const res = await greet(inputName.value)
-    greetResult.value = res
+  await runAsyncAction(async () => {
+    greetResult.value = await greet(inputName.value)
     message.success('Rust IPC 调用成功')
-  }
-  catch (err: any) {
-    message.error(`IPC 调用异常: ${err}`)
-  }
-  finally {
-    loadingGreet.value = false
-  }
+  }, 'IPC 调用异常', loadingGreet)
 }
 
 async function handleGetSysInfo() {
-  try {
-    loadingSysInfo.value = true
-    const res = await getSystemInfo()
-    systemInfoResult.value = res
+  await runAsyncAction(async () => {
+    systemInfoResult.value = await getSystemInfo()
     message.success('系统信息获取成功')
-  }
-  catch (err: any) {
-    message.error(`获取系统信息异常: ${err}`)
-  }
-  finally {
-    loadingSysInfo.value = false
-  }
+  }, '获取系统信息异常', loadingSysInfo)
 }
 
 // 2. 原生持久化存储 (Tauri Store)
@@ -73,25 +79,26 @@ const storeText = ref('')
 const isStoreSaving = ref(false)
 
 onMounted(async () => {
-  const saved = await getStoreValue<string>(storeKey, '这是一个持久化存储在 AppData/settings.json 中的备忘笔记')
-  if (saved) {
-    storeText.value = saved
-  }
+  await runAsyncAction(async () => {
+    const saved = await getStoreValue<string>(storeKey, '这是一个持久化存储在 AppData/settings.json 中的备忘笔记')
+    if (saved !== undefined && saved !== null) {
+      storeText.value = saved
+    }
+  }, '读取持久化配置失败')
 })
 
 async function handleSaveStore() {
-  isStoreSaving.value = true
-  try {
+  await runAsyncAction(async () => {
     await setStoreValue(storeKey, storeText.value)
     logger.info('持久化配置更新成功', { key: storeKey, value: storeText.value })
     message.success('配置已写入本地 settings.json')
-  }
-  catch (err) {
-    message.error(`持久化保存失败: ${err}`)
-  }
-  finally {
-    isStoreSaving.value = false
-  }
+  }, '持久化保存失败', isStoreSaving)
+}
+
+async function handleOpenLogDir() {
+  await runAsyncAction(async () => {
+    await openLogDir()
+  }, '打开日志目录失败')
 }
 
 // 3. 原生统一日志中心
@@ -146,7 +153,7 @@ async function handleOpenDialog() {
     return
   }
 
-  try {
+  await runAsyncAction(async () => {
     const file = await openFileDialog({
       multiple: false,
       directory: false,
@@ -156,10 +163,7 @@ async function handleOpenDialog() {
       selectedFilePath.value = file
       message.success(`已选择文件: ${selectedFilePath.value}`)
     }
-  }
-  catch (err: any) {
-    message.error(`对话框异常: ${err}`)
-  }
+  }, '对话框异常')
 }
 
 async function handleAskDialog() {
@@ -168,7 +172,7 @@ async function handleAskDialog() {
     return
   }
 
-  try {
+  await runAsyncAction(async () => {
     const confirmed = await confirmDialog('确定要执行此核心系统操作吗？', {
       title: 'Soybean Desktop 确认',
       kind: 'info',
@@ -179,10 +183,7 @@ async function handleAskDialog() {
     else {
       message.warning('用户点击了【取消】')
     }
-  }
-  catch (err: any) {
-    message.error(`确认框异常: ${err}`)
-  }
+  }, '确认框异常')
 }
 
 // 6. Notification 系统通知
@@ -192,7 +193,7 @@ async function handleSendNotification() {
     return
   }
 
-  try {
+  await runAsyncAction(async () => {
     const sent = await sendDesktopNotification({
       title: 'Soybean Desktop',
       body: '🎉 桌面系统通知投递成功！原生通知中心交互正常。',
@@ -204,10 +205,7 @@ async function handleSendNotification() {
     else {
       message.warning('未获得系统通知权限')
     }
-  }
-  catch (err: any) {
-    message.error(`发送通知失败: ${err}`)
-  }
+  }, '发送通知失败')
 }
 
 // 7. 多窗口管理 (Multi-Window)
@@ -216,8 +214,7 @@ const loadingSubWin = ref(false)
 const loadingWebWin = ref(false)
 
 async function handleOpenSubWindow() {
-  try {
-    loadingSubWin.value = true
+  await runAsyncAction(async () => {
     await openNewWindow({
       label: 'sub-window',
       title: '子窗口 - 数据与通信面板',
@@ -227,34 +224,21 @@ async function handleOpenSubWindow() {
     })
     windowOpenStatus.value = '独立原生子窗口已就绪'
     message.success('原生子窗口已激活打开')
-  }
-  catch (err: any) {
-    message.error(`打开窗口失败: ${err}`)
-  }
-  finally {
-    loadingSubWin.value = false
-  }
+  }, '打开窗口失败', loadingSubWin)
 }
 
 async function handleOpenWebWindow() {
-  try {
-    loadingWebWin.value = true
+  await runAsyncAction(async () => {
     await openNewWindow({
       label: 'tauri-docs',
-      title: 'Tauri 官方开发文档窗口',
+      title: 'Tauri 官方开发文档',
       url: 'https://tauri.app',
       width: 980,
       height: 700,
     })
-    windowOpenStatus.value = '外部文档原生窗口已就绪'
-    message.success('文档原生窗口已激活打开')
-  }
-  catch (err: any) {
-    message.error(`打开外部网页窗口失败: ${err}`)
-  }
-  finally {
-    loadingWebWin.value = false
-  }
+    windowOpenStatus.value = '已在系统浏览器中打开文档'
+    message.success('已在系统默认浏览器中打开')
+  }, '打开外部链接失败', loadingWebWin)
 }
 </script>
 
@@ -336,7 +320,7 @@ async function handleOpenWebWindow() {
           </div>
 
           <!-- 打开日志文件夹 -->
-          <NButton size="small" secondary block @click="openLogDir">
+          <NButton size="small" secondary block @click="handleOpenLogDir">
             <template #icon>
               <SvgIcon icon="carbon:folder-open" class="text-amber-500" />
             </template>
@@ -547,7 +531,7 @@ async function handleOpenWebWindow() {
             <template #icon>
               <SvgIcon icon="carbon:launch" class="text-indigo-500" />
             </template>
-            在原生窗口中加载 Tauri 开发文档
+            在系统浏览器中打开 Tauri 开发文档
           </NButton>
 
           <div v-if="windowOpenStatus" class="border border-blue-500/15 rounded-lg bg-blue-500/8 p-2 text-center text-[11px] text-blue-600 font-medium dark:text-blue-300">

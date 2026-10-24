@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useMessage } from 'naive-ui'
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { isTauri } from '@/plugins/tauri'
 import { openFileDialog } from '@/services/ipc/dialog'
@@ -40,16 +40,17 @@ async function handleOpenFile() {
         message.success(`已选择文件: ${selected}`)
       }
     }
-    catch (err: any) {
-      message.error(`打开文件失败: ${err?.message || err}`)
+    catch (err: unknown) {
+      message.error(`打开文件失败: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
   else {
     // Web fallback
     const input = document.createElement('input')
     input.type = 'file'
-    input.onchange = (e: any) => {
-      const file = e.target.files?.[0]
+    input.onchange = (e: Event) => {
+      const target = e.target as HTMLInputElement | null
+      const file = target?.files?.[0]
       if (file) {
         message.success(`浏览器环境选择文件: ${file.name}`)
       }
@@ -70,8 +71,8 @@ async function handleOpenFolder() {
         message.success(`已打开工作区文件夹: ${selected}`)
       }
     }
-    catch (err: any) {
-      message.error(`打开文件夹失败: ${err?.message || err}`)
+    catch (err: unknown) {
+      message.error(`打开文件夹失败: ${err instanceof Error ? err.message : String(err)}`)
     }
   }
   else {
@@ -97,18 +98,31 @@ function handleCloneRepo() {
   showCloneModal.value = true
 }
 
+let cloneTimer: ReturnType<typeof setTimeout> | null = null
+
 function confirmClone() {
   if (!repoUrl.value.trim()) {
     message.warning('请输入 Git 仓库地址')
     return
   }
   cloneLoading.value = true
-  setTimeout(() => {
+  if (cloneTimer) {
+    clearTimeout(cloneTimer)
+  }
+  cloneTimer = setTimeout(() => {
+    cloneTimer = null
     cloneLoading.value = false
     showCloneModal.value = false
     message.success(`成功拉取仓库: ${repoUrl.value}`)
   }, 900)
 }
+
+onBeforeUnmount(() => {
+  if (cloneTimer) {
+    clearTimeout(cloneTimer)
+    cloneTimer = null
+  }
+})
 
 function handleOpenWorkbench() {
   router.push('/desktop')
