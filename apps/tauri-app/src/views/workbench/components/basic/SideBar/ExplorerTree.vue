@@ -72,22 +72,22 @@ const displayTree = computed(() => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col overflow-hidden text-xs select-none">
+  <div class="h-full flex flex-col select-none overflow-hidden text-xs">
     <!-- 过滤输入框 -->
-    <div class="p-2 border-b border-[#2d2d2d] shrink-0">
-      <div class="flex items-center bg-[#1e1e1e] border border-[#3e3e42] rounded px-2 py-1 text-gray-300">
-        <SvgIcon icon="ri:search-line" class="text-gray-500 mr-1.5 text-12px" />
+    <div class="shrink-0 border-b border-[#2d2d2d] p-2">
+      <div class="flex items-center border border-[#3e3e42] rounded bg-[#1e1e1e] px-2 py-1 text-gray-300">
+        <SvgIcon icon="ri:search-line" class="mr-1.5 text-12px text-gray-500" />
         <input
           v-model="filterKeyword"
           type="text"
           placeholder="过滤测试项或管脚..."
-          class="w-full bg-transparent border-none outline-none text-11px text-white placeholder-gray-500"
-        />
+          class="w-full border-none bg-transparent text-11px text-white outline-none placeholder-gray-500"
+        >
         <button
           v-if="filterKeyword"
           type="button"
-          @click="filterKeyword = ''"
           class="text-gray-500 hover:text-white"
+          @click="filterKeyword = ''"
         >
           ✕
         </button>
@@ -96,20 +96,22 @@ const displayTree = computed(() => {
 
     <!-- 树主体 -->
     <div class="flex-1 overflow-auto p-1.5">
-      <div v-if="displayTree.length === 0" class="p-4 text-center text-gray-500 text-xs">
-        <div class="mb-2">📄 暂未打开测试文件</div>
+      <div v-if="displayTree.length === 0" class="p-4 text-center text-xs text-gray-500">
+        <div class="mb-2">
+          📄 暂未打开测试文件
+        </div>
         <div class="flex flex-col gap-2">
           <button
             type="button"
+            class="cursor-pointer rounded bg-blue-600 px-2.5 py-1 text-11px text-white transition-colors hover:bg-blue-500"
             @click="tpStore.chooseAndOpenFile"
-            class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-11px transition-colors cursor-pointer"
           >
             打开本地 JSON
           </button>
           <button
             type="button"
+            class="cursor-pointer border border-[#444] rounded bg-[#2d2d2d] px-2.5 py-1 text-11px text-gray-200 transition-colors hover:bg-[#3e3e42]"
             @click="tpStore.loadSampleData"
-            class="px-2.5 py-1 bg-[#2d2d2d] hover:bg-[#3e3e42] text-gray-200 border border-[#444] rounded text-11px transition-colors cursor-pointer"
           >
             载入演示测试程序
           </button>

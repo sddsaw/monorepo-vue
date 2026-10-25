@@ -38,14 +38,14 @@ function startResize(e: MouseEvent) {
       backgroundColor: 'var(--wb-bottompanel-bg, #1e1e1e)',
       borderColor: 'var(--wb-border-color, #2d2d2d)',
     }"
-    class="flex flex-col border-t select-none relative shrink-0 text-xs"
+    class="relative flex flex-col shrink-0 select-none border-t text-xs"
   >
     <!-- 上边缘拖拽调节高度手柄 -->
     <div
-      @mousedown="startResize"
       :class="[isResizing ? 'bg-blue-500' : 'hover:bg-blue-500/50']"
-      class="absolute top-0 left-0 w-full h-1 cursor-row-resize transition-colors z-10"
+      class="absolute left-0 top-0 z-10 h-1 w-full cursor-row-resize transition-colors"
       title="拖拽调节面板高度"
+      @mousedown="startResize"
     />
 
     <!-- 顶部选项卡栏 -->
@@ -54,19 +54,19 @@ function startResize(e: MouseEvent) {
         backgroundColor: 'var(--wb-sidebar-bg, #252526)',
         borderColor: 'var(--wb-border-color, #2d2d2d)',
       }"
-      class="h-28px flex items-center justify-between px-3 border-b text-gray-400"
+      class="h-28px flex items-center justify-between border-b px-3 text-gray-400"
     >
       <div class="flex items-center gap-4">
         <button
           type="button"
-          @click="activeTab = 'problems'"
           :class="[activeTab === 'problems' ? 'text-white border-b-2 border-blue-400 font-semibold' : 'text-gray-400 hover:text-white']"
-          class="h-28px flex items-center gap-1 cursor-pointer transition-colors"
+          class="h-28px flex cursor-pointer items-center gap-1 transition-colors"
+          @click="activeTab = 'problems'"
         >
           <span>问题 (Problems)</span>
           <span
             :class="[tpStore.validationResult.errors.length > 0 ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300']"
-            class="px-1.5 py-0.2 rounded-full text-10px font-mono"
+            class="rounded-full px-1.5 py-0.2 text-10px font-mono"
           >
             {{ tpStore.validationResult.errors.length }}
           </span>
@@ -74,18 +74,18 @@ function startResize(e: MouseEvent) {
 
         <button
           type="button"
-          @click="activeTab = 'logs'"
           :class="[activeTab === 'logs' ? 'text-white border-b-2 border-blue-400 font-semibold' : 'text-gray-400 hover:text-white']"
-          class="h-28px flex items-center gap-1 cursor-pointer transition-colors"
+          class="h-28px flex cursor-pointer items-center gap-1 transition-colors"
+          @click="activeTab = 'logs'"
         >
           <span>本地日志 (Logs)</span>
         </button>
 
         <button
           type="button"
-          @click="activeTab = 'output'"
           :class="[activeTab === 'output' ? 'text-white border-b-2 border-blue-400 font-semibold' : 'text-gray-400 hover:text-white']"
-          class="h-28px flex items-center gap-1 cursor-pointer transition-colors"
+          class="h-28px flex cursor-pointer items-center gap-1 transition-colors"
+          @click="activeTab = 'output'"
         >
           <span>输出 (Output)</span>
         </button>
@@ -94,26 +94,26 @@ function startResize(e: MouseEvent) {
       <!-- 右侧关闭按钮 -->
       <button
         type="button"
-        @click="layoutStore.setBottomPanelVisible(false)"
-        class="text-gray-400 hover:text-white cursor-pointer"
+        class="cursor-pointer text-gray-400 hover:text-white"
         title="关闭面板 (Ctrl+J)"
+        @click="layoutStore.setBottomPanelVisible(false)"
       >
         ✕
       </button>
     </div>
 
     <!-- 面板主体内容 -->
-    <div class="flex-1 overflow-auto p-3 font-mono text-xs select-text">
+    <div class="flex-1 select-text overflow-auto p-3 text-xs font-mono">
       <!-- 1. 问题列表 -->
       <div v-if="activeTab === 'problems'">
-        <div v-if="tpStore.validationResult.errors.length === 0" class="text-gray-500 py-4 text-center">
+        <div v-if="tpStore.validationResult.errors.length === 0" class="py-4 text-center text-gray-500">
           ✓ 当前测试程序未检测到 DRC 规则或上下限错误
         </div>
-        <ul v-else class="space-y-1.5 text-red-400">
+        <ul v-else class="text-red-400 space-y-1.5">
           <li
             v-for="(err, idx) in tpStore.validationResult.errors"
             :key="idx"
-            class="flex items-start gap-2 p-1.5 rounded hover:bg-red-950/30 cursor-pointer"
+            class="flex cursor-pointer items-start gap-2 rounded p-1.5 hover:bg-red-950/30"
           >
             <span class="text-red-500">✕</span>
             <span>{{ err }}</span>
@@ -123,9 +123,15 @@ function startResize(e: MouseEvent) {
 
       <!-- 2. 日志 -->
       <div v-else-if="activeTab === 'logs'" class="text-gray-400 space-y-1">
-        <div class="text-gray-500">[INFO] ATE Studio 日志系统就绪，已关联本地 rolling app.log</div>
-        <div v-if="tpStore.fileName" class="text-blue-400">[INFO] 已加载测试程序: {{ tpStore.filePath }}</div>
-        <div v-if="tpStore.isDirty" class="text-amber-400">[WARN] 检测到未保存的脏数据修改</div>
+        <div class="text-gray-500">
+          [INFO] ATE Studio 日志系统就绪，已关联本地 rolling app.log
+        </div>
+        <div v-if="tpStore.fileName" class="text-blue-400">
+          [INFO] 已加载测试程序: {{ tpStore.filePath }}
+        </div>
+        <div v-if="tpStore.isDirty" class="text-amber-400">
+          [WARN] 检测到未保存的脏数据修改
+        </div>
       </div>
 
       <!-- 3. 输出 -->

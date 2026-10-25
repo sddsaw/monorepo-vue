@@ -35,6 +35,9 @@
     "fullscreen",
     "fullscreen-exit"
   ],
+  "heroicons": [
+    "language"
+  ],
   "ic": [
     "round-delete",
     "round-plus",

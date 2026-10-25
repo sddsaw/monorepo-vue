@@ -28,10 +28,5 @@ export const views: Record<LastLevelRouteKey, RouteComponent | (() => Promise<Ro
   monitor_data: () => import("@/views/monitor/data/index.vue"),
   monitor_online: () => import("@/views/monitor/online/index.vue"),
   "sub-window": () => import("@/views/sub-window/index.vue"),
-  system_announcement: () => import("@/views/system/announcement/index.vue"),
-  system_dict: () => import("@/views/system/dict/index.vue"),
-  system_menu: () => import("@/views/system/menu/index.vue"),
-  system_role: () => import("@/views/system/role/index.vue"),
-  system_user: () => import("@/views/system/user/index.vue"),
   workbench: () => import("@/views/workbench/index.vue"),
 };

@@ -21,23 +21,23 @@ export interface WorkbenchThemeTokens {
 }
 
 export const PRESET_WORKBENCH_THEMES: Record<string, WorkbenchThemeTokens> = {
-  'vs-dark': {
-    id: 'vs-dark',
+  'vscode-dark': {
+    id: 'vscode-dark',
     name: 'VS Code Dark (暗黑)',
     isDark: true,
     titleBarBg: '#2d2d2d',
-    activityBarBg: '#333333',
+    activityBarBg: '#181818',
     sidebarBg: '#252526',
     editorBg: '#1e1e1e',
     bottomPanelBg: '#1e1e1e',
     statusBarBg: '#007acc',
     accentColor: '#007acc',
-    borderColor: '#2d2d2d',
+    borderColor: '#2b2b2b',
     textColor: '#cccccc',
     textSecondaryColor: '#8c8c8c',
   },
-  'vs-light': {
-    id: 'vs-light',
+  'vscode-light': {
+    id: 'vscode-light',
     name: 'VS Code Light (明亮)',
     isDark: false,
     titleBarBg: '#f3f3f3',

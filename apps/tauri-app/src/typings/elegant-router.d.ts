@@ -32,12 +32,6 @@ declare module "@elegant-router/types" {
     "monitor_data": "/monitor/data";
     "monitor_online": "/monitor/online";
     "sub-window": "/sub-window";
-    "system": "/system";
-    "system_announcement": "/system/announcement";
-    "system_dict": "/system/dict";
-    "system_menu": "/system/menu";
-    "system_role": "/system/role";
-    "system_user": "/system/user";
     "workbench": "/workbench";
   };
 
@@ -80,7 +74,6 @@ declare module "@elegant-router/types" {
     | "login"
     | "monitor"
     | "sub-window"
-    | "system"
     | "workbench"
   >;
 
@@ -111,11 +104,6 @@ declare module "@elegant-router/types" {
     | "monitor_data"
     | "monitor_online"
     | "sub-window"
-    | "system_announcement"
-    | "system_dict"
-    | "system_menu"
-    | "system_role"
-    | "system_user"
     | "workbench"
   >;
 

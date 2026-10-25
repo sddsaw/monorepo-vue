@@ -7,18 +7,18 @@ const tpStore = useTpStore()
 <template>
   <footer
     :style="{ backgroundColor: 'var(--wb-statusbar-bg, #007acc)' }"
-    class="h-22px flex items-center justify-between px-3 text-11px text-white select-none shrink-0 font-sans"
+    class="h-22px flex shrink-0 select-none items-center justify-between px-3 text-11px text-white font-sans"
   >
     <!-- 左侧状态项 -->
     <div class="flex items-center gap-3">
       <!-- Git 分支 -->
-      <div class="flex items-center gap-1 cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors" title="当前 Git 分支">
+      <div class="flex cursor-pointer items-center gap-1 rounded px-1 py-0.5 transition-colors hover:bg-white/10" title="当前 Git 分支">
         <SvgIcon icon="ri:git-branch-line" class="text-12px" />
         <span class="font-mono">taui</span>
       </div>
 
       <!-- 错误/警告统计 -->
-      <div class="flex items-center gap-2 cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors" title="DRC 校验错误">
+      <div class="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 transition-colors hover:bg-white/10" title="DRC 校验错误">
         <span class="flex items-center gap-0.5">
           <span>✕</span>
           <span class="font-mono">{{ tpStore.validationResult.errors.length }}</span>
@@ -31,9 +31,9 @@ const tpStore = useTpStore()
     </div>
 
     <!-- 右侧状态项 -->
-    <div class="flex items-center gap-3 font-mono text-10px">
+    <div class="flex items-center gap-3 text-10px font-mono">
       <!-- 未保存脏数据指示 -->
-      <div v-if="tpStore.isDirty" class="flex items-center gap-1 text-yellow-300 font-bold animate-pulse">
+      <div v-if="tpStore.isDirty" class="flex animate-pulse items-center gap-1 text-yellow-300 font-bold">
         <span>●</span>
         <span>存在未保存修改</span>
       </div>

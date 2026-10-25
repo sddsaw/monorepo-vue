@@ -178,12 +178,6 @@ const routeMap: RouteMap = {
   "monitor_data": "/monitor/data",
   "monitor_online": "/monitor/online",
   "sub-window": "/sub-window",
-  "system": "/system",
-  "system_announcement": "/system/announcement",
-  "system_dict": "/system/dict",
-  "system_menu": "/system/menu",
-  "system_role": "/system/role",
-  "system_user": "/system/user",
   "workbench": "/workbench"
 };
 

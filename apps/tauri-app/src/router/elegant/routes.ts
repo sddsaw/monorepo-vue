@@ -155,71 +155,9 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'system',
-    path: '/system',
-    component: 'layout.base',
-    meta: {
-      title: '系统管理',
-      icon: 'ant-design:setting-outlined',
-      order: 3
-    },
-    children: [
-      {
-        name: 'system_announcement',
-        path: '/system/announcement',
-        component: 'view.system_announcement',
-        meta: {
-          title: '通知公告',
-          icon: 'ant-design:notification-outlined',
-          order: 1
-        }
-      },
-      {
-        name: 'system_dict',
-        path: '/system/dict',
-        component: 'view.system_dict',
-        meta: {
-          title: '字典管理',
-          icon: 'ant-design:database-outlined',
-          order: 2
-        }
-      },
-      {
-        name: 'system_menu',
-        path: '/system/menu',
-        component: 'view.system_menu',
-        meta: {
-          title: '菜单管理',
-          icon: 'ant-design:apartment-outlined',
-          order: 3
-        }
-      },
-      {
-        name: 'system_role',
-        path: '/system/role',
-        component: 'view.system_role',
-        meta: {
-          title: '角色管理',
-          icon: 'ant-design:team-outlined',
-          order: 4
-        }
-      },
-      {
-        name: 'system_user',
-        path: '/system/user',
-        component: 'view.system_user',
-        meta: {
-          title: '用户管理',
-          icon: 'ant-design:user-outlined',
-          order: 5
-        }
-      }
-    ]
-  },
-  {
     name: 'workbench',
     path: '/workbench',
-    component: 'layout.base$view.workbench',
+    component: 'layout.blank$view.workbench',
     meta: {
       title: 'workbench'
     }

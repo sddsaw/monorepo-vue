@@ -12,7 +12,6 @@ export function setupStore(app: App) {
 
 export * from './modules/app'
 export * from './modules/auth'
-export * from './modules/dict'
 export * from './modules/route'
 export * from './modules/tab'
 export * from './modules/theme'

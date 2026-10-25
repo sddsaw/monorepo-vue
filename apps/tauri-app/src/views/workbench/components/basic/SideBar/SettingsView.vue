@@ -36,40 +36,40 @@ function handleImportJson() {
 </script>
 
 <template>
-  <div class="h-full flex flex-col p-3 overflow-y-auto font-sans text-xs select-none">
-    <div class="flex items-center justify-between pb-2 mb-3 border-b border-[#2d2d2d]">
-      <span class="font-bold text-[#e1e1e1] text-sm">主题与外观设置</span>
+  <div class="h-full flex flex-col select-none overflow-y-auto p-3 text-xs font-sans">
+    <div class="mb-3 flex items-center justify-between border-b border-[#2d2d2d] pb-2">
+      <span class="text-sm text-[#e1e1e1] font-bold">主题与外观设置</span>
       <button
         type="button"
+        class="cursor-pointer rounded bg-[#007acc] px-2 py-1 text-11px text-white transition-colors hover:bg-[#1a8ad6]"
         @click="showImportModal = true"
-        class="px-2 py-1 bg-[#007acc] hover:bg-[#1a8ad6] text-white rounded text-11px transition-colors cursor-pointer"
       >
         导入 VS Code 主题
       </button>
     </div>
 
     <!-- 预设主题列表 -->
-    <div class="text-gray-400 font-semibold mb-2 uppercase text-10px tracking-wider">
+    <div class="mb-2 text-10px text-gray-400 font-semibold tracking-wider uppercase">
       官方预设主题
     </div>
 
-    <div class="flex flex-col gap-2 mb-6">
+    <div class="mb-6 flex flex-col gap-2">
       <div
         v-for="p in presets"
         :key="p.id"
-        @click="handleSelectTheme(p.id)"
         :class="[
           themeStore.currentThemeId === p.id
             ? 'border-[#007acc] bg-[#2d2d2d]/60 ring-1 ring-[#007acc]'
             : 'border-[#333333] hover:border-gray-500 bg-[#1e1e1e]/40',
         ]"
-        class="p-2.5 rounded-lg border cursor-pointer transition-all flex flex-col gap-2"
+        class="flex flex-col cursor-pointer gap-2 border rounded-lg p-2.5 transition-all"
+        @click="handleSelectTheme(p.id)"
       >
         <div class="flex items-center justify-between">
-          <span class="font-medium text-[#cccccc]">{{ p.name }}</span>
+          <span class="text-[#cccccc] font-medium">{{ p.name }}</span>
           <span
             v-if="themeStore.currentThemeId === p.id"
-            class="text-10px bg-[#007acc] text-white px-1.5 py-0.5 rounded"
+            class="rounded bg-[#007acc] px-1.5 py-0.5 text-10px text-white"
           >
             当前激活
           </span>
@@ -78,27 +78,27 @@ function handleImportJson() {
         <!-- 调色盘预览圆点 -->
         <div class="flex items-center gap-1.5 pt-1">
           <span
-            class="size-3.5 rounded-full border border-black/30"
+            class="size-3.5 border border-black/30 rounded-full"
             :style="{ backgroundColor: p.editorBg }"
             title="主编辑区背景"
           />
           <span
-            class="size-3.5 rounded-full border border-black/30"
+            class="size-3.5 border border-black/30 rounded-full"
             :style="{ backgroundColor: p.sidebarBg }"
             title="侧边栏背景"
           />
           <span
-            class="size-3.5 rounded-full border border-black/30"
+            class="size-3.5 border border-black/30 rounded-full"
             :style="{ backgroundColor: p.activityBarBg }"
             title="活动栏背景"
           />
           <span
-            class="size-3.5 rounded-full border border-black/30"
+            class="size-3.5 border border-black/30 rounded-full"
             :style="{ backgroundColor: p.statusBarBg }"
             title="状态栏背景"
           />
           <span
-            class="size-3.5 rounded-full border border-black/30"
+            class="size-3.5 border border-black/30 rounded-full"
             :style="{ backgroundColor: p.accentColor }"
             title="主强调色"
           />
@@ -107,28 +107,28 @@ function handleImportJson() {
     </div>
 
     <!-- 当前颜色参数一览 -->
-    <div class="text-gray-400 font-semibold mb-2 uppercase text-10px tracking-wider">
+    <div class="mb-2 text-10px text-gray-400 font-semibold tracking-wider uppercase">
       当前生效色值 Token
     </div>
 
-    <div class="bg-[#1e1e1e] border border-[#2d2d2d] rounded-lg p-2.5 flex flex-col gap-1.5 font-mono text-11px text-gray-400">
-      <div class="flex justify-between items-center">
+    <div class="flex flex-col gap-1.5 border border-[#2d2d2d] rounded-lg bg-[#1e1e1e] p-2.5 text-11px text-gray-400 font-mono">
+      <div class="flex items-center justify-between">
         <span>Accent:</span>
         <span class="text-[#007acc] font-bold">{{ themeStore.currentTheme.accentColor }}</span>
       </div>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <span>Editor Bg:</span>
         <span>{{ themeStore.currentTheme.editorBg }}</span>
       </div>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <span>SideBar Bg:</span>
         <span>{{ themeStore.currentTheme.sidebarBg }}</span>
       </div>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <span>TitleBar Bg:</span>
         <span>{{ themeStore.currentTheme.titleBarBg }}</span>
       </div>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <span>StatusBar Bg:</span>
         <span>{{ themeStore.currentTheme.statusBarBg }}</span>
       </div>
@@ -151,14 +151,14 @@ function handleImportJson() {
           type="textarea"
           rows="10"
           placeholder="{ &quot;name&quot;: &quot;My Custom Theme&quot;, &quot;colors&quot;: { &quot;editor.background&quot;: &quot;#1e1e1e&quot;, ... } }"
-          class="font-mono text-xs"
+          class="text-xs font-mono"
         />
 
         <div class="flex justify-end gap-2 pt-2">
-          <NButton @click="showImportModal = false" size="small">
+          <NButton size="small" @click="showImportModal = false">
             取消
           </NButton>
-          <NButton type="primary" @click="handleImportJson" size="small">
+          <NButton type="primary" size="small" @click="handleImportJson">
             解析并应用
           </NButton>
         </div>

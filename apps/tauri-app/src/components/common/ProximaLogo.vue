@@ -13,7 +13,7 @@ withDefaults(
 
 <template>
   <div
-    class="inline-flex items-center justify-center shrink-0 select-none"
+    class="inline-flex shrink-0 select-none items-center justify-center"
     :style="{
       width: typeof size === 'number' ? `${size}px` : size,
       height: typeof size === 'number' ? `${size}px` : size,
@@ -21,7 +21,7 @@ withDefaults(
   >
     <svg
       viewBox="0 0 100 100"
-      class="w-full h-full"
+      class="h-full w-full"
       :class="[showShadow ? 'drop-shadow-lg' : '']"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

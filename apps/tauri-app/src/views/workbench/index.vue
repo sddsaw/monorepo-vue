@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import WorkbenchLayout from '@/layouts/workbench-layout/index.vue'
+import WorkbenchBasic from './components/basic/index.vue'
 
 defineOptions({
   name: 'WorkbenchView',
@@ -7,5 +7,5 @@ defineOptions({
 </script>
 
 <template>
-  <WorkbenchLayout />
+  <WorkbenchBasic />
 </template>

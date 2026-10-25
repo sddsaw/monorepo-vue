@@ -3,7 +3,16 @@ import { defineStore } from 'pinia'
 import { ref, shallowRef } from 'vue'
 import { SetupStoreId } from '@/enum'
 
-export type ActivityType = 'explorer' | 'search' | 'settings'
+export type ActivityType
+  = | 'explorer'
+    | 'search'
+    | 'source-control'
+    | 'debug'
+    | 'remote-explorer'
+    | 'extensions'
+    | 'testing'
+    | 'accounts'
+    | 'settings'
 
 export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout, () => {
   /** 主侧边栏是否可见 (Ctrl + B) */
@@ -11,6 +20,9 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
 
   /** 底部问题与日志面板是否可见 (Ctrl + J) */
   const bottomPanelVisible = ref<boolean>(false)
+
+  /** 右侧辅助侧边栏/Copilot 面板是否可见 */
+  const secondarySidebarVisible = ref<boolean>(true)
 
   /** 当前激活的活动栏图标类型 */
   const activeActivity = ref<ActivityType>('explorer')
@@ -24,6 +36,14 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
 
   function setSidebarVisible(visible: boolean) {
     sidebarVisible.value = visible
+  }
+
+  function toggleSecondarySidebar() {
+    secondarySidebarVisible.value = !secondarySidebarVisible.value
+  }
+
+  function setSecondarySidebarVisible(visible: boolean) {
+    secondarySidebarVisible.value = visible
   }
 
   function toggleBottomPanel() {
@@ -52,10 +72,13 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
   return {
     sidebarVisible,
     bottomPanelVisible,
+    secondarySidebarVisible,
     activeActivity,
     dockviewApi,
     toggleSidebar,
     setSidebarVisible,
+    toggleSecondarySidebar,
+    setSecondarySidebarVisible,
     toggleBottomPanel,
     setBottomPanelVisible,
     setActiveActivity,

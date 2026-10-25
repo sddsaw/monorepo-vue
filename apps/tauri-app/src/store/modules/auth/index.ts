@@ -5,7 +5,6 @@ import { SetupStoreId } from '@/enum'
 import { useRouterPush } from '@/hooks/common/router'
 import { fetchGetUserInfo, fetchLogin } from '@/service/api'
 import { localStg } from '@/utils/storage'
-import { useDictStore } from '../dict'
 import { useRouteStore } from '../route'
 import { useTabStore } from '../tab'
 import { clearAuthStorage, getToken, setAuthTokens } from './shared'
@@ -149,9 +148,6 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
     if (!error) {
       // update store
       Object.assign(userInfo, info)
-
-      const dictStore = useDictStore()
-      await dictStore.fetchAllDicts()
 
       return true
     }

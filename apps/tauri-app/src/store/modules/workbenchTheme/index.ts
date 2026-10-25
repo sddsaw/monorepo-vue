@@ -9,7 +9,7 @@ import {
 } from '@/theme/workbenchTheme'
 
 export const useWorkbenchThemeStore = defineStore(SetupStoreId.WorkbenchTheme, () => {
-  const currentThemeId = ref<string>('vs-dark')
+  const currentThemeId = ref<string>('vscode-dark')
   const customTokens = ref<WorkbenchThemeTokens | null>(null)
 
   /** 当前生效的主题 Tokens */
@@ -17,7 +17,7 @@ export const useWorkbenchThemeStore = defineStore(SetupStoreId.WorkbenchTheme, (
     if (customTokens.value && customTokens.value.id === currentThemeId.value) {
       return customTokens.value
     }
-    return PRESET_WORKBENCH_THEMES[currentThemeId.value] || PRESET_WORKBENCH_THEMES['vs-dark']
+    return PRESET_WORKBENCH_THEMES[currentThemeId.value] || PRESET_WORKBENCH_THEMES['vscode-dark']
   })
 
   /** 将当前主题颜色变量注入到 DOM 根节点 */
@@ -90,7 +90,7 @@ export const useWorkbenchThemeStore = defineStore(SetupStoreId.WorkbenchTheme, (
   /** 初始化加载持久化的主题配置 */
   async function initTheme() {
     try {
-      const savedThemeId = await getStoreValue<string>('workbench_theme_id', 'vs-dark')
+      const savedThemeId = await getStoreValue<string>('workbench_theme_id', 'vscode-dark')
       const savedCustom = await getStoreValue<WorkbenchThemeTokens>('workbench_custom_theme')
 
       if (savedCustom) {
@@ -98,12 +98,20 @@ export const useWorkbenchThemeStore = defineStore(SetupStoreId.WorkbenchTheme, (
       }
 
       if (savedThemeId) {
-        currentThemeId.value = savedThemeId
+        if (savedThemeId.endsWith('dark')) {
+          currentThemeId.value = 'vscode-dark'
+        }
+        else if (savedThemeId.endsWith('light')) {
+          currentThemeId.value = 'vscode-light'
+        }
+        else {
+          currentThemeId.value = savedThemeId
+        }
       }
     }
     catch {
       // 容错回退
-      currentThemeId.value = 'vs-dark'
+      currentThemeId.value = 'vscode-dark'
     }
     finally {
       applyThemeCssVariables()

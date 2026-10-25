@@ -105,7 +105,7 @@ watch(
 <template>
   <div
     :style="{ backgroundColor: 'var(--wb-editor-bg, #1e1e1e)' }"
-    class="size-full overflow-hidden relative"
+    class="relative size-full overflow-hidden"
   >
     <!-- 空白水印 (当没有打开任何测试项时呈现) -->
     <EditorWatermark v-if="!hasTabs" />

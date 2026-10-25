@@ -4,16 +4,17 @@ import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
 import { useWorkbenchThemeStore } from '@/store/modules/workbenchTheme'
 import { useNaiveWorkbenchTheme } from '@/theme/naiveTheme'
-import ActivityBar from './modules/ActivityBar.vue'
-import BottomPanel from './modules/BottomPanel.vue'
-import EditorBreadcrumb from './modules/EditorArea/EditorBreadcrumb.vue'
-import EditorArea from './modules/EditorArea/index.vue'
-import SideBar from './modules/SideBar/index.vue'
-import StatusBar from './modules/StatusBar.vue'
-import WindowTitleBar from './modules/WindowTitleBar.vue'
+import ActivityBar from './ActivityBar.vue'
+import BottomPanel from './BottomPanel.vue'
+import EditorBreadcrumb from './EditorArea/EditorBreadcrumb.vue'
+import EditorArea from './EditorArea/index.vue'
+import SecondarySideBar from './SecondarySideBar.vue'
+import SideBar from './SideBar/index.vue'
+import StatusBar from './StatusBar.vue'
+import WindowTitleBar from './WindowTitleBar.vue'
 
 defineOptions({
-  name: 'WorkbenchLayout',
+  name: 'WorkbenchBasic',
 })
 
 const tpStore = useTpStore()
@@ -85,13 +86,13 @@ onUnmounted(() => {
             backgroundColor: 'var(--wb-editor-bg, #1e1e1e)',
             color: 'var(--wb-text-color, #cccccc)',
           }"
-          class="h-screen w-screen flex flex-col overflow-hidden select-none font-sans"
+          class="h-screen w-screen flex flex-col select-none overflow-hidden font-sans"
         >
           <!-- 1. 顶部标题栏 -->
           <WindowTitleBar class="h-35px shrink-0" />
 
           <!-- 2. 中间主工作区 -->
-          <div class="flex-1 flex overflow-hidden relative">
+          <div class="relative flex flex-1 overflow-hidden">
             <!-- 极窄 48px 活动栏 -->
             <ActivityBar class="w-48px shrink-0" />
 
@@ -102,12 +103,12 @@ onUnmounted(() => {
             />
 
             <!-- 主编辑区与底部面板区 -->
-            <main class="flex-1 flex flex-col overflow-hidden min-w-0">
+            <main class="min-w-0 flex flex-col flex-1 overflow-hidden">
               <!-- 顶部面包屑坐标 -->
               <EditorBreadcrumb class="h-26px shrink-0" />
 
               <!-- Dockview 核心多向分屏区域 -->
-              <div class="flex-1 overflow-hidden relative min-h-0">
+              <div class="relative min-h-0 flex-1 overflow-hidden">
                 <EditorArea class="size-full" />
               </div>
 
@@ -117,6 +118,12 @@ onUnmounted(() => {
                 class="shrink-0"
               />
             </main>
+
+            <!-- 右侧辅助侧边栏 (Copilot / 聊天面板) -->
+            <SecondarySideBar
+              v-show="layoutStore.secondarySidebarVisible"
+              class="shrink-0"
+            />
           </div>
 
           <!-- 3. 底部紧凑状态栏 -->
