@@ -84,7 +84,7 @@ export const generatedRoutes: GeneratedRoute[] = [
   {
     name: 'home',
     path: '/home',
-    component: 'layout.base$view.home',
+    component: 'layout.blank$view.home',
     meta: {
       title: '首页',
       order: 1

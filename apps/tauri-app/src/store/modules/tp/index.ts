@@ -17,6 +17,47 @@ export interface WbTabItem {
   isDirty?: boolean
 }
 
+/** 最近打开的工程记录 */
+export interface RecentProject {
+  id: string
+  name: string
+  path: string
+  lastOpened: string
+}
+
+export const DEFAULT_RECENT_PROJECTS: RecentProject[] = [
+  {
+    id: 'proj-1',
+    name: 'TP_MVS_Checker',
+    path: 'C:\\Users\\ArcUser\\Downloads\\MVS1A_Checker_TP\\MVS1A_Checker_TP\\TP_MVS_Checker',
+    lastOpened: '2026/10/23 17:25',
+  },
+  {
+    id: 'proj-2',
+    name: 'MIO_Checker',
+    path: 'C:\\Users\\ArcUser\\Downloads\\DII_realized\\DII_realized\\MIO_Checker',
+    lastOpened: '2026/10/21 22:31',
+  },
+  {
+    id: 'proj-3',
+    name: 'MIO_Cal',
+    path: 'C:\\Users\\ArcUser\\Downloads\\DII_realized\\DII_realized\\MIO_Cal',
+    lastOpened: '2026/10/20 09:53',
+  },
+  {
+    id: 'proj-4',
+    name: 'Case-vs-visualizer',
+    path: 'C:\\syn\\AE\\Case-vs-visualizer\\Offline',
+    lastOpened: '2026/10/19 21:16',
+  },
+  {
+    id: 'proj-5',
+    name: 'case-vih-group',
+    path: 'C:\\syn\\AE\\case-vih-group\\Offline',
+    lastOpened: '2026/10/16 10:18',
+  },
+]
+
 /** 路径极速寻址取值 (耗时 0.0001ms) */
 export function getByPath(obj: any, path: (string | number)[]) {
   if (!obj || !Array.isArray(path))
@@ -41,6 +82,44 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
 
   // ─── 4. DRC 硬件/规则校验结果 ───
   const validationResult = ref<TPValidationResult>({ valid: true, errors: [] })
+
+  // ─── 4.1 最近打开工程列表 ───
+  const recentProjects = ref<RecentProject[]>(DEFAULT_RECENT_PROJECTS)
+
+  function addRecentProject(name: string, path: string) {
+    const now = new Date()
+    const dateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+
+    const existingIdx = recentProjects.value.findIndex(p => p.path === path || p.name === name)
+    if (existingIdx > -1) {
+      recentProjects.value.splice(existingIdx, 1)
+    }
+
+    recentProjects.value.unshift({
+      id: `proj-${Date.now()}`,
+      name: name || 'ATE_Project',
+      path,
+      lastOpened: dateStr,
+    })
+
+    try {
+      localStorage.setItem('proxima_recent_projects', JSON.stringify(recentProjects.value))
+    }
+    catch {
+      // ignore
+    }
+  }
+
+  // 初始化尝试加载本地记忆的最近工程
+  try {
+    const saved = localStorage.getItem('proxima_recent_projects')
+    if (saved) {
+      recentProjects.value = JSON.parse(saved)
+    }
+  }
+  catch {
+    // ignore
+  }
 
   // 计算属性
   const fileName = computed(() => {
@@ -108,9 +187,11 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     fileDirty.value = false
     validationResult.value = { valid: true, errors: [] }
 
-    // 记忆会话
+    // 记忆会话并更新最近打开列表
     try {
       localStorage.setItem('ate_last_opened_file', selectedPath)
+      const baseName = fileName.value || selectedPath.replace(/\\/g, '/').split('/').pop() || 'ATE_Project'
+      addRecentProject(baseName, selectedPath)
     }
     catch {
       // ignore
@@ -307,6 +388,8 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     activeTab,
     isDirty,
     validationResult,
+    recentProjects,
+    addRecentProject,
     loadFile,
     chooseAndOpenFile,
     loadSampleData,

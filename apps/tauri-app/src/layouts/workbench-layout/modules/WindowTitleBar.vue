@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import ProximaLogo from '@/components/common/ProximaLogo.vue'
 import { isTauri } from '@/plugins/tauri'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
 
+const router = useRouter()
 const tpStore = useTpStore()
 const layoutStore = useWorkbenchLayoutStore()
 
@@ -42,13 +45,25 @@ async function handleClose() {
   >
     <!-- 左侧：macOS 避让红绿灯 / Windows 菜单栏 -->
     <div class="flex items-center gap-3" :class="[isMac ? 'pl-16' : '']">
-      <div class="flex items-center gap-1.5 font-bold text-white tracking-wider">
-        <SvgIcon icon="ri:cpu-line" class="text-blue-400 text-15px" />
-        <span class="text-11px hidden sm:inline">ATE Studio</span>
+      <div
+        class="flex items-center gap-1.5 font-bold text-white tracking-wider cursor-pointer hover:opacity-80 transition-opacity"
+        title="返回 Proxima 首页"
+        @click="router.push('/home')"
+      >
+        <ProximaLogo :size="18" :show-shadow="false" />
+        <span class="text-11px hidden sm:inline">Proxima</span>
       </div>
 
       <!-- 顶部菜单项 -->
       <nav class="flex items-center gap-1 text-gray-300">
+        <button
+          type="button"
+          @click="router.push('/home')"
+          class="px-2 py-1 rounded hover:bg-[#3e3e42] transition-colors cursor-pointer text-11px text-blue-300"
+          title="返回 Proxima 欢迎首页"
+        >
+          首页(H)
+        </button>
         <button
           type="button"
           @click="tpStore.chooseAndOpenFile"

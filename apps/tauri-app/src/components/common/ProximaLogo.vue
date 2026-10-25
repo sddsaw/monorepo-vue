@@ -1,0 +1,78 @@
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    size?: number | string
+    showShadow?: boolean
+  }>(),
+  {
+    size: 48,
+    showShadow: true,
+  },
+)
+</script>
+
+<template>
+  <div
+    class="inline-flex items-center justify-center shrink-0 select-none"
+    :style="{
+      width: typeof size === 'number' ? `${size}px` : size,
+      height: typeof size === 'number' ? `${size}px` : size,
+    }"
+  >
+    <svg
+      viewBox="0 0 100 100"
+      class="w-full h-full"
+      :class="[showShadow ? 'drop-shadow-lg' : '']"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <!-- 左侧纵柱渐变 (Cyan -> Emerald Green) -->
+        <linearGradient id="proxima-cyan-green" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#00D2FF" />
+          <stop offset="60%" stop-color="#00E5FF" />
+          <stop offset="100%" stop-color="#00E676" />
+        </linearGradient>
+
+        <!-- 右侧回环渐变 (Vibrant Magenta -> Purple Pink) -->
+        <linearGradient id="proxima-magenta-purple" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FF1774" />
+          <stop offset="50%" stop-color="#FF007F" />
+          <stop offset="100%" stop-color="#B000FF" />
+        </linearGradient>
+
+        <!-- 白色底板高光微渐变 -->
+        <linearGradient id="proxima-bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFFFFF" />
+          <stop offset="100%" stop-color="#F0F4F8" />
+        </linearGradient>
+      </defs>
+
+      <!-- 优雅圆角白底基座 -->
+      <rect
+        width="100"
+        height="100"
+        rx="22"
+        fill="url(#proxima-bg-grad)"
+      />
+
+      <!-- P 左侧竖立条 (Cyan-Green) -->
+      <rect
+        x="24"
+        y="22"
+        width="14"
+        height="56"
+        rx="7"
+        fill="url(#proxima-cyan-green)"
+      />
+
+      <!-- P 右侧环形结构 (Magenta-Purple) -->
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M36 22H53C65.15 22 75 30.06 75 40C75 49.94 65.15 58 53 58H36V45H52C56.97 45 61 42.76 61 40C61 37.24 56.97 35 52 35H36V22Z"
+        fill="url(#proxima-magenta-purple)"
+      />
+    </svg>
+  </div>
+</template>
