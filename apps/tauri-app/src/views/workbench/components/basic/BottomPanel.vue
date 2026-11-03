@@ -1,7 +1,22 @@
 <script setup lang="ts">
+import {
+  NBadge,
+  NButton,
+  NEmpty,
+  NScrollbar,
+  NTabPane,
+  NTabs,
+  NTag,
+  NTooltip,
+} from 'naive-ui'
 import { ref } from 'vue'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
+import ResizeHandle from './ResizeHandle.vue'
+
+defineOptions({
+  name: 'BottomPanel',
+})
 
 const tpStore = useTpStore()
 const layoutStore = useWorkbenchLayoutStore()
@@ -9,136 +24,318 @@ const layoutStore = useWorkbenchLayoutStore()
 const activeTab = ref<'problems' | 'logs' | 'output'>('problems')
 const panelHeight = ref<number>(180)
 const isResizing = ref(false)
+const isMaximized = ref(false)
+const previousHeight = ref<number>(180)
+const logsCleared = ref(false)
 
-function startResize(e: MouseEvent) {
-  isResizing.value = true
-  const startY = e.clientY
-  const startHeight = panelHeight.value
+/** 处理拖拽折叠事件 (向下拖拽低于阈值时收起底部面板) */
+function handleCollapse() {
+  layoutStore.setBottomPanelVisible(false)
+  isResizing.value = false
+  panelHeight.value = 180
+}
 
-  function onMouseMove(moveEvent: MouseEvent) {
-    const delta = startY - moveEvent.clientY
-    panelHeight.value = Math.max(100, Math.min(450, startHeight + delta))
+/** 折叠状态下向上拖拽或双击手柄时重新展开底部面板 */
+function handleExpand() {
+  layoutStore.setBottomPanelVisible(true)
+}
+
+/** 手动拖拽过程中重置最大化状态 */
+function handleResize() {
+  if (isMaximized.value) {
+    isMaximized.value = false
   }
+}
 
-  function onMouseUp() {
-    isResizing.value = false
-    window.removeEventListener('mousemove', onMouseMove)
-    window.removeEventListener('mouseup', onMouseUp)
+/** 切换最大化与恢复原高度 */
+function toggleMaximize() {
+  if (isMaximized.value) {
+    panelHeight.value = previousHeight.value
+    isMaximized.value = false
   }
-
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('mouseup', onMouseUp)
+  else {
+    previousHeight.value = panelHeight.value
+    panelHeight.value = 400
+    isMaximized.value = true
+  }
 }
 </script>
 
 <template>
-  <section
-    :style="{
-      height: `${panelHeight}px`,
-      backgroundColor: 'var(--wb-bottompanel-bg, #1e1e1e)',
-      borderColor: 'var(--wb-border-color, #2d2d2d)',
-    }"
-    class="relative flex flex-col shrink-0 select-none border-t text-xs"
-  >
-    <!-- 上边缘拖拽调节高度手柄 -->
-    <div
-      :class="[isResizing ? 'bg-blue-500' : 'hover:bg-blue-500/50']"
-      class="absolute left-0 top-0 z-10 h-1 w-full cursor-row-resize transition-colors"
-      title="拖拽调节面板高度"
-      @mousedown="startResize"
+  <div class="w-full flex flex-col shrink-0">
+    <!-- 顶部常驻拖拽调整高度手柄 (展开时向上变大、向下低于阈值折叠；折叠后可向上拖拽或双击重新拉开) -->
+    <ResizeHandle
+      v-model="panelHeight"
+      direction="row"
+      :reverse="true"
+      :min="100"
+      :max="500"
+      :collapsed="!layoutStore.bottomPanelVisible"
+      :collapse-threshold="80"
+      :expand-threshold="30"
+      :title="layoutStore.bottomPanelVisible ? '拖拽调节高度 (向下拖拽收起)' : '向上拖拽或双击展开底部面板'"
+      @start="isResizing = true"
+      @end="isResizing = false"
+      @resize="handleResize"
+      @collapse="handleCollapse"
+      @expand="handleExpand"
+      @dblclick="!layoutStore.bottomPanelVisible && handleExpand()"
     />
 
-    <!-- 顶部选项卡栏 -->
-    <div
+    <section
       :style="{
-        backgroundColor: 'var(--wb-sidebar-bg, #252526)',
-        borderColor: 'var(--wb-border-color, #2d2d2d)',
+        height: layoutStore.bottomPanelVisible ? `${panelHeight}px` : '0px',
+        opacity: layoutStore.bottomPanelVisible ? 1 : 0,
+        backgroundColor: 'var(--wb-activitybar-bg, #181818)',
+        borderColor: 'var(--wb-border-color, #2b2b2b)',
       }"
-      class="h-28px flex items-center justify-between border-b px-3 text-gray-400"
+      class="z-20 w-full flex flex-col shrink-0 select-none overflow-hidden rounded-8px text-xs"
+      :class="[
+        layoutStore.bottomPanelVisible && 'mb-4px border',
+        !isResizing ? 'transition-[height,opacity] duration-220 ease-[cubic-bezier(0.25,1,0.5,1)]' : '',
+      ]"
     >
-      <div class="flex items-center gap-4">
-        <button
-          type="button"
-          :class="[activeTab === 'problems' ? 'text-white border-b-2 border-blue-400 font-semibold' : 'text-gray-400 hover:text-white']"
-          class="h-28px flex cursor-pointer items-center gap-1 transition-colors"
-          @click="activeTab = 'problems'"
-        >
-          <span>问题 (Problems)</span>
-          <span
-            :class="[tpStore.validationResult.errors.length > 0 ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300']"
-            class="rounded-full px-1.5 py-0.2 text-10px font-mono"
-          >
-            {{ tpStore.validationResult.errors.length }}
-          </span>
-        </button>
-
-        <button
-          type="button"
-          :class="[activeTab === 'logs' ? 'text-white border-b-2 border-blue-400 font-semibold' : 'text-gray-400 hover:text-white']"
-          class="h-28px flex cursor-pointer items-center gap-1 transition-colors"
-          @click="activeTab = 'logs'"
-        >
-          <span>本地日志 (Logs)</span>
-        </button>
-
-        <button
-          type="button"
-          :class="[activeTab === 'output' ? 'text-white border-b-2 border-blue-400 font-semibold' : 'text-gray-400 hover:text-white']"
-          class="h-28px flex cursor-pointer items-center gap-1 transition-colors"
-          @click="activeTab = 'output'"
-        >
-          <span>输出 (Output)</span>
-        </button>
-      </div>
-
-      <!-- 右侧关闭按钮 -->
-      <button
-        type="button"
-        class="cursor-pointer text-gray-400 hover:text-white"
-        title="关闭面板 (Ctrl+J)"
-        @click="layoutStore.setBottomPanelVisible(false)"
+      <!-- 内部固定高度容器，防止折叠动画时选项卡与内容挤压变形 -->
+      <div
+        :style="{ height: `${panelHeight}px` }"
+        class="min-h-0 flex flex-col shrink-0 overflow-hidden"
       >
-        ✕
-      </button>
-    </div>
+        <NTabs
+          v-model:value="activeTab"
+          type="line"
+          size="small"
+          class="bottom-panel-tabs h-full flex flex-col"
+          pane-wrapper-class="flex-1 min-h-0 overflow-hidden"
+          pane-class="h-full !p-0"
+        >
+          <!-- 1. 问题 (Problems) 标签页 -->
+          <NTabPane name="problems">
+            <template #tab>
+              <div class="flex items-center gap-1.5 py-0.5">
+                <SvgIcon icon="ri:error-warning-line" class="text-13px" />
+                <span>问题 (Problems)</span>
+                <NBadge
+                  :value="tpStore.validationResult.errors.length"
+                  :type="tpStore.validationResult.errors.length > 0 ? 'error' : 'default'"
+                  :color="tpStore.validationResult.errors.length > 0 ? undefined : '#3f3f46'"
+                  :show-zero="true"
+                  size="small"
+                />
+              </div>
+            </template>
 
-    <!-- 面板主体内容 -->
-    <div class="flex-1 select-text overflow-auto p-3 text-xs font-mono">
-      <!-- 1. 问题列表 -->
-      <div v-if="activeTab === 'problems'">
-        <div v-if="tpStore.validationResult.errors.length === 0" class="py-4 text-center text-gray-500">
-          ✓ 当前测试程序未检测到 DRC 规则或上下限错误
-        </div>
-        <ul v-else class="text-red-400 space-y-1.5">
-          <li
-            v-for="(err, idx) in tpStore.validationResult.errors"
-            :key="idx"
-            class="flex cursor-pointer items-start gap-2 rounded p-1.5 hover:bg-red-950/30"
-          >
-            <span class="text-red-500">✕</span>
-            <span>{{ err }}</span>
-          </li>
-        </ul>
-      </div>
+            <NScrollbar class="h-full">
+              <div class="p-3 text-xs font-mono">
+                <!-- 无问题状态：NEmpty 展示成功反馈 -->
+                <div v-if="tpStore.validationResult.errors.length === 0" class="py-6">
+                  <NEmpty description="当前测试程序未检测到 DRC 规则或上下限错误" size="small">
+                    <template #icon>
+                      <SvgIcon icon="ri:checkbox-circle-line" class="text-28px text-emerald-500" />
+                    </template>
+                    <template #extra>
+                      <NButton size="tiny" quaternary class="text-xs" @click="tpStore.runValidation()">
+                        <template #icon>
+                          <SvgIcon icon="ri:refresh-line" class="text-12px" />
+                        </template>
+                        重新校验 DRC
+                      </NButton>
+                    </template>
+                  </NEmpty>
+                </div>
 
-      <!-- 2. 日志 -->
-      <div v-else-if="activeTab === 'logs'" class="text-gray-400 space-y-1">
-        <div class="text-gray-500">
-          [INFO] ATE Studio 日志系统就绪，已关联本地 rolling app.log
-        </div>
-        <div v-if="tpStore.fileName" class="text-blue-400">
-          [INFO] 已加载测试程序: {{ tpStore.filePath }}
-        </div>
-        <div v-if="tpStore.isDirty" class="text-amber-400">
-          [WARN] 检测到未保存的脏数据修改
-        </div>
-      </div>
+                <!-- 存在校验错误：列表化展示 -->
+                <div v-else class="select-text space-y-1.5">
+                  <div
+                    v-for="(err, idx) in tpStore.validationResult.errors"
+                    :key="idx"
+                    class="group flex cursor-pointer items-start gap-2.5 border border-transparent rounded p-2 transition-colors hover:border-red-900/40 hover:bg-red-950/25"
+                  >
+                    <SvgIcon icon="ri:close-circle-fill" class="mt-0.5 shrink-0 text-15px text-red-500" />
+                    <span class="flex-1 select-text text-red-400 leading-relaxed">{{ err }}</span>
+                    <NTag type="error" size="tiny" :bordered="false" class="shrink-0 text-10px font-mono">
+                      DRC
+                    </NTag>
+                  </div>
+                </div>
+              </div>
+            </NScrollbar>
+          </NTabPane>
 
-      <!-- 3. 输出 -->
-      <div v-else-if="activeTab === 'output'" class="text-gray-400">
-        <div>ATE Studio 核心解析引擎版本: 1.0.0</div>
-        <div>当前匹配适配器: {{ tpStore.activeAdapter?.name || '无' }}</div>
+          <!-- 2. 本地日志 (Logs) 标签页 -->
+          <NTabPane name="logs">
+            <template #tab>
+              <div class="flex items-center gap-1.5 py-0.5">
+                <SvgIcon icon="ri:file-list-3-line" class="text-13px" />
+                <span>本地日志 (Logs)</span>
+              </div>
+            </template>
+
+            <NScrollbar class="h-full">
+              <div class="select-text p-3 text-xs text-gray-300 font-mono space-y-2">
+                <div v-if="logsCleared" class="py-4 text-center text-gray-500 italic">
+                  日志已清空
+                </div>
+                <template v-else>
+                  <div class="flex items-start gap-2 text-gray-400">
+                    <NTag size="tiny" type="info" :bordered="false" class="shrink-0 text-10px font-mono">
+                      INFO
+                    </NTag>
+                    <span class="text-gray-400">ATE Studio 日志系统就绪，已关联本地 rolling app.log</span>
+                  </div>
+                  <div v-if="tpStore.fileName" class="flex items-start gap-2">
+                    <NTag size="tiny" type="info" :bordered="false" class="shrink-0 text-10px font-mono">
+                      INFO
+                    </NTag>
+                    <span class="text-blue-400">已加载测试程序: {{ tpStore.filePath }}</span>
+                  </div>
+                  <div v-if="tpStore.isDirty" class="flex items-start gap-2">
+                    <NTag size="tiny" type="warning" :bordered="false" class="shrink-0 text-10px font-mono">
+                      WARN
+                    </NTag>
+                    <span class="text-amber-400">检测到未保存的脏数据修改</span>
+                  </div>
+                </template>
+              </div>
+            </NScrollbar>
+          </NTabPane>
+
+          <!-- 3. 输出 (Output) 标签页 -->
+          <NTabPane name="output">
+            <template #tab>
+              <div class="flex items-center gap-1.5 py-0.5">
+                <SvgIcon icon="ri:terminal-box-line" class="text-13px" />
+                <span>输出 (Output)</span>
+              </div>
+            </template>
+
+            <NScrollbar class="h-full">
+              <div class="select-text p-3 text-xs text-gray-300 font-mono space-y-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-400">ATE Studio 核心解析引擎版本:</span>
+                  <NTag size="tiny" type="success" :bordered="false" class="text-10px font-mono">
+                    1.0.0
+                  </NTag>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-400">当前匹配适配器:</span>
+                  <NTag
+                    size="tiny"
+                    :type="tpStore.activeAdapter ? 'primary' : 'default'"
+                    :bordered="false"
+                    class="text-10px font-mono"
+                  >
+                    {{ tpStore.activeAdapter?.name || '无' }}
+                  </NTag>
+                </div>
+                <div v-if="tpStore.fileName" class="flex items-center gap-2">
+                  <span class="text-gray-400">已打开模块项:</span>
+                  <span class="text-gray-300">
+                    {{ tpStore.tabs.length }} 个活跃编辑标签页
+                  </span>
+                </div>
+              </div>
+            </NScrollbar>
+          </NTabPane>
+
+          <!-- 选项卡右侧操作区 (Suffix Slot) -->
+          <template #suffix>
+            <div class="flex items-center gap-1 pr-2">
+              <!-- 重新校验 DRC -->
+              <NTooltip v-if="activeTab === 'problems'" placement="top" trigger="hover">
+                <template #trigger>
+                  <NButton
+                    quaternary
+                    size="tiny"
+                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    @click="tpStore.runValidation()"
+                  >
+                    <template #icon>
+                      <SvgIcon icon="ri:refresh-line" class="text-13px" />
+                    </template>
+                  </NButton>
+                </template>
+                <span>重新执行 DRC 校验</span>
+              </NTooltip>
+
+              <!-- 清空日志 -->
+              <NTooltip v-if="activeTab === 'logs'" placement="top" trigger="hover">
+                <template #trigger>
+                  <NButton
+                    quaternary
+                    size="tiny"
+                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    @click="logsCleared = true"
+                  >
+                    <template #icon>
+                      <SvgIcon icon="ri:delete-bin-line" class="text-13px" />
+                    </template>
+                  </NButton>
+                </template>
+                <span>清空日志</span>
+              </NTooltip>
+
+              <!-- 最大化 / 还原切换 -->
+              <NTooltip placement="top" trigger="hover">
+                <template #trigger>
+                  <NButton
+                    quaternary
+                    size="tiny"
+                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    @click="toggleMaximize"
+                  >
+                    <template #icon>
+                      <SvgIcon
+                        :icon="isMaximized ? 'ri:contract-up-down-line' : 'ri:expand-up-down-line'"
+                        class="text-13px"
+                      />
+                    </template>
+                  </NButton>
+                </template>
+                <span>{{ isMaximized ? '还原面板大小' : '最大化面板' }}</span>
+              </NTooltip>
+
+              <!-- 关闭面板 (Ctrl+J) -->
+              <NTooltip placement="top" trigger="hover">
+                <template #trigger>
+                  <NButton
+                    quaternary
+                    size="tiny"
+                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    @click="layoutStore.setBottomPanelVisible(false)"
+                  >
+                    <template #icon>
+                      <SvgIcon icon="ri:close-line" class="text-14px" />
+                    </template>
+                  </NButton>
+                </template>
+                <span>关闭面板 (Ctrl+J)</span>
+              </NTooltip>
+            </div>
+          </template>
+        </NTabs>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
+
+<style scoped>
+:deep(.n-tabs-nav) {
+  background-color: var(--wb-activitybar-bg, #181818);
+  border-bottom: 1px solid var(--wb-border-color, #2d2d2d);
+  padding: 0 8px;
+}
+
+:deep(.n-tabs-nav-scroll-content) {
+  gap: 8px;
+}
+
+:deep(.n-tabs-pane-wrapper) {
+  flex: 1;
+  min-height: 0;
+}
+
+:deep(.n-tab-pane) {
+  height: 100%;
+  box-sizing: border-box;
+}
+</style>

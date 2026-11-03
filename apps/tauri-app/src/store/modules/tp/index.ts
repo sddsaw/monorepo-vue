@@ -15,6 +15,7 @@ export interface WbTabItem {
   componentKey: string
   dataPath: (string | number)[]
   isDirty?: boolean
+  pinned?: boolean
 }
 
 /** 最近打开的工程记录 */
@@ -310,6 +311,30 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     activeTabId.value = node.id
   }
 
+  /** 打开首选项与设置 Tab (在 Dockview 核心多向分屏区域展示) */
+  function openSettingsTab() {
+    const SETTINGS_TAB_ID = 'workbench-settings'
+    const existingIndex = tabs.value.findIndex(tab => tab.id === SETTINGS_TAB_ID)
+    if (existingIndex > -1) {
+      activeTabId.value = SETTINGS_TAB_ID
+      activeNodeId.value = SETTINGS_TAB_ID
+      return
+    }
+
+    const settingsTab: WbTabItem = {
+      id: SETTINGS_TAB_ID,
+      label: '设置',
+      icon: 'ri:equalizer-line',
+      componentKey: 'SettingsView',
+      dataPath: [],
+      isDirty: false,
+    }
+
+    tabs.value.push(settingsTab)
+    activeTabId.value = SETTINGS_TAB_ID
+    activeNodeId.value = SETTINGS_TAB_ID
+  }
+
   /** 关闭指定 Tab */
   function closeTab(tabId: string) {
     const index = tabs.value.findIndex(tab => tab.id === tabId)
@@ -337,6 +362,19 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
   function setActiveTab(tabId: string) {
     activeTabId.value = tabId
     activeNodeId.value = tabId
+  }
+
+  /** 判断指定 Tab 是否已固定 */
+  function isTabPinned(tabId: string) {
+    return Boolean(tabs.value.find(tab => tab.id === tabId)?.pinned)
+  }
+
+  /** 设置指定 Tab 固定状态 */
+  function setTabPinned(tabId: string, pinned: boolean) {
+    const target = tabs.value.find(tab => tab.id === tabId)
+    if (target) {
+      target.pinned = pinned
+    }
   }
 
   /** 执行 DRC 规则校验 */
@@ -396,8 +434,11 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     getItemData,
     updateItemField,
     openTab,
+    openSettingsTab,
     closeTab,
     setActiveTab,
+    isTabPinned,
+    setTabPinned,
     runValidation,
     saveFile,
   }

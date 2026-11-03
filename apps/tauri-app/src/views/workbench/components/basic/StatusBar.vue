@@ -28,6 +28,15 @@ const tpStore = useTpStore()
           <span class="font-mono">0</span>
         </span>
       </div>
+
+      <!-- 文件及未打开标签页状态展示 -->
+      <div
+        class="flex items-center gap-1.5 rounded px-1 py-0.5 text-white/90 font-mono"
+        :title="tpStore.fileName ? (tpStore.activeTab ? `当前文件: ${tpStore.fileName}` : `${tpStore.fileName} (无打开标签页)`) : '未载入文件'"
+      >
+        <SvgIcon icon="ri:file-code-line" class="text-12px text-white/70" />
+        <span>{{ tpStore.fileName ? (tpStore.activeTab ? tpStore.fileName : `${tpStore.fileName} (无打开标签页)`) : '未载入文件' }}</span>
+      </div>
     </div>
 
     <!-- 右侧状态项 -->

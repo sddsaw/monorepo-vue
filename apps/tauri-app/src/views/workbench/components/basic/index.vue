@@ -4,12 +4,11 @@ import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
 import { useWorkbenchThemeStore } from '@/store/modules/workbenchTheme'
 import { useNaiveWorkbenchTheme } from '@/theme/naiveTheme'
-import ActivityBar from './ActivityBar.vue'
 import BottomPanel from './BottomPanel.vue'
 import EditorBreadcrumb from './EditorArea/EditorBreadcrumb.vue'
 import EditorArea from './EditorArea/index.vue'
+import PrimarySideBar from './PrimarySideBar.vue'
 import SecondarySideBar from './SecondarySideBar.vue'
-import SideBar from './SideBar/index.vue'
 import StatusBar from './StatusBar.vue'
 import WindowTitleBar from './WindowTitleBar.vue'
 
@@ -51,6 +50,13 @@ function handleKeyDown(e: KeyboardEvent) {
   if (isCtrlOrCmd && e.key.toLowerCase() === 'o') {
     e.preventDefault()
     tpStore.chooseAndOpenFile()
+    return
+  }
+
+  // Ctrl + ,: 打开设置
+  if (isCtrlOrCmd && e.key === ',') {
+    e.preventDefault()
+    tpStore.openSettingsTab()
   }
 }
 
@@ -83,47 +89,34 @@ onUnmounted(() => {
       <NDialogProvider>
         <div
           :style="{
-            backgroundColor: 'var(--wb-editor-bg, #1e1e1e)',
+            backgroundColor: 'var(--wb-activitybar-bg, #181818)',
             color: 'var(--wb-text-color, #cccccc)',
           }"
           class="h-screen w-screen flex flex-col select-none overflow-hidden font-sans"
         >
           <!-- 1. 顶部标题栏 -->
-          <WindowTitleBar class="h-35px shrink-0" />
+          <WindowTitleBar class="shrink-0" />
 
           <!-- 2. 中间主工作区 -->
-          <div class="relative flex flex-1 overflow-hidden">
-            <!-- 极窄 48px 活动栏 -->
-            <ActivityBar class="w-48px shrink-0" />
-
-            <!-- 可伸缩侧边栏 (支持 Ctrl+B 折叠) -->
-            <SideBar
-              v-show="layoutStore.sidebarVisible"
-              class="shrink-0"
-            />
+          <div class="relative flex flex-1 overflow-hidden rounded-md">
+            <!-- 左侧主侧边栏 (整合 ActivityBar 与 SideBar) -->
+            <PrimarySideBar />
 
             <!-- 主编辑区与底部面板区 -->
             <main class="min-w-0 flex flex-col flex-1 overflow-hidden">
-              <!-- 顶部面包屑坐标 -->
+              <!-- 顶部面包屑坐标  -->
               <EditorBreadcrumb class="h-26px shrink-0" />
-
               <!-- Dockview 核心多向分屏区域 -->
-              <div class="relative min-h-0 flex-1 overflow-hidden">
+              <div class="relative min-h-0 flex-1 overflow-hidden rounded-md">
                 <EditorArea class="size-full" />
               </div>
 
-              <!-- 底部面板 (支持 Ctrl+J 折叠) -->
-              <BottomPanel
-                v-show="layoutStore.bottomPanelVisible"
-                class="shrink-0"
-              />
+              <!-- 底部面板 (支持 Ctrl+J 折叠，常驻保留顶部拖拽手柄) -->
+              <BottomPanel class="shrink-0" />
             </main>
 
-            <!-- 右侧辅助侧边栏 (Copilot / 聊天面板) -->
-            <SecondarySideBar
-              v-show="layoutStore.secondarySidebarVisible"
-              class="shrink-0"
-            />
+            <!-- 右侧辅助侧边栏 (Copilot / 聊天面板，常驻保留左侧拖拽手柄) -->
+            <SecondarySideBar class="shrink-0" />
           </div>
 
           <!-- 3. 底部紧凑状态栏 -->

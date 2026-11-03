@@ -3,16 +3,24 @@ import type { DropdownOption } from 'naive-ui'
 import { useSvgIcon } from '@sa/components/hooks/icon'
 import { computed } from 'vue'
 import { $t } from '@/locales'
+import { setupIconifyOffline } from '@/plugins/iconify'
 import { useTabStore } from '@/store/modules/tab'
+import { useNaiveWorkbenchTheme } from '@/theme/naiveTheme'
 
 defineOptions({
   name: 'ContextMenu',
 })
 
 const props = withDefaults(defineProps<Props>(), {
+  custom: false,
+  isPinned: false,
   excludeKeys: () => [],
   disabledKeys: () => [],
 })
+
+const emit = defineEmits<{
+  action: [key: App.Global.DropdownKey]
+}>()
 
 interface Props {
   /** ClientX */
@@ -20,14 +28,23 @@ interface Props {
   /** ClientY */
   y: number
   tabId: string
+  /** 是否使用外部受控数据源（如工作台 Dockview 标签栏） */
+  custom?: boolean
+  /** 受控模式下当前标签是否已固定 */
+  isPinned?: boolean
   excludeKeys?: App.Global.DropdownKey[]
   disabledKeys?: App.Global.DropdownKey[]
+}
+
+if (props.custom) {
+  setupIconifyOffline()
 }
 
 const visible = defineModel<boolean>('visible')
 
 const { removeTab, clearTabs, clearLeftTabs, clearRightTabs, fixTab, unfixTab, isTabRetain, homeTab } = useTabStore()
 const { SvgIconVNode } = useSvgIcon()
+const { activeTheme, themeOverrides } = useNaiveWorkbenchTheme()
 
 type LocalDropdownOption = DropdownOption & {
   key: App.Global.DropdownKey
@@ -62,7 +79,23 @@ const options = computed(() => {
     },
   ]
 
-  if (props.tabId !== homeTab?.id) {
+  if (props.custom) {
+    if (props.isPinned) {
+      opts.push({
+        key: 'unpin',
+        label: $t('dropdown.unpin'),
+        icon: SvgIconVNode({ icon: 'mdi:pin-off-outline', fontSize: 18 }),
+      })
+    }
+    else {
+      opts.push({
+        key: 'pin',
+        label: $t('dropdown.pin'),
+        icon: SvgIconVNode({ icon: 'mdi:pin-outline', fontSize: 18 }),
+      })
+    }
+  }
+  else if (props.tabId !== homeTab?.id) {
     if (isTabRetain(props.tabId)) {
       opts.push({
         key: 'unpin',
@@ -123,13 +156,31 @@ const dropdownAction: Record<App.Global.DropdownKey, () => void> = {
 }
 
 function handleDropdown(optionKey: App.Global.DropdownKey) {
-  dropdownAction[optionKey]?.()
+  if (props.custom) {
+    emit('action', optionKey)
+  }
+  else {
+    dropdownAction[optionKey]?.()
+  }
   hideDropdown()
 }
 </script>
 
 <template>
+  <NConfigProvider v-if="custom" :theme="activeTheme" :theme-overrides="themeOverrides">
+    <NDropdown
+      :show="visible"
+      placement="bottom-start"
+      trigger="manual"
+      :x="x"
+      :y="y"
+      :options="options"
+      @clickoutside="hideDropdown"
+      @select="handleDropdown"
+    />
+  </NConfigProvider>
   <NDropdown
+    v-else
     :show="visible"
     placement="bottom-start"
     trigger="manual"

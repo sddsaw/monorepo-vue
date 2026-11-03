@@ -21,6 +21,21 @@ export interface WorkbenchThemeTokens {
 }
 
 export const PRESET_WORKBENCH_THEMES: Record<string, WorkbenchThemeTokens> = {
+  'cursor': {
+    id: 'cursor',
+    name: 'Cursor',
+    isDark: true,
+    titleBarBg: '#131720',
+    activityBarBg: '#0e1117',
+    sidebarBg: '#12161f',
+    editorBg: '#10141d',
+    bottomPanelBg: '#12161f',
+    statusBarBg: '#181e2b',
+    accentColor: '#3b82f6',
+    borderColor: '#202636',
+    textColor: '#cbd5e1',
+    textSecondaryColor: '#64748b',
+  },
   'vscode-dark': {
     id: 'vscode-dark',
     name: 'VS Code Dark (暗黑)',

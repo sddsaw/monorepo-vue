@@ -232,6 +232,7 @@ const local: Schema = {
     '500': 'Server Error',
     'iframe-page': 'Iframe',
     'home': 'Home',
+    'workbench': 'Workbench',
     'document': 'Document',
     'document_project': 'Project Document',
     'document_project-link': 'Project Document(External Link)',

@@ -1,0 +1,169 @@
+<script setup lang="ts">
+import { useDraggable } from '@vueuse/core'
+import { onUnmounted, ref, watch } from 'vue'
+
+interface Props {
+  /** 绑定的尺寸数值 (支持 v-model) */
+  modelValue?: number
+  /** 方向: 'col' 为垂直分割线(水平拉伸宽度), 'row' 为水平分割线(垂直拉伸高度) */
+  direction?: 'col' | 'row'
+  /** 最小尺寸 */
+  min?: number
+  /** 最大尺寸 */
+  max?: number
+  /** 当前关联面板是否处于折叠状态 */
+  collapsed?: boolean
+  /** 折叠触发阈值：展开态向内拖拽计算尺寸低于此阈值时直接触发折叠 */
+  collapseThreshold?: number
+  /** 展开触发阈值：折叠态向外拖拽超过此距离时触发展开 */
+  expandThreshold?: number
+  /** 是否反向计算变化量 (例如右侧侧边栏向左拖拽变大，或底部面板向上拖拽变高) */
+  reverse?: boolean
+  /** 提示文案 */
+  title?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 240,
+  direction: 'col',
+  min: 160,
+  max: 600,
+  collapsed: false,
+  collapseThreshold: undefined,
+  expandThreshold: 40,
+  reverse: false,
+  title: '拖拽调节尺寸',
+})
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: number): void
+  (e: 'start'): void
+  (e: 'resize', value: number): void
+  (e: 'end'): void
+  (e: 'collapse'): void
+  (e: 'expand'): void
+}>()
+
+const handleRef = ref<HTMLElement | null>(null)
+
+let startCoord = 0
+let startSize = 0
+let isCurrentlyCollapsed = false
+// 从折叠态开始拖拽时，在尚未越过 collapseThreshold 前使用 expandThreshold 判定回缩，防止刚展开立即闪断折叠
+let hasEnteredNormalZone = !props.collapsed
+
+const { isDragging } = useDraggable(handleRef, {
+  preventDefault: true,
+  onStart: (_, e: PointerEvent) => {
+    emit('start')
+    startCoord = props.direction === 'col' ? e.clientX : e.clientY
+    startSize = props.collapsed ? 0 : props.modelValue
+    isCurrentlyCollapsed = props.collapsed
+    hasEnteredNormalZone = !props.collapsed
+  },
+  onMove: (_, e: PointerEvent) => {
+    const currentCoord = props.direction === 'col' ? e.clientX : e.clientY
+    const rawDelta = currentCoord - startCoord
+    const delta = props.reverse ? -rawDelta : rawDelta
+    const targetSize = startSize + delta
+
+    if (isCurrentlyCollapsed) {
+      // 折叠态：向外拖拽超过展开阈值时重新展开面板
+      if (targetSize >= props.expandThreshold) {
+        isCurrentlyCollapsed = false
+        if (props.collapseThreshold === undefined || targetSize >= props.collapseThreshold) {
+          hasEnteredNormalZone = true
+        }
+        emit('expand')
+        const newSize = Math.max(props.min, Math.min(props.max, targetSize))
+        emit('update:modelValue', newSize)
+        emit('resize', newSize)
+      }
+      return
+    }
+
+    if (props.collapseThreshold !== undefined && targetSize >= props.collapseThreshold) {
+      hasEnteredNormalZone = true
+    }
+
+    // 检查是否向内拖拽超过折叠阈值
+    const activeCollapseThreshold = hasEnteredNormalZone
+      ? props.collapseThreshold
+      : props.expandThreshold
+
+    if (activeCollapseThreshold !== undefined && targetSize < activeCollapseThreshold) {
+      isCurrentlyCollapsed = true
+      emit('collapse')
+      return
+    }
+
+    const newSize = Math.max(props.min, Math.min(props.max, targetSize))
+    emit('update:modelValue', newSize)
+    emit('resize', newSize)
+  },
+  onEnd: () => {
+    emit('end')
+  },
+})
+
+watch(isDragging, (dragging) => {
+  if (dragging) {
+    document.body.style.cursor = props.direction === 'col' ? 'col-resize' : 'row-resize'
+    document.body.style.userSelect = 'none'
+  }
+  else {
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
+  }
+})
+
+onUnmounted(() => {
+  document.body.style.cursor = ''
+  document.body.style.userSelect = ''
+})
+</script>
+
+<template>
+  <div
+    ref="handleRef"
+    class="group relative flex shrink-0 select-none items-center justify-center"
+    :style="{
+      backgroundColor: 'var(--wb-activitybar-bg, #181818)',
+    }"
+    :class="[
+      direction === 'col' ? 'h-full w-4px cursor-col-resize' : 'w-full h-4px cursor-row-resize',
+    ]"
+    :title="title"
+  >
+    <!-- 拖拽感应/高亮指示中线 -->
+    <div
+      class="transition-colors duration-150"
+      :class="[
+        direction === 'col' ? 'h-full w-1px' : 'w-full h-1px',
+        isDragging ? 'bg-blue-500' : 'group-hover:bg-blue-500/50',
+      ]"
+    />
+
+    <!-- 居中的三点拉伸指示图标 -->
+    <div
+      class="absolute left-1/2 top-1/2 flex items-center rounded-full p-1px transition-colors duration-150 -translate-x-1/2 -translate-y-1/2"
+      :class="[
+        direction === 'col' ? 'flex-col gap-3px' : 'flex-row gap-3px',
+        isDragging ? 'bg-blue-500/20' : 'group-hover:bg-white/10',
+      ]"
+    >
+      <span
+        class="h-2px w-2px rounded-full bg-[#686868] transition-colors"
+        :class="[isDragging ? 'bg-blue-400' : 'group-hover:bg-gray-300']"
+      />
+      <span
+        class="h-2px w-2px rounded-full bg-[#686868] transition-colors"
+        :class="[isDragging ? 'bg-blue-400' : 'group-hover:bg-gray-300']"
+      />
+      <span
+        class="h-2px w-2px rounded-full bg-[#686868] transition-colors"
+        :class="[isDragging ? 'bg-blue-400' : 'group-hover:bg-gray-300']"
+      />
+    </div>
+  </div>
+</template>
