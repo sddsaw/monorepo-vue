@@ -7,16 +7,16 @@ import { type Component, defineAsyncComponent } from 'vue'
  */
 export const TP_COMPONENTS = {
   // ─── 测试流与测试项 (TestFlow) ──────────────────────────
-  SuiteSummary: defineAsyncComponent(() => import('@/components/business/test-flow/SuiteSummary.vue')),
-  Continuity: defineAsyncComponent(() => import('@/components/business/test-flow/ContinuityEditor.vue')),
-  IDDQ: defineAsyncComponent(() => import('@/components/business/test-flow/IddqEditor.vue')),
-  PMU_Force: defineAsyncComponent(() => import('@/components/business/test-flow/PmuForceEditor.vue')),
+  SuiteSummary: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/SuiteSummary.vue')),
+  Continuity: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/ContinuityEditor.vue')),
+  IDDQ: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/IddqEditor.vue')),
+  PMU_Force: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/PmuForceEditor.vue')),
 
   // ─── 管脚定义 (PinMap) ──────────────────────────────────
-  PinTable: defineAsyncComponent(() => import('@/components/business/pin-map/PinTableEditor.vue')),
+  PinTable: defineAsyncComponent(() => import('@/views/workbench/components/business/pin-map/PinTableEditor.vue')),
 
   // ─── 直流电平参数 (Levels) ──────────────────────────────
-  SpecTable: defineAsyncComponent(() => import('@/components/business/levels/SpecTableEditor.vue')),
+  SpecTable: defineAsyncComponent(() => import('@/views/workbench/components/business/levels/SpecTableEditor.vue')),
 } as const
 
 /** 业务组件键名强类型联合，用于编译期类型守卫 */

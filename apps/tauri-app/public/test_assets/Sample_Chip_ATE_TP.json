@@ -12,12 +12,12 @@
   },
   "testSuites": [
     {
-      "name": "OS_Continuity_Suite",
-      "description": "管脚静电保护二极管开短路特性验证 (Open/Short Continuity)",
+      "name": "OS_Continuity",
+      "description": "管脚静电保护开短路测试 (Open/Short Continuity)",
       "items": [
         {
           "id": "TC_001",
-          "name": "OS_Ground_Clamp_Diode",
+          "name": "Ground_Clamp",
           "testType": "Continuity",
           "pinGroup": "ALL_IO_PINS",
           "forceCurrent": -100,
@@ -29,7 +29,7 @@
         },
         {
           "id": "TC_002",
-          "name": "OS_Power_Clamp_Diode",
+          "name": "Power_Clamp",
           "testType": "Continuity",
           "pinGroup": "ALL_IO_PINS",
           "forceCurrent": 100,
@@ -41,7 +41,7 @@
         },
         {
           "id": "TC_003",
-          "name": "OS_Differential_Pairs",
+          "name": "Diff_Pairs",
           "testType": "Continuity",
           "pinGroup": "PCIE_TX_RX_PINS",
           "forceCurrent": -200,
@@ -54,12 +54,12 @@
       ]
     },
     {
-      "name": "Static_Current_IDDQ_Suite",
-      "description": "高压与待机稳态漏电流测试 (IDDQ Static Supply Current)",
+      "name": "IDDQ_Current",
+      "description": "静态供电漏电流测试 (IDDQ Supply Current)",
       "items": [
         {
           "id": "TC_101",
-          "name": "IDDQ_Standby_Mode",
+          "name": "Standby_Mode",
           "testType": "Iddq",
           "vccVolt": 3.3,
           "maxCurrentUa": 50,
@@ -70,7 +70,7 @@
         },
         {
           "id": "TC_102",
-          "name": "IDDQ_Deep_Sleep_VddCore",
+          "name": "Deep_Sleep",
           "testType": "Iddq",
           "vccVolt": 1.05,
           "maxCurrentUa": 12.5,
@@ -82,12 +82,12 @@
       ]
     },
     {
-      "name": "DC_Parametric_Suite",
-      "description": "高精度单管脚直流驱动能力与灌拉电流测试 (PMU DC Parametric)",
+      "name": "DC_Parametric",
+      "description": "单管脚直流驱动与漏电流测试 (DC Parametric)",
       "items": [
         {
           "id": "TC_201",
-          "name": "VOH_VOL_Driver_Check",
+          "name": "Driver_Check",
           "testType": "PmuForce",
           "channel": "PMU_CH_04",
           "forceType": "Current",
@@ -101,7 +101,7 @@
         },
         {
           "id": "TC_202",
-          "name": "Input_Leakage_Current_IIH",
+          "name": "Leakage_IIH",
           "testType": "PmuForce",
           "channel": "PMU_CH_12",
           "forceType": "Voltage",

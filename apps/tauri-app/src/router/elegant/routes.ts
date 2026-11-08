@@ -37,60 +37,6 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'demo',
-    path: '/demo',
-    component: 'layout.base',
-    meta: {
-      title: '演示页面',
-      order: 2
-    },
-    children: [
-      {
-        name: 'demo_from',
-        path: '/demo/from',
-        component: 'view.demo_from',
-        meta: {
-          title: '表单封装'
-        }
-      },
-      {
-        name: 'demo_infinite-scroll',
-        path: '/demo/infinite-scroll',
-        component: 'view.demo_infinite-scroll',
-        meta: {
-          title: '滚动加载封装'
-        }
-      },
-      {
-        name: 'demo_rich-editor',
-        path: '/demo/rich-editor',
-        component: 'view.demo_rich-editor',
-        meta: {
-          title: '富文本封装'
-        }
-      }
-    ]
-  },
-  {
-    name: 'desktop',
-    path: '/desktop',
-    component: 'layout.base$view.desktop',
-    meta: {
-      title: '桌面原生工作台',
-      icon: 'carbon:application-web',
-      order: 2
-    }
-  },
-  {
-    name: 'home',
-    path: '/home',
-    component: 'layout.blank$view.home',
-    meta: {
-      title: '首页',
-      order: 1
-    }
-  },
-  {
     name: 'iframe-page',
     path: '/iframe-page/:url',
     component: 'layout.base$view.iframe-page',
@@ -113,43 +59,11 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
-    name: 'monitor',
-    path: '/monitor',
-    component: 'layout.base',
+    name: 'redis-devtools',
+    path: '/redis-devtools',
+    component: 'layout.blank$view.redis-devtools',
     meta: {
-      title: '系统监控',
-      icon: 'ant-design:monitor-outlined',
-      order: 4
-    },
-    children: [
-      {
-        name: 'monitor_data',
-        path: '/monitor/data',
-        component: 'view.monitor_data',
-        meta: {
-          title: '数据监控',
-          icon: 'ant-design:line-chart-outlined',
-          order: 2
-        }
-      },
-      {
-        name: 'monitor_online',
-        path: '/monitor/online',
-        component: 'view.monitor_online',
-        meta: {
-          title: '在线用户',
-          icon: 'ant-design:user-outlined',
-          order: 1
-        }
-      }
-    ]
-  },
-  {
-    name: 'sub-window',
-    path: '/sub-window',
-    component: 'layout.blank$view.sub-window',
-    meta: {
-      title: '独立子窗口',
+      title: 'Redis 调试面板',
       constant: true,
       hideInMenu: true
     }

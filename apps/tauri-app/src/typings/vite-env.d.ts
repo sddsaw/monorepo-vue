@@ -124,6 +124,10 @@ declare namespace Env {
     readonly VITE_UMAMI_SCRIPT_URL?: string
     /** Apifox Mock 鉴权 Token */
     readonly VITE_APIFOX_TOKEN?: string
+    /** 开发模式下启动时是否自动打开 Redis 调试面板（Y | N） */
+    readonly VITE_REDIS_DEVTOOLS_AUTO_OPEN?: CommonType.YesOrNo
+    /** 是否展示工作台底部状态栏（Y | N） */
+    readonly VITE_SHOW_STATUS_BAR?: CommonType.YesOrNo
   }
 }
 

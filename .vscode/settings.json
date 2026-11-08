@@ -48,5 +48,23 @@
     "scss",
     "pcss",
     "postcss"
-  ]
+  ],
+
+  // i18n-ally 插件配置（解决 monorepo 下路径无法自动识别及行内内联提示中文）
+  "i18n-ally.localesPaths": [
+    "apps/tauri-app/src/locales/langs",
+    "packages/locales/src/langs"
+  ],
+  "i18n-ally.enabledParsers": ["ts"],
+  "i18n-ally.enabledFrameworks": ["vue"],
+  "i18n-ally.parsers.typescript.compilerOptions": {
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "rootDir": ".",
+    "baseUrl": "."
+  },
+  "i18n-ally.displayLanguage": "zh-cn",
+  "i18n-ally.sourceLanguage": "zh-cn",
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.namespace": false
 }

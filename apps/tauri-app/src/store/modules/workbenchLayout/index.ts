@@ -1,7 +1,8 @@
-import type { DockviewApi } from 'dockview-vue'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import { defineStore } from 'pinia'
-import { ref, shallowRef } from 'vue'
+import { ref } from 'vue'
 import { SetupStoreId } from '@/enum'
+import { isTauri } from '@/plugins/tauri'
 
 export type ActivityType
   = | 'explorer'
@@ -26,9 +27,6 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
 
   /** 当前激活的活动栏图标类型 */
   const activeActivity = ref<ActivityType>('explorer')
-
-  /** 底层 Dockview API 实例控制器 */
-  const dockviewApi = shallowRef<DockviewApi | null>(null)
 
   function toggleSidebar() {
     sidebarVisible.value = !sidebarVisible.value
@@ -65,8 +63,42 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
     }
   }
 
-  function setDockviewApi(api: DockviewApi) {
-    dockviewApi.value = api
+  /** 全局界面缩放比例 (默认 1.0) */
+  const zoomLevel = ref<number>(1.0)
+
+  function applyZoom(val: number) {
+    zoomLevel.value = Math.min(2.0, Math.max(0.6, Number(val.toFixed(2))))
+    if (typeof document !== 'undefined') {
+      (document.documentElement.style as any).zoom = zoomLevel.value
+    }
+  }
+
+  function zoomIn() {
+    applyZoom(zoomLevel.value + 0.1)
+  }
+
+  function zoomOut() {
+    applyZoom(zoomLevel.value - 0.1)
+  }
+
+  function resetZoom() {
+    applyZoom(1.0)
+  }
+
+  async function toggleFullscreen() {
+    if (isTauri()) {
+      const win = getCurrentWindow()
+      const isFull = await win.isFullscreen()
+      await win.setFullscreen(!isFull)
+    }
+    else if (typeof document !== 'undefined') {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen()
+      }
+      else {
+        await document.exitFullscreen()
+      }
+    }
   }
 
   return {
@@ -74,7 +106,11 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
     bottomPanelVisible,
     secondarySidebarVisible,
     activeActivity,
-    dockviewApi,
+    zoomLevel,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+    toggleFullscreen,
     toggleSidebar,
     setSidebarVisible,
     toggleSecondarySidebar,
@@ -82,6 +118,5 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
     toggleBottomPanel,
     setBottomPanelVisible,
     setActiveActivity,
-    setDockviewApi,
   }
 })

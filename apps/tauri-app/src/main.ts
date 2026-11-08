@@ -9,6 +9,7 @@ import {
   setupIconifyOffline,
   setupLoading,
   setupNProgress,
+  setupRedisDevtools,
 } from './plugins'
 import { isMainWindow } from './plugins/tauri'
 import { router, setupRouter } from './router'
@@ -33,6 +34,7 @@ async function setupApp() {
     setupAppVersionNotification()
     setupGlobalShortcuts()
     setupDeepLink(router)
+    setupRedisDevtools()
   }
 }
 

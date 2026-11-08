@@ -32,6 +32,31 @@ export async function emitAppEvent<K extends AppEventName>(
 }
 
 /**
+ * 监听跨窗口事件（非组件场景使用，需自行调用返回的注销函数）
+ */
+export async function listenAppEvent<K extends AppEventName>(
+  eventName: K,
+  handler: (payload: AppEventPayloads[K]) => void,
+): Promise<() => void> {
+  if (isTauri()) {
+    const { listen } = await import('@tauri-apps/api/event')
+    return listen<AppEventPayloads[K]>(eventName, event => handler(event.payload))
+  }
+
+  const channel = getWebBroadcastChannel()
+  if (!channel)
+    return () => {}
+
+  const messageListener = (ev: MessageEvent) => {
+    if (ev.data?.eventName === eventName) {
+      handler(ev.data.payload)
+    }
+  }
+  channel.addEventListener('message', messageListener)
+  return () => channel.removeEventListener('message', messageListener)
+}
+
+/**
  * Vue 组合式 Hook：监听跨窗口事件
  * 自动在组件挂载生命周期注册，并在组件卸载 (onUnmounted) 时自动注销监听器，杜绝内存泄漏
  */

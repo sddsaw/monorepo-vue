@@ -247,16 +247,16 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     const fallback = {
       testSuites: [
         {
-          name: 'OS_Continuity_Suite',
+          name: 'OS_Continuity',
           items: [
-            { id: 'TC_001', name: 'OS_Ground_Clamp_Diode', testType: 'Continuity', pinGroup: 'ALL_IO_PINS', forceCurrent: -100, voltageClamp: 1.5, loLimit: -0.85, hiLimit: -0.2, unit: 'V', settlingTimeMs: 2.5 },
-            { id: 'TC_002', name: 'OS_Power_Clamp_Diode', testType: 'Continuity', pinGroup: 'ALL_IO_PINS', forceCurrent: 100, voltageClamp: 1.5, loLimit: 0.2, hiLimit: 0.85, unit: 'V', settlingTimeMs: 2.5 },
+            { id: 'TC_001', name: 'Ground_Clamp', testType: 'Continuity', pinGroup: 'ALL_IO_PINS', forceCurrent: -100, voltageClamp: 1.5, loLimit: -0.85, hiLimit: -0.2, unit: 'V', settlingTimeMs: 2.5 },
+            { id: 'TC_002', name: 'Power_Clamp', testType: 'Continuity', pinGroup: 'ALL_IO_PINS', forceCurrent: 100, voltageClamp: 1.5, loLimit: 0.2, hiLimit: 0.85, unit: 'V', settlingTimeMs: 2.5 },
           ],
         },
         {
-          name: 'Static_Current_IDDQ_Suite',
+          name: 'IDDQ_Current',
           items: [
-            { id: 'TC_101', name: 'IDDQ_Standby_Mode', testType: 'Iddq', vccVolt: 3.3, maxCurrentUa: 50, settlingTimeMs: 15, preconditionPattern: 'pat_standby_reset_vector', sampleCount: 16, passFailCount: 0 },
+            { id: 'TC_101', name: 'Standby_Mode', testType: 'Iddq', vccVolt: 3.3, maxCurrentUa: 50, settlingTimeMs: 15, preconditionPattern: 'pat_standby_reset_vector', sampleCount: 16, passFailCount: 0 },
           ],
         },
       ],
@@ -311,7 +311,7 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     activeTabId.value = node.id
   }
 
-  /** 打开首选项与设置 Tab (在 Dockview 核心多向分屏区域展示) */
+  /** 打开首选项与设置视图 */
   function openSettingsTab() {
     const SETTINGS_TAB_ID = 'workbench-settings'
     const existingIndex = tabs.value.findIndex(tab => tab.id === SETTINGS_TAB_ID)

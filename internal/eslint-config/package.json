@@ -15,7 +15,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@antfu/eslint-config": "^9.0.0",
+    "@antfu/eslint-config": "^9.5.1",
     "eslint": "10.3.0"
   },
   "devDependencies": {

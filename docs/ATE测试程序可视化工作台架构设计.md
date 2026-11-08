@@ -17,7 +17,7 @@
 1. **数据驱动与目录/文件分层语义**：用户导入/打开本地 JSON 文件，系统自动匹配并提取专属的树形测试导航。左侧树严格区分 **“文件夹（Folder）”** 与 **“文件（File）”** 两种节点：
    * **文件夹节点（如测试套件 TestSuite、参数组 Category）**：点击行或展开箭头**仅触发目录展开与收起（Expand / Collapse）**，不会在右侧打开标签页或切换视图；
    * **文件节点（如具体的某个测试项 Continuity_1、IDDQ_2、PinMap 等叶子节点）**：点击**触发在右侧多标签区打开/聚焦自定义业务组件**，进行可视化渲染与编辑。
-2. **方式 A 显式组件映射**：所有业务组件收敛在 `src/components/business/`，通过强类型注册表显式按需引入；
+2. **方式 A 显式组件映射**：所有业务组件收敛在 `src/views/workbench/components/business/`，通过强类型注册表显式按需引入；
 3. **双向响应式与闭环保存**：界面修改参数实时同步到内存响应式模型，`Ctrl + S` 进行 DRC 规则校验并安全写回本地磁盘；
 4. **工业级排障定位**：在无浏览器地址栏的环境下，具备面包屑坐标显示、组件级错误边界诊断卡（防白屏）及本地黑匣子日志追踪能力。
 
@@ -84,9 +84,7 @@ apps/tauri-app/src/
 ├── components/
 │   ├── common/                               # 通用底座与排障诊断组件
 │   │   ├── ComponentErrorBoundary.vue        # 组件级防白屏错误捕获边界
-│   │   ├── FallbackJsonView.vue              # 缺少对应组件时的原始 JSON 兜底预览
-│   │   ├── TpBreadcrumb.vue                  # 顶部面包屑坐标栏
-│   │   └── TpStatusBar.vue                   # 底部状态栏定位信息
+│   │   └── FallbackJsonView.vue              # 缺少对应组件时的原始 JSON 兜底预览
 │   │
 │   └── business/                             # 【核心】所有内置 ATE 业务组件
 │       ├── test-flow/                        # 测试流与具体测试项配置
@@ -119,11 +117,8 @@ apps/tauri-app/src/
 │       │   ├── SideBar/                      # 3. 可伸缩主侧边栏 (挂载 NTree 测试项树)
 │       │   │   ├── index.vue                 # 侧栏容器 (支持拖拽调节宽度与折叠)
 │       │   │   └── ExplorerTree.vue          # 测试项树 (区分 folder/file 交互)
-│       │   ├── EditorArea/                   # 4. 【核心编辑区 - dockview-vue 驱动】
-│       │   │   ├── index.vue                 # DockviewVue 分屏网格宿主
-│       │   │   ├── EditorBreadcrumb.vue      # 顶部路径面包屑
-│       │   │   ├── EditorWatermark.vue       # 无 Tab 时的快捷键与引导水印
-│       │   │   └── theme.css                 # VS Code 官方深色主题样式注入
+│       │   ├── MainContent/                  # 4. 【核心展示与编辑区】
+│       │   │   └── index.vue                 # 业务测试项组件宿主与空状态容灾
 │       │   ├── BottomPanel.vue               # 5. 底部可折叠面板 (DRC问题/日志/输出)
 │       │   └── StatusBar.vue                 # 6. 底部 22px 紧凑状态栏 (状态与编码)
 │
@@ -162,18 +157,18 @@ import { defineAsyncComponent, type Component } from 'vue'
  */
 export const TP_COMPONENTS = {
   // ─── 测试流 (TestFlow) ──────────────────────────
-  SuiteSummary: defineAsyncComponent(() => import('@/components/business/test-flow/SuiteSummary.vue')),
-  Continuity: defineAsyncComponent(() => import('@/components/business/test-flow/ContinuityEditor.vue')),
-  IDDQ: defineAsyncComponent(() => import('@/components/business/test-flow/IddqEditor.vue')),
-  PMU_Force: defineAsyncComponent(() => import('@/components/business/test-flow/PmuForceEditor.vue')),
-  ShmooScan: defineAsyncComponent(() => import('@/components/business/test-flow/ShmooScanEditor.vue')),
+  SuiteSummary: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/SuiteSummary.vue')),
+  Continuity: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/ContinuityEditor.vue')),
+  IDDQ: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/IddqEditor.vue')),
+  PMU_Force: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/PmuForceEditor.vue')),
+  ShmooScan: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/ShmooScanEditor.vue')),
 
   // ─── 管脚定义 (PinMap) ───────────────────────────
-  PinTable: defineAsyncComponent(() => import('@/components/business/pin-map/PinTableEditor.vue')),
-  PackageDiagram: defineAsyncComponent(() => import('@/components/business/pin-map/PackageDiagram.vue')),
+  PinTable: defineAsyncComponent(() => import('@/views/workbench/components/business/pin-map/PinTableEditor.vue')),
+  PackageDiagram: defineAsyncComponent(() => import('@/views/workbench/components/business/pin-map/PackageDiagram.vue')),
 
   // ─── 电平参数 (Levels) ───────────────────────────
-  SpecTable: defineAsyncComponent(() => import('@/components/business/levels/SpecTableEditor.vue')),
+  SpecTable: defineAsyncComponent(() => import('@/views/workbench/components/business/levels/SpecTableEditor.vue')),
 } as const
 
 /** 业务组件键名联合类型，用于全流程类型守卫 */
@@ -250,7 +245,7 @@ export interface TPModuleAdapter {
 ```mermaid
 flowchart TD
     Click["用户点击左侧树某个节点 (node)"] --> CheckType{"判断节点类型<br/>(node.nodeType)"}
-    
+
     CheckType -->|nodeType === 'folder'| ToggleFolder["触发展开 / 收起<br/>toggleExpandedKeys(node.id)"]
     ToggleFolder --> IgnoreTabs["阻断右侧工作区操作<br/>保持当前编辑 Tab 不变"]
 
@@ -338,15 +333,15 @@ sequenceDiagram
     User->>Store: 1. 打开本地 100MB 文件 (readFile)
     Store->>Disk: Tauri 原生流式读盘 (耗时几十毫秒)
     Disk-->>Store: 存入 rawJson (shallowRef，内存稳定在 250MB，不卡顿)
-    
+
     User->>Store: 2. 点击左侧树测试项 (带有 dataPath)
     Store->>Comp: 3. getItemData(dataPath) 切出该节点微量数据 (2KB)
     Comp-->>User: 渲染表单/图表 (耗时仅 1ms)，支持查看底层原始 JSON
-    
+
     User->>Comp: 4. 修改输入框参数 (如 LowLimit = -0.8)
     Comp->>Store: 5. updateItemField(dataPath, 'loLimit', -0.8)
     Note over Store: 内存原位快速更新对应字段<br/>标记 isDirty = true (亮起未保存圆点 ●)
-    
+
     User->>Store: 6. 按下 Ctrl + S 触发保存
     Store->>Disk: invoke('save_file_content', { path, content: JSON.stringify(rawJson) })
     Disk-->>Store: 原子写盘成功，清除未保存圆点 ●
@@ -445,7 +440,7 @@ const CurrentComponent = computed(() => TP_COMPONENTS[props.activeNode.component
 </template>
 ```
 
-##### 3. 业务组件实战：看数据、改数据与查看原始 JSON (`src/components/business/test-flow/ContinuityEditor.vue`)
+##### 3. 业务组件实战：看数据、改数据与查看原始 JSON (`src/views/workbench/components/business/test-flow/ContinuityEditor.vue`)
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
@@ -478,8 +473,8 @@ function handleFieldChange(field: string, event: Event) {
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-bold">{{ data.testName }} 参数配置</h2>
       <!-- 工程师想看这个测试项对应的原始 JSON，点这里一键展开 -->
-      <button 
-        @click="showRawJson = !showRawJson" 
+      <button
+        @click="showRawJson = !showRawJson"
         class="text-xs px-2 py-1 bg-gray-700 rounded text-gray-300 hover:bg-gray-600"
       >
         {{ showRawJson ? '隐藏原始 JSON' : '查看原始 JSON' }}
@@ -648,7 +643,7 @@ const layoutStore = useWorkbenchLayoutStore()
 
 function onReady(event: DockviewReadyEvent) {
   layoutStore.setDockviewApi(event.api)
-  
+
   // 将方式 A 中的所有业务组件批量注册进 Dockview 窗格字典
   Object.entries(TP_COMPONENTS).forEach(([key, component]) => {
     event.api.registerCustomComponent(key, component)
@@ -734,7 +729,7 @@ function onReady(event: DockviewReadyEvent) {
 ```mermaid
 flowchart TD
     Store["主题状态中心 (workbenchThemeStore)<br/>- 预设主题 (VS Code Dark, Light, OneDark...)<br/>- 用户自定义颜色 / 导入的 VS Code 主题"]
-    
+
     Store --> CSSVars[":root CSS 变量注入<br/>(--wb-title-bar-bg, --wb-sidebar-bg, --wb-editor-bg...)"]
     Store --> DockviewVars["Dockview 分屏样式变量<br/>(--dv-activegroup-visiblepanel-tab-background-color...)"]
     Store --> NaiveTheme["Naive UI 全局主题覆盖<br/>(NConfigProvider theme-overrides: 表格/表单/树)"]
@@ -944,11 +939,11 @@ flowchart TD
 ```mermaid
 flowchart TD
     Change["监听到本地磁盘文件已被外部改动"] --> CheckDirty{"客户端当前是否存在<br/>未保存的修改 (isDirty) ?"}
-    
+
     CheckDirty -->|isDirty === false| AutoReload["静默热重载 (Auto Reload)<br/>1. 重新读盘替换 rawJson<br/>2. 右下角轻提示: 文件已在外部更新"]
-    
+
     CheckDirty -->|isDirty === true| ShowModal["弹出冲突确认对话框<br/>⚠️ 警告: 磁盘文件与客户端均有未保存修改"]
-    
+
     ShowModal --> Action1["【覆盖磁盘】: 强制以客户端内存为准，直接写盘覆盖外部改动"]
     ShowModal --> Action2["【放弃修改】: 放弃客户端改动，以磁盘最新数据为准重新载入"]
     ShowModal --> Action3["【差异对比】: 呼出 Monaco Diff 并排比对差异后再决定"]
@@ -1031,8 +1026,8 @@ export const useTpStore = defineStore('tpStore', () => {
 | :--- | :--- | :--- |
 | **Phase 1: 基础设施** | 补充 Tauri 端安全读写命令、权限与本地文件监听 | `src-tauri/src/commands.rs`<br/>`src-tauri/src/watcher.rs`<br/>`src-tauri/capabilities/default.json` |
 | **Phase 2: 核心适配层** | 建立契约类型、状态管理与方式 A 组件注册表 | `src/core/tpModule.ts`<br/>`src/core/adapterManager.ts`<br/>`src/constants/tpRegistry.ts`<br/>`src/store/modules/tpStore.ts` |
-| **Phase 3: 通用诊断组件** | 实现防白屏错误边界、面包屑与 JSON 兜底视图 | `src/components/common/ComponentErrorBoundary.vue`<br/>`src/components/common/FallbackJsonView.vue`<br/>`src/components/common/TpBreadcrumb.vue` |
+| **Phase 3: 通用诊断组件** | 实现防白屏错误边界与 JSON 兜底视图 | `src/components/common/ComponentErrorBoundary.vue`<br/>`src/components/common/FallbackJsonView.vue` |
 | **Phase 4: 工业级 IDE 布局与分屏** | 落地 `workbench-layout` 架构，集成 `dockview-vue` 多向分屏与侧边栏折叠 | `src/layouts/workbench-layout/*`<br/>`src/views/workbench/index.vue`<br/>`src/store/modules/workbenchLayoutStore.ts` |
 | **Phase 5: 主题体系与换肤能力** | 落地 4 套预设主题、Naive UI 联动覆盖与 VS Code 主题导入器 | `src/theme/workbenchTheme.ts`<br/>`src/theme/naiveTheme.ts`<br/>`src/store/modules/workbenchThemeStore.ts` |
 | **Phase 6: 多源同步与 Redis 桥接** | 实现 VS Code 插件 Patch 接收、来源防回环打标与文件冲突弹窗 | `src-tauri/src/redis_bridge.rs`<br/>`src/store/modules/tpStore.ts` |
-| **Phase 7: 业务组件入驻** | 首批落地常用 ATE 测试项与管脚配置组件，打通保存与校验 | `src/components/business/test-flow/*`<br/>`src/components/business/pin-map/*` |
+| **Phase 7: 业务组件入驻** | 首批落地常用 ATE 测试项与管脚配置组件，打通保存与校验 | `src/views/workbench/components/business/test-flow/*`<br/>`src/views/workbench/components/business/pin-map/*` |

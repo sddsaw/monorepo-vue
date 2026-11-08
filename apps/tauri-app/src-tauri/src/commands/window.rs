@@ -4,6 +4,18 @@ use crate::error::{AppError, AppResult};
 /// 允许在 WebView 中打开的内部窗口标签白名单
 const ALLOWED_WEBVIEW_LABELS: &[&str] = &["sub-window"];
 
+/// 仅开发构建允许的调试窗口标签
+#[cfg(debug_assertions)]
+const DEBUG_WEBVIEW_LABELS: &[&str] = &["redis-devtools"];
+
+fn is_allowed_label(label: &str) -> bool {
+    #[cfg(debug_assertions)]
+    if DEBUG_WEBVIEW_LABELS.contains(&label) {
+        return true;
+    }
+    ALLOWED_WEBVIEW_LABELS.contains(&label)
+}
+
 /// 窗口尺寸安全边界（逻辑像素）
 const MIN_WINDOW_WIDTH: f64 = 360.0;
 const MAX_WINDOW_WIDTH: f64 = 3840.0;
@@ -57,7 +69,7 @@ pub async fn open_new_window(
     }
 
     // 内部窗口标签校验：仅允许白名单内的标签
-    if !ALLOWED_WEBVIEW_LABELS.contains(&label.as_str()) {
+    if !is_allowed_label(&label) {
         log::warn!("拒绝创建非白名单窗口: label={}", label);
         return Err(AppError::Window(format!(
             "窗口标签 \"{}\" 不在允许列表中",

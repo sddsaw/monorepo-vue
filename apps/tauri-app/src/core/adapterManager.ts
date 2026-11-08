@@ -18,7 +18,7 @@ export const testFlowAdapter: TPModuleAdapter = {
       const suiteId = `suite-${suite.name || sIdx}`
       const children: TPTreeNode[] = (suite.items || []).map((item: any, iIdx: number) => ({
         id: `item-${suite.name || sIdx}-${item.id || item.name || iIdx}`,
-        label: `${item.name || '测试项'} [${item.testType || item.componentKey || '通用'}]`,
+        label: item.name || '测试项',
         nodeType: 'file',
         icon: 'ri:test-tube-line',
         componentKey: item.testType || item.componentKey || 'Continuity',

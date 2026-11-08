@@ -32,8 +32,6 @@ pub fn run() {
                 tray::focus_window(&window);
             }
         }))
-        // 3. 窗口状态自动持久化记忆（位置、宽高、最大化状态）
-        .plugin(tauri_plugin_window_state::Builder::default().build())
         // 4. 官方原生系统插件（遵循最小化引入原则）
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
@@ -60,6 +58,20 @@ pub fn run() {
                     }
                 }
 
+                // 启动时确保主窗口恢复默认尺寸 (1100x750) 并在屏幕上下及左右严格居中
+                if let Some(main_window) = app.get_webview_window("main") {
+                    let default_size = tauri::Size::Logical(tauri::LogicalSize {
+                        width: 1100.0,
+                        height: 750.0,
+                    });
+                    if let Err(e) = main_window.set_size(default_size) {
+                        log::warn!("重置主窗口默认尺寸失败: {}", e);
+                    }
+                    if let Err(e) = main_window.center() {
+                        log::warn!("主窗口居中对齐失败: {}", e);
+                    }
+                }
+
                 tray::create_tray(app.handle())?;
             }
             Ok(())
@@ -82,6 +94,13 @@ pub fn run() {
                     }
                     if let Err(e) = app.emit("open-settings", ()) {
                         log::warn!("广播 open-settings 事件失败: {}", e);
+                    }
+                }
+                #[cfg(debug_assertions)]
+                "redis_devtools" => {
+                    use tauri::Emitter;
+                    if let Err(e) = app.emit("redis-devtools:open", ()) {
+                        log::warn!("广播 redis-devtools:open 事件失败: {}", e);
                     }
                 }
                 #[cfg(debug_assertions)]

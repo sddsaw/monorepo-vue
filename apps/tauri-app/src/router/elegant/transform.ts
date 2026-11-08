@@ -166,18 +166,9 @@ const routeMap: RouteMap = {
   "403": "/403",
   "404": "/404",
   "500": "/500",
-  "demo": "/demo",
-  "demo_from": "/demo/from",
-  "demo_infinite-scroll": "/demo/infinite-scroll",
-  "demo_rich-editor": "/demo/rich-editor",
-  "desktop": "/desktop",
-  "home": "/home",
   "iframe-page": "/iframe-page/:url",
   "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
-  "monitor": "/monitor",
-  "monitor_data": "/monitor/data",
-  "monitor_online": "/monitor/online",
-  "sub-window": "/sub-window",
+  "redis-devtools": "/redis-devtools",
   "workbench": "/workbench"
 };
 

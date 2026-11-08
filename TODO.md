@@ -96,3 +96,19 @@
     - [ ] umami 自托管 → 用户行为 + 自定义埋点，免费
     - [ ] Sentry 自托管 → 错误监控 + 性能，免费（`@sentry/vue`）
 
+- [ ] **23. Redis 通道 Rust 侧实现（apps/tauri-app）**
+  - [x] 前端通道层已完成：`src/service/redis`（RedisClient / transport / useRedisTopic），协议契约见 `types.ts` 顶部注释
+  - [ ] 待确认：客户端直连 Redis 还是经网关；使用 Pub/Sub / List / Stream 哪种原语；请求与回包的 channel/key 规则；真实消息格式
+  - [ ] Rust：引入 `redis` crate，实现连接池 + 断线重连 + 后台消费任务
+  - [ ] Rust：实现 `redis_send` 命令，emit `redis://message` 与 `redis://state` 事件，并在 `lib.rs` 注册
+  - [ ] 按真实协议调整 `types.ts` 中的消息结构与成功码判定
+  - [ ] 安全：Redis ACL 按客户端最小权限、TLS、禁止客户端共用账号
+  - [ ] 可靠性：若使用 Pub/Sub，评估断线丢消息问题（改用 Stream 或增加 ack/重发）
+  - [ ] Web 预览模式（`dev:tauri:web`）下的 Mock transport
+
+- [x] **24. Redis 通道调试面板（类 Network 面板）**
+  - [x] 流量记录器：`src/service/redis/devtools.ts`（开发模式记录完整请求/响应/推送并跨窗口同步；生产模式仅输出摘要日志）
+  - [x] 独立调试子窗口：`src/views/redis-devtools/index.vue`（列表过滤、耗时与状态统计、JSON 详情查看、复制、参数编辑重放）
+  - [x] 按需唤醒与开关：`Ctrl/Cmd+Alt+R` 快捷键、macOS「视图 → Redis 调试面板」菜单、`VITE_REDIS_DEVTOOLS_AUTO_OPEN` 环境变量
+  - [ ] 待第 23 项 Rust 侧完成后，将开发模式数据源切换为 Rust emit 的 `redis://devtools` 事件
+

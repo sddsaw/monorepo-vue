@@ -16,7 +16,7 @@ export default createViteConfig({
       return routePath
     },
     onRouteMetaGen(routeName) {
-      const constantRoutes = ['login', 'sub-window', '403', '404', '500']
+      const constantRoutes = ['login', '403', '404', '500']
       const meta: Record<string, any> = {
         title: routeName,
       }

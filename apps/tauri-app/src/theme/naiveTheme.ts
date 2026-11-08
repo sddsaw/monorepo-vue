@@ -39,6 +39,10 @@ export function useNaiveWorkbenchTheme() {
         thFontWeight: '600',
       },
       Tree: {
+        nodeHeight: '22px',
+        nodeWrapperPadding: '1px 0',
+        fontSize: '12px',
+        lineHeight: '20px',
         nodeColorHover: t.isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)',
         nodeColorActive: `${t.accentColor}33`,
         nodeTextColor: t.textColor,

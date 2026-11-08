@@ -39,12 +39,6 @@ export const useWorkbenchThemeStore = defineStore(SetupStoreId.WorkbenchTheme, (
     root.style.setProperty('--wb-text-color', t.textColor)
     root.style.setProperty('--wb-text-secondary', t.textSecondaryColor)
 
-    // Dockview 核心分屏样式联动
-    root.style.setProperty('--dv-activegroup-visiblepanel-tab-background-color', t.editorBg)
-    root.style.setProperty('--dv-tabs-and-actions-container-background-color', t.sidebarBg)
-    root.style.setProperty('--dv-separator-border', t.borderColor)
-    root.style.setProperty('--dv-drag-over-background-color', `${t.accentColor}33`)
-
     // 暗黑 / 明亮属性切换
     if (t.isDark) {
       root.classList.add('dark')

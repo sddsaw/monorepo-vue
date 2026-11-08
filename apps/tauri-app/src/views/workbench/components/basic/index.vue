@@ -1,25 +1,41 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { naiveDateLocales, naiveLocales } from '@/locales'
+import { useAppStore } from '@/store/modules/app'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
 import { useWorkbenchThemeStore } from '@/store/modules/workbenchTheme'
 import { useNaiveWorkbenchTheme } from '@/theme/naiveTheme'
-import BottomPanel from './BottomPanel.vue'
-import EditorBreadcrumb from './EditorArea/EditorBreadcrumb.vue'
-import EditorArea from './EditorArea/index.vue'
-import PrimarySideBar from './PrimarySideBar.vue'
-import SecondarySideBar from './SecondarySideBar.vue'
-import StatusBar from './StatusBar.vue'
-import WindowTitleBar from './WindowTitleBar.vue'
+import { getMenus } from '../../config/menuConfig'
+import BottomPanel from './BottomPanel/index.vue'
+import EditorBreadcrumb from './MainContent/EditorBreadcrumb.vue'
+import MainContent from './MainContent/index.vue'
+import PrimarySideBar from './PrimarySideBar/index.vue'
+import SecondarySideBar from './SecondarySideBar/index.vue'
+import StatusBar from './StatusBar/index.vue'
+import WindowTitleBar from './WindowTitleBar/index.vue'
 
 defineOptions({
   name: 'WorkbenchBasic',
 })
 
+const appStore = useAppStore()
 const tpStore = useTpStore()
 const layoutStore = useWorkbenchLayoutStore()
 const themeStore = useWorkbenchThemeStore()
 const { activeTheme, themeOverrides } = useNaiveWorkbenchTheme()
+
+/** Naive UI 国际化语言包（与应用全局语言贯穿同步） */
+const naiveLocale = computed(() => naiveLocales[appStore.locale])
+const naiveDateLocale = computed(() => naiveDateLocales[appStore.locale])
+
+/** 顶部窗口标题栏菜单配置（随系统语言响应式更新） */
+const menus = computed(() => getMenus())
+
+/** 是否展示底部状态栏（由环境变量 VITE_SHOW_STATUS_BAR 控制，默认在开发环境下展示） */
+const showStatusBar = import.meta.env.VITE_SHOW_STATUS_BAR !== undefined
+  ? import.meta.env.VITE_SHOW_STATUS_BAR === 'Y'
+  : import.meta.env.DEV
 
 /** 全局快捷键监听 */
 function handleKeyDown(e: KeyboardEvent) {
@@ -53,10 +69,31 @@ function handleKeyDown(e: KeyboardEvent) {
     return
   }
 
-  // Ctrl + ,: 打开设置
-  if (isCtrlOrCmd && e.key === ',') {
+  // F11: 全屏切换
+  if (e.key === 'F11') {
     e.preventDefault()
-    tpStore.openSettingsTab()
+    layoutStore.toggleFullscreen()
+    return
+  }
+
+  // Ctrl + = / Ctrl + +: 放大 (Zoom In)
+  if (isCtrlOrCmd && (e.key === '=' || e.key === '+')) {
+    e.preventDefault()
+    layoutStore.zoomIn()
+    return
+  }
+
+  // Ctrl + -: 缩小 (Zoom Out)
+  if (isCtrlOrCmd && (e.key === '-' || e.key === '_')) {
+    e.preventDefault()
+    layoutStore.zoomOut()
+    return
+  }
+
+  // Ctrl + 0: 重置缩放 (Reset Zoom)
+  if (isCtrlOrCmd && e.key === '0') {
+    e.preventDefault()
+    layoutStore.resetZoom()
   }
 }
 
@@ -84,7 +121,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NConfigProvider :theme="activeTheme" :theme-overrides="themeOverrides" class="h-full">
+  <NConfigProvider
+    :theme="activeTheme"
+    :theme-overrides="themeOverrides"
+    :locale="naiveLocale"
+    :date-locale="naiveDateLocale"
+    class="h-full"
+  >
     <NMessageProvider>
       <NDialogProvider>
         <div
@@ -95,20 +138,20 @@ onUnmounted(() => {
           class="h-screen w-screen flex flex-col select-none overflow-hidden font-sans"
         >
           <!-- 1. 顶部标题栏 -->
-          <WindowTitleBar class="shrink-0" />
+          <WindowTitleBar :menus="menus" class="shrink-0" />
 
           <!-- 2. 中间主工作区 -->
           <div class="relative flex flex-1 overflow-hidden rounded-md">
-            <!-- 左侧主侧边栏 (整合 ActivityBar 与 SideBar) -->
+            <!-- 左侧主侧边栏 (资源管理器树) -->
             <PrimarySideBar />
 
             <!-- 主编辑区与底部面板区 -->
             <main class="min-w-0 flex flex-col flex-1 overflow-hidden">
               <!-- 顶部面包屑坐标  -->
               <EditorBreadcrumb class="h-26px shrink-0" />
-              <!-- Dockview 核心多向分屏区域 -->
+              <!-- 业务组件主展示区 -->
               <div class="relative min-h-0 flex-1 overflow-hidden rounded-md">
-                <EditorArea class="size-full" />
+                <MainContent class="size-full" />
               </div>
 
               <!-- 底部面板 (支持 Ctrl+J 折叠，常驻保留顶部拖拽手柄) -->
@@ -119,8 +162,8 @@ onUnmounted(() => {
             <SecondarySideBar class="shrink-0" />
           </div>
 
-          <!-- 3. 底部紧凑状态栏 -->
-          <StatusBar class="h-22px shrink-0" />
+          <!-- 3. 底部紧凑状态栏 (开发环境下展示，支持环境变量配置) -->
+          <StatusBar v-if="showStatusBar" class="h-22px shrink-0" />
         </div>
       </NDialogProvider>
     </NMessageProvider>

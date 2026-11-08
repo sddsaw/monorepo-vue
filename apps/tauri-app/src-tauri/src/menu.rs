@@ -71,10 +71,14 @@ pub fn init_menu<R: Runtime>(app: &tauri::AppHandle<R>) -> tauri::Result<Menu<R>
     let fullscreen_item = PredefinedMenuItem::fullscreen(app, Some("切换全屏"))?;
     #[cfg(debug_assertions)]
     let devtools_item = MenuItem::with_id(app, "devtools", "切换开发者工具", true, Some("Alt+CmdOrCtrl+I"))?;
+    #[cfg(debug_assertions)]
+    let redis_devtools_item = MenuItem::with_id(app, "redis_devtools", "Redis 调试面板", true, Some("Alt+CmdOrCtrl+R"))?;
 
     let mut view_items: Vec<&dyn tauri::menu::IsMenuItem<R>> = vec![&fullscreen_item];
     #[cfg(debug_assertions)]
     view_items.push(&devtools_item);
+    #[cfg(debug_assertions)]
+    view_items.push(&redis_devtools_item);
 
     let view_menu = Submenu::with_items(app, "视图", true, &view_items)?;
 
