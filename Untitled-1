@@ -1,0 +1,113 @@
+/** Default theme settings */
+export const themeSettings: App.Theme.ThemeSetting = {
+  // 1. 默认采用 Unity 最标志性的深色模式
+  themeScheme: 'dark',
+  grayscale: false,
+  colourWeakness: false,
+  recommendColor: false,
+  // 2. Unity 经典的选中高亮蓝 (Unity Blue / Selection Accent)
+  themeColor: '#307be1',
+  // 3. 桌面客户端微圆角（2px），更具工业/软件硬朗质感
+  themeRadius: 2,
+  otherColor: {
+    info: '#307be1',
+    success: '#4caf50', // 类似 Play Mode 运行绿
+    warning: '#f0ad4e', // Unity Console Warning 黄
+    error: '#e55454'    // Unity Console Error 红
+  },
+  isInfoFollowPrimary: true,
+  layout: {
+    mode: 'vertical',
+    scrollMode: 'content'
+  },
+  page: {
+    animate: true,
+    // 淡入淡出更贴近原生客户端切换质感
+    animateMode: 'fade'
+  },
+  header: {
+    // 紧凑的顶栏高度（Unity 工具栏偏扁平紧凑）
+    height: 48,
+    breadcrumb: {
+      visible: true,
+      showIcon: true
+    },
+    multilingual: {
+      visible: true
+    },
+    globalSearch: {
+      visible: true
+    }
+  },
+  tab: {
+    visible: true,
+    cache: true,
+    height: 36, // 紧凑的面板 Tab 高度
+    // 采用按钮方块风格，模拟 Unity Editor (Scene/Game/Inspector) 的面板 Tab
+    mode: 'button',
+    closeTabByMiddleClick: false
+  },
+  fixedHeaderAndTab: true,
+  sider: {
+    inverted: false,
+    width: 220,
+    collapsedWidth: 64,
+    mixWidth: 90,
+    mixCollapsedWidth: 64,
+    mixChildMenuWidth: 200,
+    autoSelectFirstMenu: false
+  },
+  footer: {
+    // 客户端软件通常不需要 Web 风格的 Footer
+    visible: false,
+    fixed: false,
+    height: 48,
+    right: true
+  },
+  watermark: {
+    visible: false,
+    text: 'SoybeanAdmin',
+    enableUserName: false,
+    enableTime: false,
+    timeFormat: 'YYYY-MM-DD HH:mm'
+  },
+  tokens: {
+    light: {
+      colors: {
+        // Unity Light Theme (灰白中性色)
+        container: 'rgb(240, 240, 240)',
+        layout: 'rgb(222, 222, 222)',
+        inverted: 'rgb(40, 40, 40)',
+        'base-text': 'rgb(30, 30, 30)'
+      },
+      boxShadow: {
+        header: 'none',
+        sider: 'none',
+        tab: 'none'
+      }
+    },
+    dark: {
+      colors: {
+        // Unity Editor 经典面板中性灰 (#383838)
+        container: 'rgb(56, 56, 56)',
+        // Unity Editor 经典底色/工作区暗灰 (#222222)
+        layout: 'rgb(34, 34, 34)',
+        // 经典灰白文本 (#D7D7D7)
+        'base-text': 'rgb(215, 215, 215)'
+      },
+      boxShadow: {
+        // 去除 Web 弥散阴影，符合桌面客户端依靠 1px 细线分割的视觉规范
+        header: 'none',
+        sider: 'none',
+        tab: 'none'
+      }
+    }
+  }
+};
+
+/**
+ * Override theme settings
+ *
+ * If publish new version, use `overrideThemeSettings` to override certain theme settings
+ */
+export const overrideThemeSettings: Partial<App.Theme.ThemeSetting> = {};
