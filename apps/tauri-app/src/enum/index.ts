@@ -6,5 +6,4 @@ export enum SetupStoreId {
   Tab = 'tab-store',
   Tp = 'tp-store',
   WorkbenchLayout = 'workbench-layout-store',
-  WorkbenchTheme = 'workbench-theme-store',
 }

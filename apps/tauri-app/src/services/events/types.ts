@@ -6,8 +6,8 @@ export interface AppEventPayloads {
   'open-settings': void
   /** 退出登录广播 */
   'auth:logout': void
-  /** 主题模式变更广播 */
-  'theme:change': boolean
+  /** 全局主题配置同步（所有窗口使用同一主色和明暗模式） */
+  'theme:settings': { settings: App.Theme.ThemeSetting, overrides?: App.Theme.NaiveUIThemeOverride }
   /** 语言环境变更广播 */
   'locale:change': App.I18n.LangType
   /** 跨窗口通用消息通信 */

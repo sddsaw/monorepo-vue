@@ -5,7 +5,6 @@ import { computed } from 'vue'
 import { $t } from '@/locales'
 import { setupIconifyOffline } from '@/plugins/iconify'
 import { useTabStore } from '@/store/modules/tab'
-import { useNaiveWorkbenchTheme } from '@/theme/naiveTheme'
 
 defineOptions({
   name: 'ContextMenu',
@@ -44,7 +43,6 @@ const visible = defineModel<boolean>('visible')
 
 const { removeTab, clearTabs, clearLeftTabs, clearRightTabs, fixTab, unfixTab, isTabRetain, homeTab } = useTabStore()
 const { SvgIconVNode } = useSvgIcon()
-const { activeTheme, themeOverrides } = useNaiveWorkbenchTheme()
 
 type LocalDropdownOption = DropdownOption & {
   key: App.Global.DropdownKey
@@ -167,20 +165,7 @@ function handleDropdown(optionKey: App.Global.DropdownKey) {
 </script>
 
 <template>
-  <NConfigProvider v-if="custom" :theme="activeTheme" :theme-overrides="themeOverrides">
-    <NDropdown
-      :show="visible"
-      placement="bottom-start"
-      trigger="manual"
-      :x="x"
-      :y="y"
-      :options="options"
-      @clickoutside="hideDropdown"
-      @select="handleDropdown"
-    />
-  </NConfigProvider>
   <NDropdown
-    v-else
     :show="visible"
     placement="bottom-start"
     trigger="manual"

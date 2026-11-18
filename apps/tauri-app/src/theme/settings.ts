@@ -1,3 +1,5 @@
+import { DEFAULT_FONT_SIZE } from './typography'
+
 /** Default theme settings */
 export const themeSettings: App.Theme.ThemeSetting = {
   themeScheme: 'dark',
@@ -6,6 +8,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
   recommendColor: false,
   themeColor: '#007acc',
   themeRadius: 6,
+  fontSize: DEFAULT_FONT_SIZE,
   otherColor: {
     info: '#007acc',
     success: '#388a34',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { WatermarkProps } from 'naive-ui'
-import { darkTheme, NConfigProvider } from 'naive-ui'
+import { darkTheme, NConfigProvider, NGlobalStyle } from 'naive-ui'
 import { computed } from 'vue'
 import { naiveDateLocales, naiveLocales } from './locales'
 import { useAppEventListener } from './services/events'
@@ -53,6 +53,7 @@ const watermarkProps = computed<WatermarkProps>(() => {
     :date-locale="naiveDateLocale"
     class="h-full"
   >
+    <NGlobalStyle />
     <AppProvider>
       <RouterView class="bg-layout" />
       <NWatermark v-if="themeStore.watermark.visible" v-bind="watermarkProps" />

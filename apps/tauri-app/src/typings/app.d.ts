@@ -21,6 +21,8 @@ declare namespace App {
       themeColor: string
       /** Theme radius */
       themeRadius: number
+      /** Global base font size, 12–18 px */
+      fontSize: number
       /** Other color */
       otherColor: OtherColor
       /** Whether info color is followed by the primary color */

@@ -168,13 +168,13 @@ const showPopover = ref(false)
     <DarkModeContainer class="shadow-card w-360px flex flex-col overflow-hidden rounded-8px">
       <!-- Header -->
       <div class="flex items-center justify-between border-b border-gray-100 px-16px py-12px dark:border-gray-800">
-        <span class="text-16px text-gray-800 font-semibold dark:text-gray-200">通知中心</span>
+        <span class="text-gray-800 font-semibold text-ui-16 dark:text-gray-200">通知中心</span>
         <NButton
           v-if="totalUnreadCount > 0"
           text
           type="primary"
           size="small"
-          class="text-12px"
+          class="text-ui-12"
           @click="handleMarkAllRead"
         >
           全部已读
@@ -204,16 +204,16 @@ const showPopover = ref(false)
                   class="h-36px w-36px flex-center flex-shrink-0 rounded-full text-white shadow-sm"
                   :style="{ backgroundColor: item.color }"
                 >
-                  <SvgIcon :icon="item.icon" class="text-18px" />
+                  <SvgIcon :icon="item.icon" class="text-ui-18" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center justify-between gap-8px">
-                    <span class="truncate text-14px text-gray-800 font-medium dark:text-gray-200" :class="{ 'font-semibold': !item.read }">
+                    <span class="truncate text-gray-800 font-medium text-ui-14 dark:text-gray-200" :class="{ 'font-semibold': !item.read }">
                       {{ item.title }}
                     </span>
-                    <span class="flex-shrink-0 text-11px text-gray-400 dark:text-gray-500">{{ item.time }}</span>
+                    <span class="flex-shrink-0 text-gray-400 text-ui-11 dark:text-gray-500">{{ item.time }}</span>
                   </div>
-                  <p class="line-clamp-2 mt-4px text-12px text-gray-500 leading-relaxed dark:text-gray-400">
+                  <p class="line-clamp-2 mt-4px text-gray-500 leading-relaxed text-ui-12 dark:text-gray-400">
                     {{ item.description }}
                   </p>
                 </div>
@@ -240,16 +240,16 @@ const showPopover = ref(false)
                   class="h-36px w-36px flex-center flex-shrink-0 rounded-full text-white shadow-sm"
                   :style="{ backgroundColor: item.color }"
                 >
-                  <SvgIcon :icon="item.icon" class="text-18px" />
+                  <SvgIcon :icon="item.icon" class="text-ui-18" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center justify-between gap-8px">
-                    <span class="truncate text-14px text-gray-800 font-medium dark:text-gray-200" :class="{ 'font-semibold': !item.read }">
+                    <span class="truncate text-gray-800 font-medium text-ui-14 dark:text-gray-200" :class="{ 'font-semibold': !item.read }">
                       {{ item.title }}
                     </span>
-                    <span class="flex-shrink-0 text-11px text-gray-400 dark:text-gray-500">{{ item.time }}</span>
+                    <span class="flex-shrink-0 text-gray-400 text-ui-11 dark:text-gray-500">{{ item.time }}</span>
                   </div>
-                  <p class="line-clamp-2 mt-4px text-12px text-gray-500 leading-relaxed dark:text-gray-400">
+                  <p class="line-clamp-2 mt-4px text-gray-500 leading-relaxed text-ui-12 dark:text-gray-400">
                     {{ item.description }}
                   </p>
                 </div>
@@ -276,16 +276,16 @@ const showPopover = ref(false)
                   class="h-36px w-36px flex-center flex-shrink-0 rounded-full text-white shadow-sm"
                   :style="{ backgroundColor: item.color }"
                 >
-                  <SvgIcon :icon="item.icon" class="text-18px" />
+                  <SvgIcon :icon="item.icon" class="text-ui-18" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center justify-between gap-8px">
-                    <span class="truncate text-14px text-gray-800 font-medium dark:text-gray-200" :class="{ 'font-semibold': !item.read }">
+                    <span class="truncate text-gray-800 font-medium text-ui-14 dark:text-gray-200" :class="{ 'font-semibold': !item.read }">
                       {{ item.title }}
                     </span>
-                    <span class="flex-shrink-0 text-11px text-gray-400 dark:text-gray-500">{{ item.time }}</span>
+                    <span class="flex-shrink-0 text-gray-400 text-ui-11 dark:text-gray-500">{{ item.time }}</span>
                   </div>
-                  <p class="line-clamp-2 mt-4px text-12px text-gray-500 leading-relaxed dark:text-gray-400">
+                  <p class="line-clamp-2 mt-4px text-gray-500 leading-relaxed text-ui-12 dark:text-gray-400">
                     {{ item.description }}
                   </p>
                 </div>
@@ -302,14 +302,14 @@ const showPopover = ref(false)
       <!-- Footer -->
       <div class="flex border-t border-gray-100 bg-gray-50/50 dark:border-gray-800 dark:bg-gray-900/30">
         <button
-          class="flex-1 cursor-pointer border-none bg-transparent py-10px text-center text-13px text-gray-500 font-medium outline-none transition-colors duration-200 hover:bg-gray-100/50 hover:text-primary dark:hover:bg-gray-800/50"
+          class="flex-1 cursor-pointer border-none bg-transparent py-10px text-center text-gray-500 font-medium outline-none transition-colors duration-200 text-ui-13 hover:bg-gray-100/50 hover:text-primary dark:hover:bg-gray-800/50"
           @click="handleClearTab"
         >
           清空当前
         </button>
         <div class="w-1px bg-gray-100 dark:bg-gray-800" />
         <button
-          class="flex-1 cursor-pointer border-none bg-transparent py-10px text-center text-13px text-gray-500 font-medium outline-none transition-colors duration-200 hover:bg-gray-100/50 hover:text-primary dark:hover:bg-gray-800/50"
+          class="flex-1 cursor-pointer border-none bg-transparent py-10px text-center text-gray-500 font-medium outline-none transition-colors duration-200 text-ui-13 hover:bg-gray-100/50 hover:text-primary dark:hover:bg-gray-800/50"
           @click="handleViewAll"
         >
           查看全部

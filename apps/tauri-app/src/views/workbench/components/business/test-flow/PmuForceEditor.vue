@@ -81,26 +81,26 @@ async function handleCopyJson() {
 </script>
 
 <template>
-  <div class="business-editor-container max-w-5xl select-text p-6 text-gray-200">
+  <div class="business-editor-container max-w-5xl select-text p-6 text-base-text">
     <!-- 头部卡片与标题栏 -->
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[#2d2d2d] pb-4">
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
       <div class="flex items-center gap-3.5">
-        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-8px bg-purple-500/15 text-purple-400 ring-1 ring-purple-500/30 transition-transform duration-300 hover:scale-105">
-          <SvgIcon icon="ri:pulse-line" class="text-20px" />
+        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-[var(--theme-radius)] bg-primary/15 text-primary ring-1 ring-primary/30 transition-transform duration-300 hover:scale-105">
+          <SvgIcon icon="ri:pulse-line" class="text-ui-20" />
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-16px text-white font-bold tracking-wide">
+            <h2 class="text-base-text font-bold tracking-wide text-ui-16">
               {{ item.name || item.id || 'PMU 精密加压/测流测试' }}
             </h2>
             <NTag type="warning" size="small" round :bordered="false" class="font-mono">
               PMU Parametric
             </NTag>
-            <NTag size="small" round :bordered="false" class="font-mono text-purple-300 bg-purple-500/15">
+            <NTag size="small" round :bordered="false" class="bg-primary/15 text-primary font-mono">
               {{ item.channel || 'PMU_CH_01' }}
             </NTag>
           </div>
-          <p class="mt-0.5 text-12px text-gray-400">
+          <p class="mt-0.5 text-[var(--text-muted)] text-ui-12">
             高精度单管脚直流驱动能力（VOH/VOL）与灌拉漏电流特性测试
           </p>
         </div>
@@ -126,12 +126,12 @@ async function handleCopyJson() {
     <!-- 模式选择器卡片 -->
     <NCard
       size="small"
-      class="editor-card mb-4 border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-[#3e3e42]"
+      class="editor-card mb-4 border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-[var(--border-color)]"
     >
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
-          <span class="text-13px text-gray-300 font-semibold">PMU 工作模式 (Force / Measure Mode):</span>
-          <span class="text-11px text-gray-500">
+          <span class="text-base-text font-semibold text-ui-13">PMU 工作模式 (Force / Measure Mode):</span>
+          <span class="text-[var(--text-muted)] text-ui-11">
             {{ currentMode === 'FVMI' ? '强制输出精准电压，采样反向漏电流' : '强制灌注标称电流，测量管脚端电压' }}
           </span>
         </div>
@@ -150,17 +150,17 @@ async function handleCopyJson() {
     <!-- 主表单参数卡片 -->
     <NCard
       size="small"
-      class="editor-card mb-5 border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-[#3e3e42]"
+      class="editor-card mb-5 border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-[var(--border-color)]"
     >
-      <div class="mb-3 flex items-center justify-between">
-        <span class="text-13px text-gray-300 font-semibold">电气激励与上下限判定门限</span>
-        <span class="text-11px text-gray-500 font-mono">Channel: {{ item.channel || 'Auto' }}</span>
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <span class="text-base-text font-semibold text-ui-13">电气激励与上下限判定门限</span>
+        <span class="text-[var(--text-muted)] font-mono text-ui-11">Channel: {{ item.channel || 'Auto' }}</span>
       </div>
 
-      <NGrid cols="1 s:2 m:2 l:3" responsive="screen" :x-gap="16" :y-gap="14">
+      <NGrid cols="1 500:2 800:3" responsive="self" :x-gap="16" :y-gap="14">
         <!-- 测试项名称 -->
         <NGi>
-          <label class="mb-1 block text-11px text-gray-400 font-medium">测试项名称 (Test Name)</label>
+          <label class="mb-1 block text-[var(--text-muted)] font-medium text-ui-11">测试项名称 (Test Name)</label>
           <NInput
             size="small"
             :value="item.name || ''"
@@ -172,7 +172,7 @@ async function handleCopyJson() {
 
         <!-- 施加激励值 -->
         <NGi>
-          <label class="mb-1 block text-11px text-gray-400 font-medium">
+          <label class="mb-1 block text-[var(--text-muted)] font-medium text-ui-11">
             {{ currentMode === 'FVMI' ? '强制施加电压 (Force Voltage)' : '强制施加电流 (Force Current)' }}
           </label>
           <NInputNumber
@@ -183,14 +183,14 @@ async function handleCopyJson() {
             @update:value="updateField('forceValue', $event)"
           >
             <template #suffix>
-              <span class="text-gray-500 font-mono text-10px">{{ currentMode === 'FVMI' ? 'V' : (item.unit || 'mA') }}</span>
+              <span class="text-[var(--text-muted)] font-mono text-ui-10">{{ currentMode === 'FVMI' ? 'V' : (item.unit || 'mA') }}</span>
             </template>
           </NInputNumber>
         </NGi>
 
         <!-- 量程选择 -->
         <NGi>
-          <label class="mb-1 block text-11px text-gray-400 font-medium">测量量程 (Measurement Range)</label>
+          <label class="mb-1 block text-[var(--text-muted)] font-medium text-ui-11">测量量程 (Measurement Range)</label>
           <NSelect
             size="small"
             :value="item.currentRange || '20mA'"
@@ -201,7 +201,7 @@ async function handleCopyJson() {
 
         <!-- 门限下限 -->
         <NGi>
-          <label class="mb-1 block text-11px text-gray-400 font-medium">判定下限 (Low Limit)</label>
+          <label class="mb-1 block text-[var(--text-muted)] font-medium text-ui-11">判定下限 (Low Limit)</label>
           <NInputNumber
             size="small"
             :value="item.loLimit ?? -0.5"
@@ -210,14 +210,14 @@ async function handleCopyJson() {
             @update:value="updateField('loLimit', $event)"
           >
             <template #suffix>
-              <span class="text-gray-500 font-mono text-10px">{{ item.unit || 'V' }}</span>
+              <span class="text-[var(--text-muted)] font-mono text-ui-10">{{ item.unit || 'V' }}</span>
             </template>
           </NInputNumber>
         </NGi>
 
         <!-- 门限上限 -->
         <NGi>
-          <label class="mb-1 block text-11px text-gray-400 font-medium">判定上限 (High Limit)</label>
+          <label class="mb-1 block text-[var(--text-muted)] font-medium text-ui-11">判定上限 (High Limit)</label>
           <NInputNumber
             size="small"
             :value="item.hiLimit ?? 0.5"
@@ -226,14 +226,14 @@ async function handleCopyJson() {
             @update:value="updateField('hiLimit', $event)"
           >
             <template #suffix>
-              <span class="text-gray-500 font-mono text-10px">{{ item.unit || 'V' }}</span>
+              <span class="text-[var(--text-muted)] font-mono text-ui-10">{{ item.unit || 'V' }}</span>
             </template>
           </NInputNumber>
         </NGi>
 
         <!-- 钳位电压 -->
         <NGi>
-          <label class="mb-1 block text-11px text-gray-400 font-medium">安全钳位保护 (Voltage Clamp)</label>
+          <label class="mb-1 block text-[var(--text-muted)] font-medium text-ui-11">安全钳位保护 (Voltage Clamp)</label>
           <NInputNumber
             size="small"
             :value="item.voltageClamp ?? 3.6"
@@ -243,7 +243,7 @@ async function handleCopyJson() {
             @update:value="updateField('voltageClamp', $event)"
           >
             <template #suffix>
-              <span class="text-gray-500 font-mono text-10px">V</span>
+              <span class="text-[var(--text-muted)] font-mono text-ui-10">V</span>
             </template>
           </NInputNumber>
         </NGi>
@@ -252,11 +252,11 @@ async function handleCopyJson() {
 
     <!-- 底层 JSON 展开抽屉（带有平滑折叠展开动画） -->
     <NCollapseTransition :show="showRawJson">
-      <div class="mt-4 border border-[#333333] rounded-8px bg-[#181818] p-4 shadow-xl transition-all duration-300">
-        <div class="mb-2.5 flex items-center justify-between">
+      <div class="mt-4 border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-layout p-4 shadow-xl transition-all duration-300">
+        <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <span class="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span class="text-12px text-gray-300 font-mono font-medium">底层原始数据结构 (Live Sync)</span>
+            <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-success" />
+            <span class="text-base-text font-medium font-mono text-ui-12">底层原始数据结构 (Live Sync)</span>
           </div>
           <NButton size="tiny" secondary type="primary" @click="handleCopyJson">
             <template #icon>
@@ -265,7 +265,7 @@ async function handleCopyJson() {
             复制代码
           </NButton>
         </div>
-        <pre class="max-h-64 overflow-auto rounded-6px bg-black/60 p-3.5 text-11px text-emerald-400/90 font-mono leading-relaxed select-all">{{ JSON.stringify(item, null, 2) }}</pre>
+        <pre class="max-h-64 select-all overflow-auto rounded-[var(--theme-radius)] bg-[var(--hover-color)] p-3.5 text-success/90 leading-relaxed font-mono text-ui-11">{{ JSON.stringify(item, null, 2) }}</pre>
       </div>
     </NCollapseTransition>
   </div>

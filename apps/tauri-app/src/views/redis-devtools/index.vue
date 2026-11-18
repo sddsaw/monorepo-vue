@@ -248,11 +248,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-full w-full flex flex-col bg-white text-slate-800 dark:bg-[#101014] dark:text-zinc-200">
+  <div class="h-full w-full flex flex-col bg-[var(--hover-color)] text-[var(--text-muted)] dark:bg-layout dark:text-base-text">
     <!-- 标题栏 -->
     <div
       data-tauri-drag-region
-      class="h-9 flex shrink-0 select-none items-center justify-between border-b border-black/[0.06] px-3 dark:border-white/[0.06]"
+      class="h-9 flex shrink-0 select-none items-center justify-between border-b border-[var(--border-color)]/[0.06] px-3 dark:border-[var(--border-color)]/[0.06]"
       :class="[isTauri() && isMac ? 'pl-[76px]' : '']"
     >
       <div class="pointer-events-none flex items-center gap-1.5 text-xs font-medium">
@@ -266,7 +266,7 @@ onUnmounted(() => {
         v-if="showWindowControls"
         type="button"
         title="关闭"
-        class="h-6 w-6 flex items-center justify-center rounded hover:bg-red-500 hover:text-white"
+        class="h-6 w-6 flex items-center justify-center rounded hover:bg-red-500 hover:text-base-text"
         @click.stop="closeCurrentWindow"
       >
         <SvgIcon icon="carbon:close" class="text-sm" />
@@ -277,7 +277,7 @@ onUnmounted(() => {
 
     <template v-else>
       <!-- 工具栏 -->
-      <div class="flex shrink-0 items-center gap-2 border-b border-black/[0.06] px-3 py-2 dark:border-white/[0.06]">
+      <div class="flex shrink-0 items-center gap-2 border-b border-[var(--border-color)]/[0.06] px-3 py-2 dark:border-[var(--border-color)]/[0.06]">
         <NInput v-model:value="keyword" size="small" clearable placeholder="过滤 method / topic / requestId / 窗口" class="max-w-80" />
         <NSelect v-model:value="kindFilter" size="small" :options="kindOptions" class="w-28" />
         <div class="flex items-center gap-1 text-xs">
@@ -287,7 +287,7 @@ onUnmounted(() => {
         <NButton size="small" secondary @click="handleClear">
           清空
         </NButton>
-        <div class="ml-auto text-xs text-slate-500 dark:text-zinc-400">
+        <div class="ml-auto text-xs text-[var(--text-muted)] dark:text-[var(--text-muted)]">
           共 {{ stats.total }} 条 · 等待中 {{ stats.pending }} · 失败 {{ stats.error }}
         </div>
       </div>
@@ -308,14 +308,14 @@ onUnmounted(() => {
           />
         </div>
 
-        <div v-if="detailRow" class="w-[42%] flex flex-col border-l border-black/[0.06] dark:border-white/[0.06]">
+        <div v-if="detailRow" class="w-[42%] flex flex-col border-l border-[var(--border-color)]/[0.06] dark:border-[var(--border-color)]/[0.06]">
           <div class="flex shrink-0 items-center justify-between px-3 py-2 text-xs">
             <span class="truncate font-medium">{{ detailRow.name }}</span>
             <NButton text size="tiny" @click="selectedKey = null">
               <SvgIcon icon="carbon:close" />
             </NButton>
           </div>
-          <div class="truncate px-3 pb-2 text-[11px] text-slate-500 font-mono dark:text-zinc-400">
+          <div class="truncate px-3 pb-2 text-[var(--text-muted)] font-mono text-ui-11 dark:text-[var(--text-muted)]">
             {{ detailRow.kind === 'rpc' ? `requestId: ${detailRow.key}` : `topic: ${detailRow.name}` }}
           </div>
           <NTabs type="line" size="small" class="min-h-0 flex-1 px-3" pane-class="min-h-0 overflow-auto">
@@ -332,7 +332,7 @@ onUnmounted(() => {
                 </div>
               </template>
               <template v-else-if="detailRow.status === 'pending'">
-                <div class="text-xs text-slate-500">
+                <div class="text-xs text-[var(--text-muted)]">
                   等待响应中...
                 </div>
               </template>
@@ -344,7 +344,7 @@ onUnmounted(() => {
               </template>
             </NTabPane>
             <NTabPane v-if="detailRow.kind === 'rpc'" name="replay" tab="重放">
-              <div class="mb-2 text-[11px] text-slate-500 dark:text-zinc-400">
+              <div class="mb-2 text-[var(--text-muted)] text-ui-11 dark:text-[var(--text-muted)]">
                 编辑参数（JSON）后由主窗口重新发送，结果会作为新记录出现在列表中
               </div>
               <NInput v-model:value="replayText" type="textarea" :autosize="{ minRows: 8, maxRows: 20 }" class="font-mono" />
@@ -362,7 +362,7 @@ onUnmounted(() => {
 <style scoped>
 .redis-devtools-json {
   margin: 0;
-  font-size: 12px;
+  font-size: max(11px, calc(var(--app-font-size) * 12 / 14));
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-all;
@@ -370,10 +370,10 @@ onUnmounted(() => {
 }
 
 :deep(.redis-devtools-row--error td) {
-  color: #e5484d;
+  color: rgb(var(--error-color));
 }
 
 :deep(.redis-devtools-row--selected td) {
-  background-color: rgba(0, 122, 204, 0.12) !important;
+  background-color: var(--active-color) !important;
 }
 </style>

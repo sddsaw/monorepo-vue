@@ -103,7 +103,7 @@ async function handleAccountLogin(account: Account) {
           {{ loginModuleRecord.register }}
         </NButton>
       </div>
-      <NDivider class="text-14px text-#666 !m-0">
+      <NDivider class="text-#666 text-ui-14 !m-0">
         {{ '其他账号登录' }}
       </NDivider>
       <div class="flex-center gap-12px">

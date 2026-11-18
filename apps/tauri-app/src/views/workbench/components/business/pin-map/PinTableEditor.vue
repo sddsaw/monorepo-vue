@@ -6,7 +6,6 @@ import {
   NEmpty,
   NInput,
   NSelect,
-  NSpace,
   NTable,
   NTag,
 } from 'naive-ui'
@@ -65,23 +64,23 @@ function updatePinType(pinName: string, newType: string) {
 </script>
 
 <template>
-  <div class="business-editor-container max-w-5xl select-text p-6 text-gray-200">
+  <div class="business-editor-container max-w-5xl select-text p-6 text-base-text">
     <!-- 头部动作栏 -->
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[#2d2d2d] pb-4">
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
       <div class="flex items-center gap-3.5">
-        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-8px bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30 transition-transform duration-300 hover:scale-105">
-          <SvgIcon icon="ri:grid-line" class="text-20px" />
+        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-[var(--theme-radius)] bg-warning/15 text-warning ring-1 ring-warning/30 transition-transform duration-300 hover:scale-105">
+          <SvgIcon icon="ri:grid-line" class="text-ui-20" />
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-16px text-white font-bold tracking-wide">
+            <h2 class="text-base-text font-bold tracking-wide text-ui-16">
               芯片管脚分配表 (PinMap Configuration)
             </h2>
             <NTag type="warning" size="small" round :bordered="false" class="font-mono">
               Pin Table
             </NTag>
           </div>
-          <p class="mt-0.5 text-12px text-gray-400">
+          <p class="mt-0.5 text-[var(--text-muted)] text-ui-12">
             ATE 测试机台通道映射、芯片物理管脚类型与多工位定义
           </p>
         </div>
@@ -96,7 +95,7 @@ function updatePinType(pinName: string, newType: string) {
           clearable
         >
           <template #prefix>
-            <SvgIcon icon="ri:search-line" class="text-gray-500" />
+            <SvgIcon icon="ri:search-line" class="text-[var(--text-muted)]" />
           </template>
         </NInput>
       </div>
@@ -105,12 +104,12 @@ function updatePinType(pinName: string, newType: string) {
     <!-- 高密度管脚表格卡片 -->
     <NCard
       size="small"
-      class="editor-card border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-[#3e3e42]"
+      class="editor-card border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-[var(--border-color)]"
     >
-      <div class="mb-3 flex items-center justify-between">
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <span class="text-13px text-gray-300 font-semibold">物理管脚通道映射表</span>
-          <span class="text-11px text-gray-500">
+          <span class="text-base-text font-semibold text-ui-13">物理管脚通道映射表</span>
+          <span class="text-[var(--text-muted)] text-ui-11">
             当前显示 {{ pinEntries.length }} 项
           </span>
         </div>
@@ -120,10 +119,10 @@ function updatePinType(pinName: string, newType: string) {
         <NEmpty description="未检索到匹配的管脚数据" />
       </div>
 
-      <div v-else class="overflow-x-auto rounded-6px border border-[#2d2d2d]">
+      <div v-else class="overflow-x-auto border border-[var(--border-color)] rounded-[var(--theme-radius)]">
         <NTable size="small" :single-line="false" class="business-table">
           <thead>
-            <tr class="bg-[#2a2a2c] text-gray-400 text-11px font-semibold">
+            <tr class="bg-layout text-[var(--text-muted)] font-semibold text-ui-11">
               <th>管脚名称 (Pin Name)</th>
               <th class="w-36">
                 机台通道 (Channel)
@@ -144,7 +143,7 @@ function updatePinType(pinName: string, newType: string) {
             >
               <!-- 管脚名称 -->
               <td>
-                <span class="font-mono text-12px font-medium text-amber-300/90 tracking-wide">
+                <span class="text-warning/90 font-medium tracking-wide font-mono text-ui-12">
                   {{ entry.pinName }}
                 </span>
               </td>
@@ -168,7 +167,7 @@ function updatePinType(pinName: string, newType: string) {
               </td>
 
               <!-- 测试工位 -->
-              <td class="text-center font-mono text-11px text-gray-400">
+              <td class="text-center text-[var(--text-muted)] font-mono text-ui-11">
                 Site {{ entry.site }}
               </td>
             </tr>
@@ -203,6 +202,6 @@ function updatePinType(pinName: string, newType: string) {
 }
 
 .table-row-hover:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: var(--hover-color);
 }
 </style>

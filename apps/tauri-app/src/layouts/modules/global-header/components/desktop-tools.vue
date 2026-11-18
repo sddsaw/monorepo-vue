@@ -69,7 +69,7 @@ onMounted(() => {
       tooltip-content="检查客户端版本更新"
       @click="updaterModalRef?.checkUpdate()"
     >
-      <SvgIcon icon="carbon:upgrade" class="text-18px text-[#646cff]" />
+      <SvgIcon icon="carbon:upgrade" class="text-[#646cff] text-ui-18" />
     </ButtonIcon>
 
     <!-- 在文件管理器中打开本地滚动日志 -->
@@ -77,7 +77,7 @@ onMounted(() => {
       tooltip-content="在系统文件管理器中查看日志"
       @click="openLogDir"
     >
-      <SvgIcon icon="carbon:terminal" class="text-18px text-amber-500" />
+      <SvgIcon icon="carbon:terminal" class="text-amber-500 text-ui-18" />
     </ButtonIcon>
 
     <!-- Windows / Linux 原生无边框自绘窗口控制按钮 -->

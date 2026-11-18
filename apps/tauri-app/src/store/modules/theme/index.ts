@@ -4,12 +4,16 @@ import { useDateFormat, useEventListener, useNow, usePreferredColorScheme } from
 import { defineStore } from 'pinia'
 import { computed, effectScope, onScopeDispose, ref, toRefs, watch } from 'vue'
 import { SetupStoreId } from '@/enum'
+import { emitAppEvent, listenAppEvent } from '@/services/events'
+import { themeSettings } from '@/theme/settings'
+import { normalizeFontSize } from '@/theme/typography'
 import { localStg } from '@/utils/storage'
 import { useAuthStore } from '../auth'
 import {
   addThemeVarsToGlobal,
   createThemeToken,
   getNaiveTheme,
+  getThemeSurfaceColors,
   initThemeSettings,
   toggleAuxiliaryColorModes,
   toggleCssDarkMode,
@@ -25,7 +29,7 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   const settings: Ref<App.Theme.ThemeSetting> = ref(initThemeSettings())
 
   /** Optional NaiveUI theme overrides from preset */
-  const naiveThemeOverrides: Ref<App.Theme.NaiveUIThemeOverride | undefined> = ref(undefined)
+  const naiveThemeOverrides: Ref<App.Theme.NaiveUIThemeOverride | undefined> = ref(localStg.get('themeNaiveOverrides') || undefined)
 
   /** Watermark time instance with controls */
   const { now: watermarkTime, pause: pauseWatermarkTime, resume: resumeWatermarkTime } = useNow({ controls: true })
@@ -56,7 +60,9 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   })
 
   /** Naive theme */
-  const naiveTheme = computed(() => getNaiveTheme(themeColors.value, settings.value, naiveThemeOverrides.value))
+  const naiveTheme = computed(() => getNaiveTheme(themeColors.value, settings.value, naiveThemeOverrides.value, darkMode.value))
+
+  const surfaceColors = computed(() => getThemeSurfaceColors(settings.value, darkMode.value))
 
   /**
    * Settings json
@@ -89,9 +95,8 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** Reset store */
   function resetStore() {
-    const themeStore = useThemeStore()
-
-    themeStore.$reset()
+    Object.assign(settings.value, structuredClone(themeSettings))
+    naiveThemeOverrides.value = undefined
   }
 
   /**
@@ -101,6 +106,10 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
    */
   function setThemeScheme(themeScheme: UnionKey.ThemeScheme) {
     settings.value.themeScheme = themeScheme
+  }
+
+  function setFontSize(value: unknown) {
+    settings.value.fontSize = normalizeFontSize(value)
   }
 
   /**
@@ -224,23 +233,57 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     }
   }
 
-  /** Cache theme settings */
-  function cacheThemeSettings() {
-    const isProd = import.meta.env.PROD
+  // 保存完整配置并同步已打开的窗口；接收端用同一快照去重，避免广播循环。
+  const snapshot = computed(() => JSON.stringify({
+    settings: settings.value,
+    overrides: naiveThemeOverrides.value,
+  }))
+  let syncedSnapshot = snapshot.value
+  let disposed = false
+  let unlistenTheme: (() => void) | undefined
 
-    if (!isProd)
+  listenAppEvent('theme:settings', (value) => {
+    const incoming = JSON.stringify(value)
+    if (incoming === snapshot.value)
       return
+    syncedSnapshot = incoming
+    Object.assign(settings.value, value.settings, { fontSize: normalizeFontSize(value.settings.fontSize) })
+    naiveThemeOverrides.value = value.overrides
+  }).then((unlisten) => {
+    if (disposed)
+      unlisten()
+    else
+      unlistenTheme = unlisten
+  }).catch(console.warn)
 
+  function cacheThemeSettings() {
     localStg.set('themeSettings', settings.value)
+    localStg.set('themeNaiveOverrides', naiveThemeOverrides.value || null)
   }
 
-  // cache theme settings when page is closed or refreshed
-  useEventListener(window, 'beforeunload', () => {
-    cacheThemeSettings()
-  })
+  useEventListener(window, 'beforeunload', cacheThemeSettings)
 
   // watch store
   scope.run(() => {
+    watch(() => settings.value.fontSize, (value) => {
+      const size = normalizeFontSize(value)
+      if (size !== value)
+        settings.value.fontSize = size
+      document.documentElement.style.setProperty('--app-font-size', `${size}px`)
+    }, { immediate: true, flush: 'sync' })
+
+    watch(snapshot, (value) => {
+      cacheThemeSettings()
+      if (value === syncedSnapshot)
+        return
+      syncedSnapshot = value
+      emitAppEvent('theme:settings', JSON.parse(value)).catch(console.warn)
+    }, { immediate: true })
+
+    watch(() => settings.value.themeRadius, (radius) => {
+      document.documentElement.style.setProperty('--theme-radius', `${radius}px`)
+    }, { immediate: true })
+
     // watch dark mode
     watch(
       darkMode,
@@ -261,12 +304,12 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
     // themeColors change, update css vars and storage theme color
     watch(
-      themeColors,
-      (val) => {
+      [themeColors, () => settings.value.tokens, () => settings.value.recommendColor],
+      () => {
         setupThemeVarsToGlobal()
-        localStg.set('themeColor', val.primary)
+        localStg.set('themeColor', themeColors.value.primary)
       },
-      { immediate: true },
+      { immediate: true, deep: true },
     )
 
     // watch watermark settings to control timer
@@ -281,6 +324,8 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   /** On scope dispose */
   onScopeDispose(() => {
+    disposed = true
+    unlistenTheme?.()
     scope.stop()
   })
 
@@ -289,12 +334,14 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     darkMode,
     themeColors,
     naiveTheme,
+    surfaceColors,
     settingsJson,
     watermarkContent,
     setGrayscale,
     setColourWeakness,
     resetStore,
     setThemeScheme,
+    setFontSize,
     toggleThemeScheme,
     updateThemeColors,
     setThemeLayout,

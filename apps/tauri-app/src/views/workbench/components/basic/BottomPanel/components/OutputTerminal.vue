@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { DropdownOption } from 'naive-ui'
+import { addColorAlpha } from '@sa/color'
 import { FitAddon } from '@xterm/addon-fit'
 import { Terminal } from '@xterm/xterm'
 import { NDropdown, useMessage } from 'naive-ui'
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useThemeStore } from '@/store/modules/theme'
+import { getUiFontSize } from '@/theme/typography'
 import '@xterm/xterm/css/xterm.css'
 
 interface Props {
@@ -25,6 +28,33 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const message = useMessage()
+const themeStore = useThemeStore()
+const terminalFontSize = computed(() => getUiFontSize(12, themeStore.fontSize))
+const terminalTheme = computed(() => {
+  const { surfaceColors: surface, themeColors: colors } = themeStore
+  return {
+    background: surface.layout,
+    foreground: surface.text,
+    cursor: surface.layout,
+    selectionBackground: addColorAlpha(colors.primary, 0.3),
+    black: surface.layout,
+    red: colors.error,
+    green: colors.success,
+    yellow: colors.warning,
+    blue: colors.primary,
+    magenta: colors.info,
+    cyan: colors.info,
+    white: surface.text,
+    brightBlack: surface.muted,
+    brightRed: colors.error,
+    brightGreen: colors.success,
+    brightYellow: colors.warning,
+    brightBlue: colors.primary,
+    brightMagenta: colors.info,
+    brightCyan: colors.info,
+    brightWhite: surface.text,
+  }
+})
 const terminalRef = ref<HTMLDivElement | null>(null)
 
 let term: Terminal | null = null
@@ -182,34 +212,25 @@ watch(
   },
 )
 
+watch(terminalTheme, (theme) => {
+  if (term)
+    term.options.theme = theme
+})
+
+watch(terminalFontSize, (size) => {
+  if (term) {
+    term.options.fontSize = size
+    safeFit()
+  }
+})
+
 onMounted(() => {
   if (!terminalRef.value)
     return
 
   term = new Terminal({
-    theme: {
-      background: '#181818',
-      foreground: '#d4d4d4',
-      cursor: '#181818',
-      selectionBackground: 'rgba(56, 139, 253, 0.4)',
-      black: '#000000',
-      red: '#f43f5e',
-      green: '#10b981',
-      yellow: '#f59e0b',
-      blue: '#3b82f6',
-      magenta: '#a855f7',
-      cyan: '#06b6d4',
-      white: '#e5e7eb',
-      brightBlack: '#6b7280',
-      brightRed: '#fb7185',
-      brightGreen: '#34d399',
-      brightYellow: '#fbbf24',
-      brightBlue: '#60a5fa',
-      brightMagenta: '#c084fc',
-      brightCyan: '#22d3ee',
-      brightWhite: '#ffffff',
-    },
-    fontSize: 12,
+    theme: terminalTheme.value,
+    fontSize: terminalFontSize.value,
     fontFamily: 'Consolas, Menlo, Monaco, "Courier New", monospace',
     lineHeight: 1.4,
     cursorBlink: false,
@@ -266,12 +287,12 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="output-terminal-wrapper relative h-full w-full overflow-hidden bg-[#181818]"
+    class="output-terminal-wrapper relative h-full w-full overflow-hidden bg-layout"
     @contextmenu="handleContextMenu"
   >
     <div
       ref="terminalRef"
-      class="h-full w-full pl-2 pr-1 py-1"
+      class="h-full w-full py-1 pl-2 pr-1"
     />
 
     <!-- 右键菜单 -->
@@ -296,9 +317,9 @@ onBeforeUnmount(() => {
 }
 
 .output-terminal-wrapper .xterm-viewport {
-  background-color: #181818 !important;
+  background-color: rgb(var(--layout-bg-color)) !important;
   scrollbar-width: thin !important;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent !important;
+  scrollbar-color: rgb(var(--base-text-color) / 0.2) transparent !important;
 }
 
 /* 1:1 复刻 Naive UI NScrollbar 滚动条视觉与交互规范 */
@@ -318,12 +339,12 @@ onBeforeUnmount(() => {
 }
 
 .output-terminal-wrapper .xterm-viewport::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: rgb(var(--base-text-color) / 0.2) !important;
   border-radius: 9999px !important;
   transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .output-terminal-wrapper .xterm-viewport::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(255, 255, 255, 0.38) !important;
+  background-color: rgb(var(--base-text-color) / 0.38) !important;
 }
 </style>

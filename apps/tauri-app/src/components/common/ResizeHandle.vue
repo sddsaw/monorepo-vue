@@ -128,7 +128,7 @@ onUnmounted(() => {
     ref="handleRef"
     class="group relative flex shrink-0 select-none items-center justify-center"
     :style="{
-      backgroundColor: 'var(--wb-activitybar-bg, #181818)',
+      backgroundColor: 'rgb(var(--layout-bg-color))',
     }"
     :class="[
       direction === 'col' ? 'h-full w-4px cursor-col-resize' : 'w-full h-4px cursor-row-resize',
@@ -140,7 +140,7 @@ onUnmounted(() => {
       class="transition-colors duration-150"
       :class="[
         direction === 'col' ? 'h-full w-1px' : 'w-full h-1px',
-        isDragging ? 'bg-blue-500' : 'group-hover:bg-blue-500/50',
+        isDragging ? 'bg-primary' : 'group-hover:bg-primary/50',
       ]"
     />
 
@@ -149,20 +149,20 @@ onUnmounted(() => {
       class="absolute left-1/2 top-1/2 flex items-center rounded-full p-1px transition-colors duration-150 -translate-x-1/2 -translate-y-1/2"
       :class="[
         direction === 'col' ? 'flex-col gap-3px' : 'flex-row gap-3px',
-        isDragging ? 'bg-blue-500/20' : 'group-hover:bg-white/10',
+        isDragging ? 'bg-primary/20' : 'group-hover:bg-[var(--hover-color)]',
       ]"
     >
       <span
-        class="h-2px w-2px rounded-full bg-[#686868] transition-colors"
-        :class="[isDragging ? 'bg-blue-400' : 'group-hover:bg-gray-300']"
+        class="h-2px w-2px rounded-full bg-[var(--text-muted)] transition-colors"
+        :class="[isDragging ? 'bg-primary' : 'group-hover:bg-gray-300']"
       />
       <span
-        class="h-2px w-2px rounded-full bg-[#686868] transition-colors"
-        :class="[isDragging ? 'bg-blue-400' : 'group-hover:bg-gray-300']"
+        class="h-2px w-2px rounded-full bg-[var(--text-muted)] transition-colors"
+        :class="[isDragging ? 'bg-primary' : 'group-hover:bg-gray-300']"
       />
       <span
-        class="h-2px w-2px rounded-full bg-[#686868] transition-colors"
-        :class="[isDragging ? 'bg-blue-400' : 'group-hover:bg-gray-300']"
+        class="h-2px w-2px rounded-full bg-[var(--text-muted)] transition-colors"
+        :class="[isDragging ? 'bg-primary' : 'group-hover:bg-gray-300']"
       />
     </div>
   </div>

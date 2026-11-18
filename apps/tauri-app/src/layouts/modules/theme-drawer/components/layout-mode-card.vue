@@ -102,7 +102,7 @@ function handleChangeMode(mode: UnionKey.ThemeLayoutMode) {
         </template>
         {{ layoutModeDetailRecord[key] }}
       </IconTooltip>
-      <p class="mt-8px text-12px">
+      <p class="mt-8px text-ui-12">
         {{ themeLayoutModeRecord[key] }}
       </p>
     </div>

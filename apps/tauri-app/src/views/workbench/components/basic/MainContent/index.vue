@@ -28,15 +28,15 @@ const MatchedComponent = computed(() => {
 
 <template>
   <div
-    :style="{ backgroundColor: 'var(--wb-editor-bg, #1e1e1e)' }"
+    :style="{ backgroundColor: 'rgb(var(--container-bg-color))' }"
     class="relative size-full overflow-hidden"
   >
     <!-- 空状态提示 (未打开任何测试项时展示) -->
     <div
       v-if="!currentTab"
-      class="size-full flex flex-col select-none items-center justify-center text-13px text-[#858585]"
+      class="size-full flex flex-col select-none items-center justify-center text-[var(--text-muted)] text-ui-13"
     >
-      <div class="mb-8px text-28px opacity-40">
+      <div class="mb-8px opacity-40 text-ui-28">
         📄
       </div>
       <span>未打开任何测试项</span>

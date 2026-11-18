@@ -4,8 +4,10 @@ import type { TPTreeNode } from '@/core/tpModule'
 import { SvgIcon } from '@sa/components'
 import { computed, h, onMounted, ref, watch } from 'vue'
 import ResizeHandle from '@/components/common/ResizeHandle.vue'
+import { useThemeStore } from '@/store/modules/theme'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
+import { getUiFontSize } from '@/theme/typography'
 
 export type { TPTreeNode }
 
@@ -83,11 +85,14 @@ const sourceTree = computed(() => props.treeData ?? tpStore.treeData)
 const currentActiveNodeId = computed(() => (props.activeNodeId !== undefined ? props.activeNodeId : tpStore.activeNodeId))
 
 /** 紧凑型树组件主题变量，匹配标准 IDE 高度与间距 */
+const themeStore = useThemeStore()
+const treeFontSize = computed(() => getUiFontSize(12, themeStore.fontSize))
+const treeNodeHeight = computed(() => Math.max(props.nodeHeight, Math.ceil(treeFontSize.value * 1.5 + 4)))
 const treeThemeOverrides = computed<NonNullable<GlobalThemeOverrides['Tree']>>(() => ({
-  nodeHeight: `${props.nodeHeight}px`,
+  nodeHeight: `${treeNodeHeight.value}px`,
   nodeWrapperPadding: '1px 0',
-  fontSize: '12px',
-  lineHeight: `${props.nodeHeight - 2}px`,
+  fontSize: `${treeFontSize.value}px`,
+  lineHeight: '1.5',
 }))
 
 /** 递归查找树中的首个叶子测试项节点 (非 folder 节点) */
@@ -171,11 +176,11 @@ function renderPrefix({ option }: { option: TreeOption }) {
   const icon = isFolder
     ? (isExpanded ? 'ri:folder-open-line' : (node.icon || 'ri:folder-line'))
     : (node.icon || 'ri:file-code-line')
-  const iconColor = isFolder ? 'text-amber-400' : 'text-blue-400'
+  const iconColor = isFolder ? 'text-warning' : 'text-primary'
 
   return h(SvgIcon, {
     icon,
-    class: `text-13px shrink-0 ${iconColor}`,
+    class: `text-ui-13 shrink-0 ${iconColor}`,
   })
 }
 
@@ -242,10 +247,10 @@ onMounted(async () => {
       :style="{
         width: layoutStore.sidebarVisible ? `${sidebarWidth}px` : '0px',
         opacity: layoutStore.sidebarVisible ? 1 : 0,
-        backgroundColor: 'var(--wb-activitybar-bg, #181818)',
-        borderColor: 'var(--wb-border-color, #2b2b2b)',
+        backgroundColor: 'rgb(var(--layout-bg-color))',
+        borderColor: 'var(--border-color)',
       }"
-      class="z-20 h-full flex flex-col shrink-0 select-none overflow-hidden rounded-8px text-[#858585]"
+      class="z-20 h-full flex flex-col shrink-0 select-none overflow-hidden rounded-[var(--theme-radius)] text-[var(--text-muted)]"
       :class="[
         layoutStore.sidebarVisible && 'ml-4px border',
         !isResizing ? 'transition-[width,opacity] duration-220 ease-[cubic-bezier(0.25,1,0.5,1)]' : '',
@@ -254,11 +259,11 @@ onMounted(async () => {
       <!-- 内部固定宽度容器，防止折叠动画时内容换行错位 -->
       <div
         :style="{ width: `${sidebarWidth}px` }"
-        class="h-full flex flex-col shrink-0 overflow-hidden text-12px leading-16px"
+        class="h-full flex flex-col shrink-0 overflow-hidden leading-16px text-ui-12"
       >
         <!-- 顶部过滤搜索栏 -->
         <slot name="header">
-          <div class="shrink-0 border-b border-[var(--wb-border-color,#2d2d2d)] p-8px">
+          <div class="shrink-0 border-b border-[var(--border-color)] p-8px">
             <NInput
               v-model:value="filterKeyword"
               size="tiny"
@@ -266,7 +271,7 @@ onMounted(async () => {
               :placeholder="placeholder"
             >
               <template #prefix>
-                <SvgIcon icon="ri:search-line" class="text-12px text-gray-400" />
+                <SvgIcon icon="ri:search-line" class="text-[var(--text-muted)] text-ui-12" />
               </template>
             </NInput>
           </div>
@@ -276,21 +281,21 @@ onMounted(async () => {
         <div class="flex-1 overflow-auto px-4px py-4px">
           <!-- 空状态引导 -->
           <slot v-if="displayTree.length === 0" name="empty">
-            <div class="p-16px text-center text-12px text-gray-500">
+            <div class="p-16px text-center text-[var(--text-muted)] text-ui-12">
               <div class="mb-8px">
                 📄 暂未打开测试文件
               </div>
               <div class="flex flex-col gap-8px">
                 <button
                   type="button"
-                  class="cursor-pointer rounded-4px bg-blue-600 px-10px py-4px text-11px text-white transition-colors hover:bg-blue-500"
+                  class="cursor-pointer rounded-4px bg-primary px-10px py-4px text-base-text transition-colors text-ui-11 hover:bg-primary"
                   @click="tpStore.chooseAndOpenFile"
                 >
                   打开本地 JSON
                 </button>
                 <button
                   type="button"
-                  class="cursor-pointer border border-[#444] rounded-4px bg-[#2d2d2d] px-10px py-4px text-11px text-gray-200 transition-colors hover:bg-[#3e3e42]"
+                  class="cursor-pointer border border-[var(--border-color)] rounded-4px bg-layout px-10px py-4px text-base-text transition-colors text-ui-11 hover:bg-container"
                   @click="tpStore.loadSampleData"
                 >
                   载入演示测试程序
@@ -343,7 +348,7 @@ onMounted(async () => {
 :deep(.ate-workbench-tree .n-tree-node-content) {
   padding-left: 2px;
   padding-right: 4px;
-  font-size: 12px;
+  font-size: inherit;
 }
 
 :deep(.ate-workbench-tree .n-tree-node-content__prefix) {
@@ -351,6 +356,6 @@ onMounted(async () => {
 }
 
 :deep(.ate-workbench-tree .n-tree-node-switcher__icon) {
-  font-size: 12px;
+  font-size: max(11px, calc(var(--app-font-size) * 12 / 14));
 }
 </style>

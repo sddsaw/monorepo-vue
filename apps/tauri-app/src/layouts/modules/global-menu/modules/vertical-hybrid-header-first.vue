@@ -146,7 +146,7 @@ watch(
           :style="{ width: showDrawer ? `${themeStore.sider.mixChildMenuWidth}px` : '0px' }"
         >
           <header class="flex-y-center justify-between px-12px" :style="{ height: `${themeStore.header.height}px` }">
-            <h2 class="text-16px text-primary font-bold">
+            <h2 class="text-primary font-bold text-ui-16">
               {{ 'Soybean 管理系统' }}
             </h2>
             <PinToggler

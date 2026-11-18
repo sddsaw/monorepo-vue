@@ -625,8 +625,9 @@ export interface Schema {
       zoomDesc: string
       interfaceFont: string
       interfaceFontDesc: string
-      monospacedFont: string
-      monospacedFontDesc: string
+      fontSize: string
+      fontSizeDesc: string
+      resetFontSize: string
       frameAndLayout: string
       borderRadius: string
       borderRadiusDesc: string

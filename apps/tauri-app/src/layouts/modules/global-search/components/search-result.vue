@@ -45,7 +45,7 @@ function handleTo() {
           <span class="ml-5px flex-1">
             {{ item.label }}
           </span>
-          <icon-ant-design-enter-outlined class="icon mr-3px p-2px text-20px" />
+          <icon-ant-design-enter-outlined class="icon mr-3px p-2px text-ui-20" />
         </div>
       </template>
     </div>

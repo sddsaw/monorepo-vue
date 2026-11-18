@@ -29,6 +29,6 @@ defineOptions({ name: 'SearchFooter' })
 }
 
 .operate-item {
-  --uno: mr-6px p-2px text-20px;
+  --uno: mr-6px p-2px text-ui-20;
 }
 </style>

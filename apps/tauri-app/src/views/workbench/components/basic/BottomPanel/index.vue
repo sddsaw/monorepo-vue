@@ -125,10 +125,10 @@ function toggleMaximize() {
       :style="{
         height: layoutStore.bottomPanelVisible ? `${panelHeight}px` : '0px',
         opacity: layoutStore.bottomPanelVisible ? 1 : 0,
-        backgroundColor: 'var(--wb-activitybar-bg, #181818)',
-        borderColor: 'var(--wb-border-color, #2b2b2b)',
+        backgroundColor: 'rgb(var(--layout-bg-color))',
+        borderColor: 'var(--border-color)',
       }"
-      class="z-20 w-full flex flex-col shrink-0 select-none overflow-hidden rounded-8px text-xs"
+      class="z-20 w-full flex flex-col shrink-0 select-none overflow-hidden rounded-[var(--theme-radius)] text-xs"
       :class="[
         layoutStore.bottomPanelVisible && 'mb-4px border',
         !isResizing ? 'transition-[height,opacity] duration-220 ease-[cubic-bezier(0.25,1,0.5,1)]' : '',
@@ -151,12 +151,12 @@ function toggleMaximize() {
           <NTabPane name="problems">
             <template #tab>
               <div class="flex items-center gap-1.5 py-0.5">
-                <SvgIcon icon="ri:error-warning-line" class="text-13px" />
+                <SvgIcon icon="ri:error-warning-line" class="text-ui-13" />
                 <span>问题 (Problems)</span>
                 <NBadge
                   :value="tpStore.validationResult.errors.length"
                   :type="tpStore.validationResult.errors.length > 0 ? 'error' : 'default'"
-                  :color="tpStore.validationResult.errors.length > 0 ? undefined : '#3f3f46'"
+                  :color="tpStore.validationResult.errors.length > 0 ? undefined : 'var(--hover-color)'"
                   :show-zero="true"
                   size="small"
                 />
@@ -169,12 +169,12 @@ function toggleMaximize() {
                 <div v-if="tpStore.validationResult.errors.length === 0" class="py-6">
                   <NEmpty description="当前测试程序未检测到 DRC 规则或上下限错误" size="small">
                     <template #icon>
-                      <SvgIcon icon="ri:checkbox-circle-line" class="text-28px text-emerald-500" />
+                      <SvgIcon icon="ri:checkbox-circle-line" class="text-success text-ui-28" />
                     </template>
                     <template #extra>
                       <NButton size="tiny" quaternary class="text-xs" @click="tpStore.runValidation()">
                         <template #icon>
-                          <SvgIcon icon="ri:refresh-line" class="text-12px" />
+                          <SvgIcon icon="ri:refresh-line" class="text-ui-12" />
                         </template>
                         重新校验 DRC
                       </NButton>
@@ -187,11 +187,11 @@ function toggleMaximize() {
                   <div
                     v-for="(err, idx) in tpStore.validationResult.errors"
                     :key="idx"
-                    class="group flex cursor-pointer items-start gap-2.5 border border-transparent rounded p-2 transition-colors hover:border-red-900/40 hover:bg-red-950/25"
+                    class="group flex cursor-pointer items-start gap-2.5 border border-transparent rounded p-2 transition-colors hover:border-error/40 hover:bg-error/25"
                   >
-                    <SvgIcon icon="ri:close-circle-fill" class="mt-0.5 shrink-0 text-15px text-red-500" />
-                    <span class="flex-1 select-text text-red-400 leading-relaxed">{{ err }}</span>
-                    <NTag type="error" size="tiny" :bordered="false" class="shrink-0 text-10px font-mono">
+                    <SvgIcon icon="ri:close-circle-fill" class="mt-0.5 shrink-0 text-error text-ui-15" />
+                    <span class="flex-1 select-text text-error leading-relaxed">{{ err }}</span>
+                    <NTag type="error" size="tiny" :bordered="false" class="shrink-0 font-mono text-ui-10">
                       DRC
                     </NTag>
                   </div>
@@ -204,34 +204,34 @@ function toggleMaximize() {
           <NTabPane name="logs">
             <template #tab>
               <div class="flex items-center gap-1.5 py-0.5">
-                <SvgIcon icon="ri:file-list-3-line" class="text-13px" />
+                <SvgIcon icon="ri:file-list-3-line" class="text-ui-13" />
                 <span>本地日志 (Logs)</span>
               </div>
             </template>
 
             <NScrollbar class="h-full">
-              <div class="select-text p-3 text-xs text-gray-300 font-mono space-y-2">
-                <div v-if="logsCleared" class="py-4 text-center text-gray-500 italic">
+              <div class="select-text p-3 text-xs text-base-text font-mono space-y-2">
+                <div v-if="logsCleared" class="py-4 text-center text-[var(--text-muted)] italic">
                   日志已清空
                 </div>
                 <template v-else>
-                  <div class="flex items-start gap-2 text-gray-400">
-                    <NTag size="tiny" type="info" :bordered="false" class="shrink-0 text-10px font-mono">
+                  <div class="flex items-start gap-2 text-[var(--text-muted)]">
+                    <NTag size="tiny" type="info" :bordered="false" class="shrink-0 font-mono text-ui-10">
                       INFO
                     </NTag>
-                    <span class="text-gray-400">ATE Studio 日志系统就绪，已关联本地 rolling app.log</span>
+                    <span class="text-[var(--text-muted)]">ATE Studio 日志系统就绪，已关联本地 rolling app.log</span>
                   </div>
                   <div v-if="tpStore.fileName" class="flex items-start gap-2">
-                    <NTag size="tiny" type="info" :bordered="false" class="shrink-0 text-10px font-mono">
+                    <NTag size="tiny" type="info" :bordered="false" class="shrink-0 font-mono text-ui-10">
                       INFO
                     </NTag>
-                    <span class="text-blue-400">已加载测试程序: {{ tpStore.filePath }}</span>
+                    <span class="text-primary">已加载测试程序: {{ tpStore.filePath }}</span>
                   </div>
                   <div v-if="tpStore.isDirty" class="flex items-start gap-2">
-                    <NTag size="tiny" type="warning" :bordered="false" class="shrink-0 text-10px font-mono">
+                    <NTag size="tiny" type="warning" :bordered="false" class="shrink-0 font-mono text-ui-10">
                       WARN
                     </NTag>
-                    <span class="text-amber-400">检测到未保存的脏数据修改</span>
+                    <span class="text-warning">检测到未保存的脏数据修改</span>
                   </div>
                 </template>
               </div>
@@ -242,7 +242,7 @@ function toggleMaximize() {
           <NTabPane name="output">
             <template #tab>
               <div class="flex items-center gap-1.5 py-0.5">
-                <SvgIcon icon="ri:terminal-box-line" class="text-13px" />
+                <SvgIcon icon="ri:terminal-box-line" class="text-ui-13" />
                 <span>输出 (Output)</span>
               </div>
             </template>
@@ -265,11 +265,11 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
                     @click="tpStore.runValidation()"
                   >
                     <template #icon>
-                      <SvgIcon icon="ri:refresh-line" class="text-13px" />
+                      <SvgIcon icon="ri:refresh-line" class="text-ui-13" />
                     </template>
                   </NButton>
                 </template>
@@ -282,11 +282,11 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
                     @click="logsCleared = true"
                   >
                     <template #icon>
-                      <SvgIcon icon="ri:delete-bin-line" class="text-13px" />
+                      <SvgIcon icon="ri:delete-bin-line" class="text-ui-13" />
                     </template>
                   </NButton>
                 </template>
@@ -299,12 +299,12 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    :class="isMockStreaming ? 'text-emerald-400 hover:text-emerald-300' : 'text-gray-400 hover:text-white'"
+                    :class="isMockStreaming ? 'text-success hover:text-success' : 'text-[var(--text-muted)] hover:text-base-text'"
                     class="!h-22px !w-22px !p-0"
                     @click="toggleMockStream"
                   >
                     <template #icon>
-                      <SvgIcon :icon="isMockStreaming ? 'ri:pause-line' : 'ri:play-line'" class="text-13px" />
+                      <SvgIcon :icon="isMockStreaming ? 'ri:pause-line' : 'ri:play-line'" class="text-ui-13" />
                     </template>
                   </NButton>
                 </template>
@@ -317,11 +317,11 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    class="text-amber-400 !h-22px !w-22px !p-0 hover:text-amber-300"
+                    class="text-warning !h-22px !w-22px !p-0 hover:text-warning"
                     @click="injectBulkLogs"
                   >
                     <template #icon>
-                      <SvgIcon icon="ri:flashlight-line" class="text-13px" />
+                      <SvgIcon icon="ri:flashlight-line" class="text-ui-13" />
                     </template>
                   </NButton>
                 </template>
@@ -334,11 +334,11 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
                     @click="outputTerminalRef?.clearLog()"
                   >
                     <template #icon>
-                      <SvgIcon icon="ri:delete-bin-line" class="text-13px" />
+                      <SvgIcon icon="ri:delete-bin-line" class="text-ui-13" />
                     </template>
                   </NButton>
                 </template>
@@ -351,13 +351,13 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
                     @click="toggleMaximize"
                   >
                     <template #icon>
                       <SvgIcon
                         :icon="isMaximized ? 'ri:contract-up-down-line' : 'ri:expand-up-down-line'"
-                        class="text-13px"
+                        class="text-ui-13"
                       />
                     </template>
                   </NButton>
@@ -371,11 +371,11 @@ function toggleMaximize() {
                   <NButton
                     quaternary
                     size="tiny"
-                    class="text-gray-400 !h-22px !w-22px !p-0 hover:text-white"
+                    class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
                     @click="layoutStore.setBottomPanelVisible(false)"
                   >
                     <template #icon>
-                      <SvgIcon icon="ri:close-line" class="text-14px" />
+                      <SvgIcon icon="ri:close-line" class="text-ui-14" />
                     </template>
                   </NButton>
                 </template>
@@ -391,8 +391,8 @@ function toggleMaximize() {
 
 <style scoped>
 :deep(.n-tabs-nav) {
-  background-color: var(--wb-activitybar-bg, #181818);
-  border-bottom: 1px solid var(--wb-border-color, #2d2d2d);
+  background-color: rgb(var(--layout-bg-color));
+  border-bottom: 1px solid var(--border-color);
   padding: 0 8px;
 }
 

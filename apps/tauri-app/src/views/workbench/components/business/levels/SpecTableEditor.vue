@@ -59,23 +59,23 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
 </script>
 
 <template>
-  <div class="business-editor-container max-w-5xl select-text p-6 text-gray-200">
+  <div class="business-editor-container max-w-5xl select-text p-6 text-base-text">
     <!-- 头部动作栏 -->
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[#2d2d2d] pb-4">
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
       <div class="flex items-center gap-3.5">
-        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-8px bg-cyan-500/15 text-cyan-400 ring-1 ring-cyan-500/30 transition-transform duration-300 hover:scale-105">
-          <SvgIcon icon="ri:sound-module-line" class="text-20px" />
+        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-[var(--theme-radius)] bg-primary/15 text-primary ring-1 ring-primary/30 transition-transform duration-300 hover:scale-105">
+          <SvgIcon icon="ri:sound-module-line" class="text-ui-20" />
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-16px text-white font-bold tracking-wide">
+            <h2 class="text-base-text font-bold tracking-wide text-ui-16">
               直流电平规格表 (DC Levels & Specs)
             </h2>
             <NTag type="info" size="small" round :bordered="false" class="font-mono">
               Levels Table
             </NTag>
           </div>
-          <p class="mt-0.5 text-12px text-gray-400">
+          <p class="mt-0.5 text-[var(--text-muted)] text-ui-12">
             规范芯片输入输出工作电平基准 (VIH, VIL, VOH, VOL, VCC)
           </p>
         </div>
@@ -90,7 +90,7 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
           clearable
         >
           <template #prefix>
-            <SvgIcon icon="ri:search-line" class="text-gray-500" />
+            <SvgIcon icon="ri:search-line" class="text-[var(--text-muted)]" />
           </template>
         </NInput>
       </div>
@@ -99,12 +99,12 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
     <!-- 高密度规格表格卡片 -->
     <NCard
       size="small"
-      class="editor-card border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-[#3e3e42]"
+      class="editor-card border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-[var(--border-color)]"
     >
-      <div class="mb-3 flex items-center justify-between">
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <span class="text-13px text-gray-300 font-semibold">直流规格参数明细</span>
-          <span class="text-11px text-gray-500">
+          <span class="text-base-text font-semibold text-ui-13">直流规格参数明细</span>
+          <span class="text-[var(--text-muted)] text-ui-11">
             当前显示 {{ specEntries.length }} 项参数
           </span>
         </div>
@@ -114,10 +114,10 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
         <NEmpty description="未检索到匹配的规格参数" />
       </div>
 
-      <div v-else class="overflow-x-auto rounded-6px border border-[#2d2d2d]">
+      <div v-else class="overflow-x-auto border border-[var(--border-color)] rounded-[var(--theme-radius)]">
         <NTable size="small" :single-line="false" class="business-table">
           <thead>
-            <tr class="bg-[#2a2a2c] text-gray-400 text-11px font-semibold">
+            <tr class="bg-layout text-[var(--text-muted)] font-semibold text-ui-11">
               <th>参数名 (Parameter)</th>
               <th class="w-24 text-center">
                 下限 (Min)
@@ -142,13 +142,13 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
             >
               <!-- 参数名 -->
               <td>
-                <span class="font-mono text-12px font-medium text-cyan-300 tracking-wide">
+                <span class="text-primary font-medium tracking-wide font-mono text-ui-12">
                   {{ spec.specKey }}
                 </span>
               </td>
 
               <!-- 下限 -->
-              <td class="text-center font-mono text-11px text-gray-400">
+              <td class="text-center text-[var(--text-muted)] font-mono text-ui-11">
                 {{ spec.min }}
               </td>
 
@@ -164,7 +164,7 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
               </td>
 
               <!-- 上限 -->
-              <td class="text-center font-mono text-11px text-gray-400">
+              <td class="text-center text-[var(--text-muted)] font-mono text-ui-11">
                 {{ spec.max }}
               </td>
 
@@ -176,7 +176,7 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
               </td>
 
               <!-- 说明 -->
-              <td class="text-11px text-gray-400">
+              <td class="text-[var(--text-muted)] text-ui-11">
                 {{ spec.comment || '-' }}
               </td>
             </tr>
@@ -211,6 +211,6 @@ function updateSpecTyp(specKey: string, newValue: number | null) {
 }
 
 .table-row-hover:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: var(--hover-color);
 }
 </style>

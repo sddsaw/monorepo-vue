@@ -4,11 +4,12 @@ import type { Component, VNodeChild } from 'vue'
 import type { IconType, ToolbarGroup, ToolbarItem, WindowTitleBarMenu, WindowTitleBarMenuItem } from './types'
 import { SvgIcon } from '@sa/components'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { NButton, NDivider, NDropdown, NEllipsis, NTooltip } from 'naive-ui'
+import { NButton, NDropdown, NEllipsis, NTooltip } from 'naive-ui'
 import { computed, h, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProximaLogo from '@/components/common/ProximaLogo.vue'
 import { $t } from '@/locales'
 import { isTauri } from '@/plugins/tauri'
+import { useThemeStore } from '@/store/modules/theme'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
 import { getMenus } from '@/views/workbench/config/menuConfig'
@@ -84,10 +85,10 @@ function renderMenuIcon(icon?: IconType): (() => VNodeChild) | undefined {
   if (!icon)
     return undefined
   if (typeof icon === 'string')
-    return () => h(SvgIcon, { icon, class: 'text-14px shrink-0' })
+    return () => h(SvgIcon, { icon, class: 'text-ui-14 shrink-0' })
   if (typeof icon === 'function')
     return icon as () => VNodeChild
-  return () => h(icon as Component, { class: 'text-14px shrink-0' })
+  return () => h(icon as Component, { class: 'text-ui-14 shrink-0' })
 }
 
 /** 菜单项标签渲染：当含有快捷键时，标签居左、快捷键靠右弱化显示 */
@@ -97,7 +98,7 @@ function renderOptionLabel(item: WindowTitleBarMenuItem): string | (() => VNodeC
   return () =>
     h('div', { class: 'flex items-center justify-between gap-16px w-full min-w-130px select-none' }, [
       h('span', { class: 'truncate' }, item.label),
-      h('span', { class: 'text-10px text-gray-400 font-mono tracking-wider opacity-70 shrink-0 ml-auto pl-8px' }, item.shortcut),
+      h('span', { class: 'text-ui-10 text-[var(--text-muted)] font-mono tracking-wider opacity-70 shrink-0 ml-auto pl-8px' }, item.shortcut),
     ])
 }
 
@@ -165,6 +166,7 @@ const menuContainerRef = ref<HTMLElement | null>(null)
 const visibleCount = ref(activeMenus.value.length)
 let menuItemWidths: number[] = []
 let resizeObserver: ResizeObserver | null = null
+const themeStore = useThemeStore()
 
 /** 超出左侧可用宽度的菜单项折叠为级联子菜单 */
 const overflowMenuOptions = computed<DropdownOption[]>(() =>
@@ -187,7 +189,7 @@ function updateVisibleMenus() {
   if (menuItemWidths.length !== currentMenus.length) {
     const items = Array.from(container.querySelectorAll<HTMLElement>('[data-menu-item]'))
     if (items.length === currentMenus.length) {
-      menuItemWidths = items.map(el => Math.ceil(el.getBoundingClientRect().width))
+      menuItemWidths = items.map(el => el.offsetWidth)
     }
   }
   if (menuItemWidths.length === 0)
@@ -219,7 +221,7 @@ function updateVisibleMenus() {
 }
 
 watch(
-  () => activeMenus.value,
+  [() => activeMenus.value, () => themeStore.fontSize],
   () => {
     menuItemWidths = []
     visibleCount.value = activeMenus.value.length
@@ -315,13 +317,13 @@ onUnmounted(() => {
 <template>
   <header
     data-tauri-drag-region
-    class="flex flex-col select-none border-b border-[#1e1e1e] text-12px font-sans"
-    :style="{ backgroundColor: 'var(--wb-titlebar-bg, #2d2d2d)' }"
+    class="workbench-titlebar flex flex-col select-none border-b border-[var(--border-color)] font-sans text-ui-12"
+    :style="{ backgroundColor: 'rgb(var(--layout-bg-color))' }"
   >
     <!-- 第一行：顶部三列居中对称网格标题栏 -->
     <div
       data-tauri-drag-region
-      class="grid h-30px items-center px-8px"
+      class="titlebar-main grid items-center px-8px h-ui-30"
       :style="{ gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)' }"
     >
       <!-- 左列：Logo + 标题 + 自适应菜单栏 (放不下时自动收起到省略号) -->
@@ -332,10 +334,10 @@ onUnmounted(() => {
       >
         <!-- Logo / 标题 -->
         <slot name="logo">
-          <div v-if="showLogo" class="mr-8px flex shrink-0 items-center gap-6px text-white font-bold tracking-wide">
+          <div v-if="showLogo" class="mr-8px flex shrink-0 items-center gap-6px text-base-text font-bold tracking-wide">
             <ProximaLogo :size="17" :show-shadow="false" />
             <slot name="title">
-              <span class="text-11px">{{ title }}</span>
+              <span class="text-ui-11">{{ title }}</span>
             </slot>
           </div>
         </slot>
@@ -356,11 +358,11 @@ onUnmounted(() => {
               :options="menu._dropdownOptions"
               @select="handleMenuSelect"
             >
-              <NButton quaternary size="tiny" :disabled="menu.disabled" class="text-gray-300 !h-22px !px-6px !text-11px hover:text-white">
-                <SvgIcon v-if="typeof menu.icon === 'string'" :icon="menu.icon" class="mr-4px text-12px" />
-                <component :is="menu.icon" v-else-if="menu.icon" class="mr-4px text-12px" />
+              <NButton quaternary size="tiny" :disabled="menu.disabled" class="text-base-text !px-6px hover:text-base-text !text-ui-11 !h-ui-22">
+                <SvgIcon v-if="typeof menu.icon === 'string'" :icon="menu.icon" class="mr-4px text-ui-12" />
+                <component :is="menu.icon" v-else-if="menu.icon" class="mr-4px text-ui-12" />
                 <span class="mr-2px">{{ menu.label }}</span>
-                <SvgIcon icon="ri:arrow-down-s-line" class="text-10px text-gray-400" />
+                <SvgIcon icon="ri:arrow-down-s-line" class="text-[var(--text-muted)] text-ui-10" />
               </NButton>
             </NDropdown>
           </div>
@@ -376,9 +378,9 @@ onUnmounted(() => {
               :options="overflowMenuOptions"
               @select="handleMenuSelect"
             >
-              <NButton quaternary size="tiny" class="shrink-0 text-gray-300 !h-22px !w-24px !p-0 hover:text-white">
+              <NButton quaternary size="tiny" class="shrink-0 text-base-text !w-24px !p-0 hover:text-base-text !h-ui-22">
                 <template #icon>
-                  <SvgIcon icon="codicon:ellipsis" class="text-14px" />
+                  <SvgIcon icon="codicon:ellipsis" class="text-ui-14" />
                 </template>
               </NButton>
             </NDropdown>
@@ -390,15 +392,15 @@ onUnmounted(() => {
       <slot name="search">
         <div
           v-if="showSearch"
-          class="h-22px min-w-0 flex cursor-pointer items-center border border-[#3e3e42] rounded-4px bg-[#1e1e1e] px-8px text-12px text-gray-300 shadow-inner transition-colors hover:border-blue-500/80"
-          :style="{ width: 'clamp(140px, 30vw, 420px)' }"
+          class="titlebar-search min-w-0 flex cursor-pointer items-center border border-[var(--border-color)] rounded-4px bg-container px-8px text-base-text shadow-inner transition-colors text-ui-12 h-ui-22 hover:border-primary/80"
+          :style="{ width: 'clamp(120px, calc(30vw / var(--app-zoom, 1)), 420px)' }"
           @click="startSearch"
         >
-          <SvgIcon icon="ri:search-line" class="mr-6px shrink-0 text-12px text-gray-500" />
+          <SvgIcon icon="ri:search-line" class="mr-6px shrink-0 text-[var(--text-muted)] text-ui-12" />
 
           <!-- 展示态 -->
           <div v-if="!isSearching" class="min-w-0 flex flex-1 items-center overflow-hidden">
-            <NEllipsis :tooltip="{ placement: 'bottom' }" class="w-full select-none text-11px" :class="currentSearchKeyword ? 'text-white' : 'text-gray-400'">
+            <NEllipsis :tooltip="{ placement: 'bottom' }" class="w-full select-none text-ui-11" :class="currentSearchKeyword ? 'text-base-text' : 'text-[var(--text-muted)]'">
               {{ currentSearchKeyword || computedSearchPlaceholder }}
             </NEllipsis>
           </div>
@@ -410,7 +412,7 @@ onUnmounted(() => {
             v-model="currentSearchKeyword"
             type="text"
             :placeholder="computedSearchPlaceholder"
-            class="min-w-0 w-full flex-1 border-none bg-transparent text-11px text-white outline-none placeholder-gray-500"
+            class="min-w-0 w-full flex-1 border-none bg-transparent text-base-text outline-none text-ui-11 placeholder-gray-500"
             @click.stop
             @blur="isSearching = false"
             @keydown.esc.stop="handleSearchEsc"
@@ -420,21 +422,21 @@ onUnmounted(() => {
           <button
             v-if="currentSearchKeyword"
             type="button"
-            class="ml-4px shrink-0 p-2px text-gray-400 hover:text-white"
+            class="ml-4px shrink-0 p-2px text-[var(--text-muted)] hover:text-base-text"
             title="清空"
             @click.stop="currentSearchKeyword = ''"
           >
-            <SvgIcon icon="ri:close-line" class="text-11px" />
+            <SvgIcon icon="ri:close-line" class="text-ui-11" />
           </button>
 
-          <span class="ml-6px shrink-0 select-none border border-[#444] rounded-4px bg-[#2d2d2d] px-4px text-9px text-gray-400 font-mono">
+          <span class="ml-6px shrink-0 select-none border border-[var(--border-color)] rounded-4px bg-layout px-4px text-[var(--text-muted)] font-mono text-ui-9">
             {{ isMac ? '⌘P' : 'Ctrl+P' }}
           </span>
         </div>
       </slot>
 
       <!-- 右列：工程文件名、面板切换控制器与窗口控制按钮 -->
-      <div data-tauri-drag-region class="h-full min-w-0 flex items-center justify-end gap-6px pl-8px">
+      <div data-tauri-drag-region class="titlebar-actions h-full min-w-0 flex items-center justify-end gap-6px pl-8px">
         <slot name="actions" />
 
         <!-- 视图面板显隐与设置按钮 -->
@@ -444,7 +446,7 @@ onUnmounted(() => {
             icon="ri:layout-left-line"
             :tooltip-content="$t('workbench.controls.toggleSidebar')"
             :type="layoutStore.sidebarVisible ? 'primary' : 'default'"
-            :class="[layoutStore.sidebarVisible && 'bg-white/10']"
+            :class="[layoutStore.sidebarVisible && 'bg-[var(--hover-color)]']"
             @click="layoutStore.toggleSidebar"
           />
 
@@ -453,7 +455,7 @@ onUnmounted(() => {
             icon="ri:layout-bottom-line"
             :tooltip-content="$t('workbench.controls.toggleBottomPanel')"
             :type="layoutStore.bottomPanelVisible ? 'primary' : 'default'"
-            :class="[layoutStore.bottomPanelVisible && 'bg-white/10']"
+            :class="[layoutStore.bottomPanelVisible && 'bg-[var(--hover-color)]']"
             @click="layoutStore.toggleBottomPanel"
           />
 
@@ -462,7 +464,7 @@ onUnmounted(() => {
             icon="ri:layout-right-line"
             :tooltip-content="$t('workbench.controls.toggleSecondarySidebar')"
             :type="layoutStore.secondarySidebarVisible ? 'primary' : 'default'"
-            :class="[layoutStore.secondarySidebarVisible && 'bg-white/10']"
+            :class="[layoutStore.secondarySidebarVisible && 'bg-[var(--hover-color)]']"
             @click="layoutStore.toggleSecondarySidebar"
           />
 
@@ -472,7 +474,7 @@ onUnmounted(() => {
             :tooltip-content="$t('workbench.controls.settings')"
             :type="showSettings ? 'primary' : 'default'"
             :class="[
-              showSettings ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white',
+              showSettings ? 'bg-[var(--hover-color)] text-base-text' : 'text-[var(--text-muted)] hover:text-base-text',
             ]"
             @click="showSettings = !showSettings"
           />
@@ -482,9 +484,9 @@ onUnmounted(() => {
         <div v-if="!isMac && showWindowControls" class="flex shrink-0 items-center gap-2px">
           <NTooltip placement="bottom" trigger="hover">
             <template #trigger>
-              <NButton quaternary size="tiny" class="text-gray-400 !h-22px !w-24px !p-0 hover:text-white" @click="handleMinimize">
+              <NButton quaternary size="tiny" class="text-[var(--text-muted)] !w-24px !p-0 hover:text-base-text !h-ui-22" @click="handleMinimize">
                 <template #icon>
-                  <SvgIcon icon="ri:subtract-line" class="text-12px" />
+                  <SvgIcon icon="ri:subtract-line" class="text-ui-12" />
                 </template>
               </NButton>
             </template>
@@ -493,9 +495,9 @@ onUnmounted(() => {
 
           <NTooltip placement="bottom" trigger="hover">
             <template #trigger>
-              <NButton quaternary size="tiny" class="text-gray-400 !h-22px !w-24px !p-0 hover:text-white" @click="handleToggleMaximize">
+              <NButton quaternary size="tiny" class="text-[var(--text-muted)] !w-24px !p-0 hover:text-base-text !h-ui-22" @click="handleToggleMaximize">
                 <template #icon>
-                  <SvgIcon icon="ri:checkbox-multiple-blank-line" class="text-12px" />
+                  <SvgIcon icon="ri:checkbox-multiple-blank-line" class="text-ui-12" />
                 </template>
               </NButton>
             </template>
@@ -504,9 +506,9 @@ onUnmounted(() => {
 
           <NTooltip placement="bottom" trigger="hover">
             <template #trigger>
-              <NButton quaternary size="tiny" class="text-gray-400 !h-22px !w-24px !p-0 hover:!bg-red-600 hover:!text-white" @click="handleClose">
+              <NButton quaternary size="tiny" class="text-[var(--text-muted)] !w-24px !p-0 !h-ui-22 hover:!bg-error hover:!text-base-text" @click="handleClose">
                 <template #icon>
-                  <SvgIcon icon="ri:close-line" class="text-13px" />
+                  <SvgIcon icon="ri:close-line" class="text-ui-13" />
                 </template>
               </NButton>
             </template>
@@ -518,17 +520,17 @@ onUnmounted(() => {
 
     <!-- 第二行：快捷工具栏 -->
     <slot name="toolbar">
-      <div v-if="showToolbar" class="h-30px flex items-center justify-between border-t border-[#1e1e1e] bg-[#222222]/90 px-12px">
+      <div v-if="showToolbar" class="titlebar-tools flex items-center justify-between border-t border-[var(--border-color)] bg-container px-12px h-ui-30">
         <!-- 工具按钮分组 -->
         <div class="flex items-center">
           <template v-for="(group, gIndex) in activeToolbarGroups" :key="group.key">
-            <div v-if="gIndex > 0" class="mx-8px h-14px w-1px shrink-0 bg-white/12" />
+            <div v-if="gIndex > 0" class="mx-8px h-14px w-1px shrink-0 bg-[var(--hover-color)]" />
 
             <div
               class="flex items-center"
               :class="[
                 group.isCluster
-                  ? 'gap-2px border border-white/[0.08] rounded-6px bg-black/25 px-4px py-2px shadow-inner'
+                  ? 'gap-2px border border-[var(--border-color)]/[0.08] rounded-[var(--theme-radius)] bg-[var(--hover-color)] px-4px py-2px shadow-inner'
                   : 'gap-4px',
               ]"
             >
@@ -539,13 +541,13 @@ onUnmounted(() => {
                     size="tiny"
                     class="shrink-0 rounded-4px transition-all duration-150 active:scale-95 !p-0"
                     :class="[
-                      group.isCluster ? '!h-22px !w-22px' : '!h-24px !w-24px',
-                      action.class || 'text-gray-300 hover:text-white hover:!bg-white/10',
+                      group.isCluster ? '!h-ui-22 !w-22px' : '!h-ui-24 !w-24px',
+                      action.class || 'text-base-text hover:text-base-text hover:!bg-[var(--hover-color)]',
                     ]"
                     @click="action.onClick"
                   >
                     <template #icon>
-                      <SvgIcon :icon="action.icon" class="text-14px" />
+                      <SvgIcon :icon="action.icon" class="text-ui-14" />
                     </template>
                   </NButton>
                 </template>
@@ -557,9 +559,9 @@ onUnmounted(() => {
 
         <!-- 右侧适配器运行状态 -->
         <slot name="toolbar-right">
-          <div v-if="showAdapterStatus && tpStore.activeAdapter" class="hidden items-center gap-6px text-10px text-gray-400 font-mono sm:flex">
-            <span class="inline-block h-6px w-6px animate-pulse rounded-full bg-emerald-400" />
-            <span class="text-gray-300">{{ tpStore.activeAdapter.name }}</span>
+          <div v-if="showAdapterStatus && tpStore.activeAdapter" class="hidden items-center gap-6px text-[var(--text-muted)] font-mono text-ui-10 sm:flex">
+            <span class="inline-block h-6px w-6px animate-pulse rounded-full bg-success" />
+            <span class="text-base-text">{{ tpStore.activeAdapter.name }}</span>
           </div>
         </slot>
       </div>
@@ -569,3 +571,34 @@ onUnmounted(() => {
     <SettingsView v-model:show="showSettings" />
   </header>
 </template>
+
+<style scoped>
+.workbench-titlebar {
+  container: titlebar / inline-size;
+}
+
+.titlebar-tools {
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+@container titlebar (max-width: 760px) {
+  .titlebar-main {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    height: auto;
+    min-height: max(30px, calc(var(--app-font-size) * 30 / 14));
+    row-gap: 4px;
+  }
+
+  .titlebar-search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100% !important;
+  }
+
+  .titlebar-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+</style>

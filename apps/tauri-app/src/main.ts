@@ -14,14 +14,19 @@ import {
 import { isMainWindow } from './plugins/tauri'
 import { router, setupRouter } from './router'
 import { setupStore } from './store'
+import { restoreInterfaceFont } from './theme/interface-font'
+import { migrateThemeSettings } from './theme/migration'
 import { localStg } from './utils/storage'
 import './plugins/assets'
 
 async function setupApp() {
+  restoreInterfaceFont()
   setupLoading()
   setupNProgress()
   setupIconifyOffline()
   setupDayjs()
+
+  await migrateThemeSettings()
 
   const app = createApp(App)
   setupStore(app)

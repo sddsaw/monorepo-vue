@@ -108,7 +108,7 @@ registerShortcut()
     <NInputGroup>
       <NInput v-model:value="keyword" clearable placeholder="请输入关键词搜索" @input="handleSearch">
         <template #prefix>
-          <icon-uil-search class="text-15px text-#c2c2c2" />
+          <icon-uil-search class="text-#c2c2c2 text-ui-15" />
         </template>
       </NInput>
       <NButton v-if="isMobile" type="primary" ghost @click="handleClose">

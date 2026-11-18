@@ -318,7 +318,7 @@ function handleContextMenuAction(key: App.Global.DropdownKey) {
 }
 
 function getChromeTabClass(tab: DisplayTabItem, index: number) {
-  const classes = ['h-36px']
+  const classes = ['h-ui-36']
   if (props.draggingTabId && props.draggingTabId === tab.id) {
     classes.push('opacity-50')
   }
@@ -363,7 +363,7 @@ init()
   <component
     :is="transparentContainer ? 'div' : DarkModeContainer"
     class="size-full flex-y-center"
-    :class="[transparentContainer ? 'pl-12px pr-4px text-[var(--wb-text-color,#cccccc)]' : 'px-16px shadow-tab']"
+    :class="[transparentContainer ? 'pl-12px pr-4px text-base-text' : 'px-16px shadow-tab']"
   >
     <div
       ref="bsWrapper"
@@ -414,15 +414,15 @@ init()
               <SvgIcon
                 :icon="tab.icon"
                 :local-icon="tab.localIcon"
-                class="inline-block shrink-0 align-text-bottom text-16px"
+                class="inline-block shrink-0 align-text-bottom text-ui-16"
                 :class="tab.iconClass"
               />
             </template>
             <div class="max-w-240px flex items-center gap-6px">
-              <span class="ellipsis-text text-14px leading-24px">{{ tab.label }}</span>
+              <span class="ellipsis-text leading-24px text-ui-14">{{ tab.label }}</span>
               <span
                 v-if="tab.isDirty"
-                class="shrink-0 text-11px text-[#e2c08d] font-semibold leading-none"
+                class="shrink-0 text-warning font-semibold leading-none text-ui-11"
                 title="存在未保存修改"
               >
                 M
@@ -430,7 +430,7 @@ init()
               <SvgIcon
                 v-if="isCustom && tab.pinned"
                 icon="mdi:pin-outline"
-                class="shrink-0 text-13px opacity-75"
+                class="shrink-0 opacity-75 text-ui-13"
                 title="已固定"
               />
             </div>

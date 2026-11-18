@@ -61,10 +61,10 @@ function handleResize() {
       :style="{
         width: layoutStore.secondarySidebarVisible ? `${sidebarWidth}px` : '0px',
         opacity: layoutStore.secondarySidebarVisible ? 1 : 0,
-        backgroundColor: 'var(--wb-activitybar-bg, #181818)',
-        borderColor: 'var(--wb-border-color, #2b2b2b)',
+        backgroundColor: 'rgb(var(--layout-bg-color))',
+        borderColor: 'var(--border-color)',
       }"
-      class="z-20 h-full flex flex-col shrink-0 select-none overflow-hidden rounded-8px text-[#cccccc]"
+      class="z-20 h-full flex flex-col shrink-0 select-none overflow-hidden rounded-[var(--theme-radius)] text-[var(--text-muted)]"
       :class="[
         layoutStore.secondarySidebarVisible && 'mr-4px border',
         !isResizing ? 'transition-[width,opacity] duration-220 ease-[cubic-bezier(0.25,1,0.5,1)]' : '',

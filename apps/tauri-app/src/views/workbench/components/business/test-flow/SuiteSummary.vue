@@ -11,7 +11,6 @@ import {
   NStatistic,
   NTable,
   NTag,
-  NTooltip,
   useMessage,
 } from 'naive-ui'
 import { computed, ref } from 'vue'
@@ -74,23 +73,23 @@ async function handleCopyJson() {
 </script>
 
 <template>
-  <div class="business-editor-container max-w-5xl select-text p-6 text-gray-200">
+  <div class="business-editor-container max-w-5xl select-text p-6 text-base-text">
     <!-- 头部卡片与标题栏 -->
-    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[#2d2d2d] pb-4">
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
       <div class="flex items-center gap-3.5">
-        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-8px bg-cyan-500/15 text-cyan-400 ring-1 ring-cyan-500/30 transition-transform duration-300 hover:scale-105">
-          <SvgIcon icon="ri:function-line" class="text-20px" />
+        <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-[var(--theme-radius)] bg-primary/15 text-primary ring-1 ring-primary/30 transition-transform duration-300 hover:scale-105">
+          <SvgIcon icon="ri:function-line" class="text-ui-20" />
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-16px text-white font-bold tracking-wide">
+            <h2 class="text-base-text font-bold tracking-wide text-ui-16">
               {{ suite.name || '测试套件总览 (Suite Summary)' }}
             </h2>
             <NTag type="primary" size="small" round :bordered="false" class="font-mono">
               Test Suite
             </NTag>
           </div>
-          <p class="mt-0.5 text-12px text-gray-400">
+          <p class="mt-0.5 text-[var(--text-muted)] text-ui-12">
             {{ suite.description || 'ATE 自动化测试程序套件执行流程与集合' }}
           </p>
         </div>
@@ -114,17 +113,17 @@ async function handleCopyJson() {
     </div>
 
     <!-- 核心指标统计卡片 -->
-    <NGrid cols="1 s:2 m:3" :x-gap="16" :y-gap="16" class="mb-5">
+    <NGrid cols="1 500:2 800:3" responsive="self" :x-gap="16" :y-gap="16" class="mb-5">
       <NGi>
         <NCard
           size="small"
-          class="metric-card border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-cyan-500/40 hover:bg-[#252528]"
+          class="metric-card border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-primary/40 hover:bg-container"
         >
           <NStatistic label="测试项总数 (Items Count)">
             <template #prefix>
-              <SvgIcon icon="ri:list-check-2" class="mr-1 text-cyan-400" />
+              <SvgIcon icon="ri:list-check-2" class="mr-1 text-primary" />
             </template>
-            <span class="text-white font-mono font-bold">{{ items.length }}</span>
+            <span class="text-base-text font-bold font-mono">{{ items.length }}</span>
           </NStatistic>
         </NCard>
       </NGi>
@@ -132,13 +131,13 @@ async function handleCopyJson() {
       <NGi>
         <NCard
           size="small"
-          class="metric-card border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-blue-500/40 hover:bg-[#252528]"
+          class="metric-card border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-primary/40 hover:bg-container"
         >
           <NStatistic label="测试类型覆盖 (Categories)">
             <template #prefix>
-              <SvgIcon icon="ri:pie-chart-line" class="mr-1 text-blue-400" />
+              <SvgIcon icon="ri:pie-chart-line" class="mr-1 text-primary" />
             </template>
-            <span class="text-white font-mono font-bold">{{ Object.keys(typeDistribution).length }}</span>
+            <span class="text-base-text font-bold font-mono">{{ Object.keys(typeDistribution).length }}</span>
           </NStatistic>
         </NCard>
       </NGi>
@@ -146,13 +145,13 @@ async function handleCopyJson() {
       <NGi>
         <NCard
           size="small"
-          class="metric-card border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-emerald-500/40 hover:bg-[#252528]"
+          class="metric-card border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-success/40 hover:bg-container"
         >
           <NStatistic label="状态就绪 (Ready Status)">
             <template #prefix>
-              <SvgIcon icon="ri:checkbox-circle-line" class="mr-1 text-emerald-400" />
+              <SvgIcon icon="ri:checkbox-circle-line" class="mr-1 text-success" />
             </template>
-            <span class="text-emerald-400 font-mono font-bold">100% OK</span>
+            <span class="text-success font-bold font-mono">100% OK</span>
           </NStatistic>
         </NCard>
       </NGi>
@@ -161,12 +160,12 @@ async function handleCopyJson() {
     <!-- 测试项表格卡片 -->
     <NCard
       size="small"
-      class="editor-card mb-5 border border-[#2d2d2d] rounded-8px bg-[#222222]/80 transition-all duration-300 hover:border-[#3e3e42]"
+      class="editor-card mb-5 border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-container transition-all duration-300 hover:border-[var(--border-color)]"
     >
-      <div class="mb-3 flex items-center justify-between">
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <span class="text-13px text-gray-300 font-semibold">包含的子测试项列表</span>
-          <span class="text-11px text-gray-500">共 {{ items.length }} 个测试子单元</span>
+          <span class="text-base-text font-semibold text-ui-13">包含的子测试项列表</span>
+          <span class="text-[var(--text-muted)] text-ui-11">共 {{ items.length }} 个测试子单元</span>
         </div>
 
         <div class="flex items-center gap-1.5">
@@ -187,10 +186,10 @@ async function handleCopyJson() {
         <NEmpty description="当前套件下无测试子项" />
       </div>
 
-      <div v-else class="overflow-x-auto rounded-6px border border-[#2d2d2d]">
+      <div v-else class="overflow-x-auto border border-[var(--border-color)] rounded-[var(--theme-radius)]">
         <NTable size="small" :single-line="false" class="business-table">
           <thead>
-            <tr class="bg-[#2a2a2c] text-gray-400 text-11px font-semibold">
+            <tr class="bg-layout text-[var(--text-muted)] font-semibold text-ui-11">
               <th class="w-16">
                 编号
               </th>
@@ -208,10 +207,10 @@ async function handleCopyJson() {
               :key="it.id || idx"
               class="table-row-hover transition-colors duration-150"
             >
-              <td class="font-mono text-11px text-gray-400">
+              <td class="text-[var(--text-muted)] font-mono text-ui-11">
                 {{ it.id || `#${idx + 1}` }}
               </td>
-              <td class="font-medium text-white">
+              <td class="text-base-text font-medium">
                 {{ it.name || it.testName || '-' }}
               </td>
               <td>
@@ -219,13 +218,13 @@ async function handleCopyJson() {
                   {{ it.testType || 'General' }}
                 </NTag>
               </td>
-              <td class="font-mono text-11px text-gray-300">
+              <td class="text-base-text font-mono text-ui-11">
                 <span v-if="it.forceCurrent !== undefined">Force: {{ it.forceCurrent }} mA</span>
                 <span v-else-if="it.forceValue !== undefined">Force: {{ it.forceValue }} {{ it.unit || 'V' }}</span>
                 <span v-else-if="it.vccVolt !== undefined">VDD: {{ it.vccVolt }} V</span>
                 <span v-else>-</span>
               </td>
-              <td class="font-mono text-11px text-gray-400">
+              <td class="text-[var(--text-muted)] font-mono text-ui-11">
                 <span v-if="it.loLimit !== undefined || it.hiLimit !== undefined">
                   [{{ it.loLimit ?? '-' }}, {{ it.hiLimit ?? '-' }}] {{ it.unit || 'V' }}
                 </span>
@@ -242,11 +241,11 @@ async function handleCopyJson() {
 
     <!-- 底层 JSON 展开抽屉（带有平滑折叠展开动画） -->
     <NCollapseTransition :show="showRawJson">
-      <div class="mt-4 border border-[#333333] rounded-8px bg-[#181818] p-4 shadow-xl transition-all duration-300">
-        <div class="mb-2.5 flex items-center justify-between">
+      <div class="mt-4 border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-layout p-4 shadow-xl transition-all duration-300">
+        <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <span class="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span class="text-12px text-gray-300 font-mono font-medium">底层原始数据结构 (Live Sync)</span>
+            <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-success" />
+            <span class="text-base-text font-medium font-mono text-ui-12">底层原始数据结构 (Live Sync)</span>
           </div>
           <NButton size="tiny" secondary type="primary" @click="handleCopyJson">
             <template #icon>
@@ -255,7 +254,7 @@ async function handleCopyJson() {
             复制代码
           </NButton>
         </div>
-        <pre class="max-h-64 overflow-auto rounded-6px bg-black/60 p-3.5 text-11px text-emerald-400/90 font-mono leading-relaxed select-all">{{ JSON.stringify(suite, null, 2) }}</pre>
+        <pre class="max-h-64 select-all overflow-auto rounded-[var(--theme-radius)] bg-[var(--hover-color)] p-3.5 text-success/90 leading-relaxed font-mono text-ui-11">{{ JSON.stringify(suite, null, 2) }}</pre>
       </div>
     </NCollapseTransition>
   </div>
@@ -286,6 +285,6 @@ async function handleCopyJson() {
 }
 
 .table-row-hover:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: var(--hover-color);
 }
 </style>

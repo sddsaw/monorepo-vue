@@ -3,6 +3,8 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { SetupStoreId } from '@/enum'
 import { isTauri } from '@/plugins/tauri'
+import { WORKBENCH_SETTINGS_STORAGE_KEY } from '@/theme/interface-font'
+import { localStg } from '@/utils/storage'
 
 export type ActivityType
   = | 'explorer'
@@ -64,13 +66,35 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
   }
 
   /** 全局界面缩放比例 (默认 1.0) */
-  const zoomLevel = ref<number>(1.0)
+  function getInitialZoom() {
+    const savedZoom = localStg.get('workbenchZoom')
+    if (typeof savedZoom === 'number' && Number.isFinite(savedZoom))
+      return savedZoom
+
+    try {
+      const legacySettings = JSON.parse(localStorage.getItem(WORKBENCH_SETTINGS_STORAGE_KEY) || '{}')
+      const legacyZoom = Number.parseInt(legacySettings.zoom, 10) / 100
+      if (Number.isFinite(legacyZoom))
+        return legacyZoom
+    }
+    catch {}
+
+    return 1.0
+  }
+
+  const zoomLevel = ref<number>(getInitialZoom())
 
   function applyZoom(val: number) {
     zoomLevel.value = Math.min(2.0, Math.max(0.6, Number(val.toFixed(2))))
     if (typeof document !== 'undefined') {
       (document.documentElement.style as any).zoom = zoomLevel.value
+      document.documentElement.style.setProperty('--app-zoom', String(zoomLevel.value))
     }
+    localStg.set('workbenchZoom', zoomLevel.value)
+  }
+
+  function setZoomLevel(val: number) {
+    applyZoom(val)
   }
 
   function zoomIn() {
@@ -84,6 +108,8 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
   function resetZoom() {
     applyZoom(1.0)
   }
+
+  applyZoom(zoomLevel.value)
 
   async function toggleFullscreen() {
     if (isTauri()) {
@@ -107,6 +133,7 @@ export const useWorkbenchLayoutStore = defineStore(SetupStoreId.WorkbenchLayout,
     secondarySidebarVisible,
     activeActivity,
     zoomLevel,
+    setZoomLevel,
     zoomIn,
     zoomOut,
     resetZoom,

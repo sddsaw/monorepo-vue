@@ -4,32 +4,15 @@ import { toggleHtmlClass } from '@sa/utils'
 import { defu } from 'defu'
 import { DARK_CLASS } from '@/constants/app'
 import { overrideThemeSettings, themeSettings } from '@/theme/settings'
+import { getTypographyTheme, normalizeFontSize } from '@/theme/typography'
 import { themeVars } from '@/theme/vars'
 import { localStg } from '@/utils/storage'
 
 /** Init theme settings */
 export function initThemeSettings() {
-  const isProd = import.meta.env.PROD
-
-  // if it is development mode, the theme settings will not be cached, by update `themeSettings` in `src/theme/settings.ts` to update theme settings
-  if (!isProd)
-    return themeSettings
-
-  // if it is production mode, the theme settings will be cached in localStorage
-  // if want to update theme settings when publish new version, please update `overrideThemeSettings` in `src/theme/settings.ts`
-
-  const localSettings = localStg.get('themeSettings')
-
-  let settings = defu(localSettings, themeSettings)
-
-  const isOverride = localStg.get('overrideThemeFlag') === BUILD_TIME
-
-  if (!isOverride) {
-    settings = defu(overrideThemeSettings, settings)
-
-    localStg.set('overrideThemeFlag', BUILD_TIME)
-  }
-
+  // 用户设置在开发、生产和新版本中均优先，默认配置只补齐新增字段。
+  const settings = defu(localStg.get('themeSettings'), overrideThemeSettings, themeSettings)
+  settings.fontSize = normalizeFontSize(settings.fontSize)
   return settings
 }
 
@@ -90,7 +73,8 @@ function createThemePaletteColors(colors: App.Theme.ThemeColor, recommended = fa
   colorKeys.forEach((key) => {
     const colorMap = getColorPalette(colors[key], recommended)
 
-    colorPaletteVar[key] = colorMap.get(500)!
+    // 基础色始终使用全局设置值；推荐色阶只用于衍生状态，不能另改 CSS 主色。
+    colorPaletteVar[key] = colors[key]
 
     colorMap.forEach((hex, number) => {
       colorPaletteVar[`${key}-${number}`] = hex
@@ -235,6 +219,21 @@ function getNaiveThemeColors(colors: App.Theme.ThemeColor, recommended = false) 
   return themeColors
 }
 
+/** 所有界面及非 DOM 渲染器共用的全局表面颜色。 */
+export function getThemeSurfaceColors(settings: App.Theme.ThemeSetting, darkMode: boolean) {
+  const { light, dark } = settings.tokens
+  const colors = { ...light.colors, ...(darkMode ? dark?.colors : {}) }
+  const text = colors['base-text']
+  return {
+    container: colors.container,
+    layout: colors.layout,
+    text,
+    muted: addColorAlpha(text, 0.65),
+    border: addColorAlpha(text, 0.16),
+    hover: addColorAlpha(text, 0.08),
+  }
+}
+
 /**
  * Get naive theme
  *
@@ -246,14 +245,41 @@ export function getNaiveTheme(
   colors: App.Theme.ThemeColor,
   settings: App.Theme.ThemeSetting,
   overrides?: GlobalThemeOverrides,
+  darkMode = false,
 ) {
   const { primary: colorLoading } = colors
+  const surface = getThemeSurfaceColors(settings, darkMode)
+  const inputBorder = `1px solid ${surface.border}`
 
   const theme: GlobalThemeOverrides = {
     common: {
+      ...getTypographyTheme(settings.fontSize),
       ...getNaiveThemeColors(colors, settings.recommendColor),
+      fontFamily: 'var(--wb-interface-font, var(--wb-default-interface-font))',
+      bodyColor: surface.layout,
+      cardColor: surface.container,
+      modalColor: surface.container,
+      popoverColor: surface.container,
+      tableColor: surface.container,
+      inputColor: surface.container,
+      textColorBase: surface.text,
+      textColor1: surface.text,
+      textColor2: surface.muted,
+      textColor3: surface.muted,
+      borderColor: surface.border,
+      dividerColor: surface.border,
       borderRadius: `${settings.themeRadius}px`,
     },
+    Card: { borderRadius: `${settings.themeRadius}px` },
+    // 暗色主题默认使用透明边框，与统一面板背景重合时无法辨认输入区域。
+    Input: {
+      borderRadius: `${settings.themeRadius}px`,
+      border: inputBorder,
+      borderDisabled: inputBorder,
+      groupLabelBorder: inputBorder,
+    },
+    InternalSelection: { border: inputBorder },
+    Alert: { borderRadius: `${settings.themeRadius}px` },
     LoadingBar: {
       colorLoading,
     },
@@ -262,7 +288,6 @@ export function getNaiveTheme(
     },
   }
 
-  // If there are overrides, merge them with priority
-  // overrides has higher priority than auto-generated theme
-  return overrides ? defu(overrides, theme) : theme
+  // 全局颜色与圆角始终优先，预设仅补充其余组件样式。
+  return overrides ? defu(theme, overrides) : theme
 }
