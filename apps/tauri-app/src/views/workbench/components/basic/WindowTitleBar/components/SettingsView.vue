@@ -14,6 +14,8 @@ import {
   useMessage,
 } from 'naive-ui'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { themeTabModeOptions } from '@/constants/app'
+import SettingItem from '@/layouts/modules/theme-drawer/components/setting-item.vue'
 import { $t } from '@/locales'
 import { useAppStore } from '@/store/modules/app'
 import { useThemeStore } from '@/store/modules/theme'
@@ -112,6 +114,11 @@ const themeScheme = computed({
 
 const themeSwatches = ['#007acc', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899', '#ef4444', '#f97316', '#22c55e', '#14b8a6']
 
+const tabModeOptions = computed(() => themeTabModeOptions.map(option => ({
+  ...option,
+  label: $t(`theme.layout.tab.mode.${option.value}` as const),
+})))
+
 const interfaceFontOptions: SelectOption[] = [
   { label: 'DBX Default', value: 'dbx-default' },
   { label: 'System Default', value: 'system-default' },
@@ -123,7 +130,7 @@ const interfaceFontOptions: SelectOption[] = [
 ]
 
 // ─── 4. 侧边栏导航项 ───
-type NavKey = 'appearance' | 'about'
+type NavKey = 'appearance' | 'content' | 'about'
 const activeNav = ref<NavKey>('appearance')
 
 const navTabs = computed(() => [
@@ -131,6 +138,11 @@ const navTabs = computed(() => [
     key: 'appearance' as NavKey,
     label: $t('workbench.settings.appearance'),
     icon: 'ri:palette-line',
+  },
+  {
+    key: 'content' as NavKey,
+    label: $t('theme.layout.content.title'),
+    icon: 'ri:layout-bottom-line',
   },
   {
     key: 'about' as NavKey,
@@ -413,6 +425,12 @@ function handleCheckUpdate() {
                 </div>
               </div>
             </section>
+          </div>
+
+          <div v-else-if="activeNav === 'content'" key="content" class="space-y-6">
+            <SettingItem :label="$t('theme.layout.tab.mode.title')">
+              <NSelect v-model:value="themeStore.tab.mode" :options="tabModeOptions" size="small" class="w-150px" />
+            </SettingItem>
           </div>
 
           <!-- ─── 视图 B: 关于我们 ─── -->

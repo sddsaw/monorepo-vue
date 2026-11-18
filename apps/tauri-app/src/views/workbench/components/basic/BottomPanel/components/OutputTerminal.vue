@@ -3,17 +3,15 @@ import type { DropdownOption } from 'naive-ui'
 import { addColorAlpha } from '@sa/color'
 import { FitAddon } from '@xterm/addon-fit'
 import { Terminal } from '@xterm/xterm'
-import { NDropdown, useMessage } from 'naive-ui'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { NDropdown, useMessage, useThemeVars } from 'naive-ui'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useThemeStore } from '@/store/modules/theme'
 import { getUiFontSize } from '@/theme/typography'
 import '@xterm/xterm/css/xterm.css'
 
 interface Props {
-  /** 当前父级激活的 Tab 名称，用于切回时触发 fit */
-  activeTab?: string
-  /** 是否正在手动拖拽拉伸面板大小 */
-  isResizing?: boolean
+  /** 输出标签和底部面板同时可见时，才初始化渲染与调整尺寸。 */
+  active?: boolean
   /** 适配器名称 */
   adapterName?: string
   /** 活跃标签数 */
@@ -21,13 +19,13 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  activeTab: 'output',
-  isResizing: false,
+  active: true,
   adapterName: '无',
   activeTabsCount: 0,
 })
 
 const message = useMessage()
+const themeVars = useThemeVars()
 const themeStore = useThemeStore()
 const terminalFontSize = computed(() => getUiFontSize(12, themeStore.fontSize))
 const terminalTheme = computed(() => {
@@ -134,7 +132,7 @@ function handleSelectDropdown(key: string) {
       term.selectAll()
       break
     case 'clear':
-      term.clear()
+      clearLog()
       break
   }
 }
@@ -144,7 +142,7 @@ function printWelcomeInfo() {
   if (!term)
     return
 
-  term.clear()
+  clearLog()
   term.writeln('')
   term.writeln(
     ` \x1B[90mATE Studio 核心解析引擎版本:\x1B[0m \x1B[42;97m 1.0.0 \x1B[0m`,
@@ -169,9 +167,9 @@ function appendLog(line: string) {
 }
 
 function clearLog() {
-  if (term) {
-    term.clear()
-  }
+  // RIS enters the same write queue as logs: it clears the screen and scrollback
+  // after earlier writes, so buffered output cannot reappear after a clear.
+  term?.write('\x1Bc')
 }
 
 defineExpose({
@@ -182,34 +180,33 @@ defineExpose({
 
 let rafId: number | null = null
 
-/** 带节流与安全捕获的尺寸自适应函数 */
+/** 仅测量可见容器；同一帧内合并尺寸变化，并保留阅读历史日志的位置。 */
 function safeFit() {
-  if (rafId) {
-    cancelAnimationFrame(rafId)
-  }
+  if (rafId !== null || !props.active || !term)
+    return
   rafId = requestAnimationFrame(() => {
     rafId = null
-    try {
-      fitAddon?.fit()
-      term?.scrollToBottom()
-    }
-    catch {
-      // 忽略尺寸为 0 时的计算异常
-    }
+    const host = terminalRef.value
+    if (!props.active || !term || !host || !host.clientWidth || !host.clientHeight)
+      return
+    if (!term.element)
+      term.open(host)
+    const atBottom = term.buffer.active.viewportY === term.buffer.active.baseY
+    fitAddon?.fit()
+    if (atBottom)
+      term.scrollToBottom()
   })
 }
 
-// 监听 Tab 切换，切回 Output 时重新计算终端尺寸
 watch(
-  () => props.activeTab,
-  (val) => {
-    if (val === 'output') {
-      nextTick(() => {
-        safeFit()
-        setTimeout(safeFit, 60)
-      })
-    }
+  () => props.active,
+  (active) => {
+    if (active)
+      safeFit()
+    else
+      showDropdown.value = false
   },
+  { flush: 'post' },
 )
 
 watch(terminalTheme, (theme) => {
@@ -242,13 +239,11 @@ onMounted(() => {
   fitAddon = new FitAddon()
   term.loadAddon(fitAddon)
 
-  term.open(terminalRef.value)
-
   // 快捷键 Ctrl+C / Cmd+C 复制选中文本
   term.attachCustomKeyEventHandler((event: KeyboardEvent) => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c' && term?.hasSelection()) {
       const selected = term.getSelection()
-      if (selected) {
+      if (selected && event.type === 'keydown') {
         copyToClipboard(selected)
       }
       return false
@@ -256,12 +251,6 @@ onMounted(() => {
     return true
   })
 
-  try {
-    fitAddon.fit()
-  }
-  catch {
-    // 容器未可见时安全降级
-  }
   printWelcomeInfo()
   safeFit()
 
@@ -273,7 +262,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  if (rafId) {
+  if (rafId !== null) {
     cancelAnimationFrame(rafId)
     rafId = null
   }
@@ -287,12 +276,19 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    class="output-terminal-wrapper relative h-full w-full overflow-hidden bg-layout"
+    class="output-terminal-wrapper relative h-full w-full overflow-hidden bg-layout py-1 pl-2 pr-1"
+    :style="{
+      '--terminal-scrollbar-width': themeVars.scrollbarWidth,
+      '--terminal-scrollbar-radius': themeVars.scrollbarBorderRadius,
+      '--terminal-scrollbar-color': themeVars.scrollbarColor,
+      '--terminal-scrollbar-color-hover': themeVars.scrollbarColorHover,
+      '--terminal-scrollbar-bezier': themeVars.cubicBezierEaseInOut,
+    }"
     @contextmenu="handleContextMenu"
   >
     <div
       ref="terminalRef"
-      class="h-full w-full py-1 pl-2 pr-1"
+      class="h-full w-full"
     />
 
     <!-- 右键菜单 -->
@@ -309,42 +305,41 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style>
-/* 注意：不能加 scoped，Vue scoped 生成的 [data-v-xxx] 属性选择器会导致浏览器判定 ::-webkit-scrollbar 非法并丢弃规则 */
-.output-terminal-wrapper .xterm {
+<style scoped>
+.output-terminal-wrapper :deep(.xterm) {
   height: 100%;
   padding: 0;
 }
 
-.output-terminal-wrapper .xterm-viewport {
-  background-color: rgb(var(--layout-bg-color)) !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgb(var(--base-text-color) / 0.2) transparent !important;
+.output-terminal-wrapper :deep(.xterm-viewport) {
+  background-color: transparent;
 }
 
-/* 1:1 复刻 Naive UI NScrollbar 滚动条视觉与交互规范 */
-.output-terminal-wrapper .xterm-viewport::-webkit-scrollbar {
-  width: 5px !important;
-  height: 5px !important;
-  background-color: transparent !important;
+/* Keep xterm's geometry and auto-hide behavior; only the painted thumb is narrow. */
+.output-terminal-wrapper :deep(.xterm-scrollable-element > .scrollbar.vertical > .slider) {
+  background: transparent;
 }
 
-.output-terminal-wrapper .xterm-viewport::-webkit-scrollbar-track {
-  background: transparent !important;
-  background-color: transparent !important;
+.output-terminal-wrapper :deep(.xterm-scrollable-element > .scrollbar.vertical > .slider::before) {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: var(--terminal-scrollbar-width);
+  transform: translateX(-50%);
+  border-radius: var(--terminal-scrollbar-radius);
+  background-color: var(--terminal-scrollbar-color);
+  pointer-events: none;
+  transition: background-color 200ms var(--terminal-scrollbar-bezier);
 }
 
-.output-terminal-wrapper .xterm-viewport::-webkit-scrollbar-corner {
-  background: transparent !important;
+.output-terminal-wrapper :deep(.xterm-scrollable-element > .scrollbar.vertical > .slider:hover::before),
+.output-terminal-wrapper :deep(.xterm-scrollable-element > .scrollbar.vertical > .slider.active::before) {
+  background-color: var(--terminal-scrollbar-color-hover);
 }
 
-.output-terminal-wrapper .xterm-viewport::-webkit-scrollbar-thumb {
-  background-color: rgb(var(--base-text-color) / 0.2) !important;
-  border-radius: 9999px !important;
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.output-terminal-wrapper .xterm-viewport::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(var(--base-text-color) / 0.38) !important;
+.output-terminal-wrapper :deep(.xterm-scrollable-element > .scrollbar.invisible.fade) {
+  transition: opacity 200ms var(--terminal-scrollbar-bezier);
 }
 </style>

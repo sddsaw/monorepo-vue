@@ -136,7 +136,7 @@ function toggleMaximize() {
     >
       <!-- 内部固定高度容器，防止折叠动画时选项卡与内容挤压变形 -->
       <div
-        :style="{ height: `${panelHeight}px` }"
+        :style="{ height: `${panelHeight - 2}px` }"
         class="min-h-0 flex flex-col shrink-0 overflow-hidden"
       >
         <NTabs
@@ -144,13 +144,12 @@ function toggleMaximize() {
           type="line"
           size="small"
           class="bottom-panel-tabs h-full flex flex-col"
-          pane-wrapper-class="flex-1 min-h-0 overflow-hidden"
-          pane-class="h-full !p-0"
+          pane-class="min-h-0 flex-1 overflow-hidden !p-0"
         >
           <!-- 1. 问题 (Problems) 标签页 -->
           <NTabPane name="problems">
             <template #tab>
-              <div class="flex items-center gap-1.5 py-0.5">
+              <div class="flex items-center gap-1.5">
                 <SvgIcon icon="ri:error-warning-line" class="text-ui-13" />
                 <span>问题 (Problems)</span>
                 <NBadge
@@ -203,7 +202,7 @@ function toggleMaximize() {
           <!-- 2. 本地日志 (Logs) 标签页 -->
           <NTabPane name="logs">
             <template #tab>
-              <div class="flex items-center gap-1.5 py-0.5">
+              <div class="flex items-center gap-1.5">
                 <SvgIcon icon="ri:file-list-3-line" class="text-ui-13" />
                 <span>本地日志 (Logs)</span>
               </div>
@@ -239,9 +238,9 @@ function toggleMaximize() {
           </NTabPane>
 
           <!-- 3. 输出 (Output) 标签页 -->
-          <NTabPane name="output">
+          <NTabPane name="output" display-directive="show">
             <template #tab>
-              <div class="flex items-center gap-1.5 py-0.5">
+              <div class="flex items-center gap-1.5">
                 <SvgIcon icon="ri:terminal-box-line" class="text-ui-13" />
                 <span>输出 (Output)</span>
               </div>
@@ -249,8 +248,7 @@ function toggleMaximize() {
 
             <OutputTerminal
               ref="outputTerminalRef"
-              :active-tab="activeTab"
-              :is-resizing="isResizing"
+              :active="layoutStore.bottomPanelVisible && activeTab === 'output'"
               :adapter-name="tpStore.activeAdapter?.name"
               :active-tabs-count="tpStore.tabs.length"
             />
@@ -301,6 +299,7 @@ function toggleMaximize() {
                     size="tiny"
                     :class="isMockStreaming ? 'text-success hover:text-success' : 'text-[var(--text-muted)] hover:text-base-text'"
                     class="!h-22px !w-22px !p-0"
+                    :aria-label="isMockStreaming ? '暂停模拟日志推流' : '恢复模拟日志推流'"
                     @click="toggleMockStream"
                   >
                     <template #icon>
@@ -318,6 +317,7 @@ function toggleMaximize() {
                     quaternary
                     size="tiny"
                     class="text-warning !h-22px !w-22px !p-0 hover:text-warning"
+                    aria-label="灌入 1,000 条日志"
                     @click="injectBulkLogs"
                   >
                     <template #icon>
@@ -335,6 +335,7 @@ function toggleMaximize() {
                     quaternary
                     size="tiny"
                     class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
+                    aria-label="清空输出"
                     @click="outputTerminalRef?.clearLog()"
                   >
                     <template #icon>
@@ -352,6 +353,7 @@ function toggleMaximize() {
                     quaternary
                     size="tiny"
                     class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
+                    :aria-label="isMaximized ? '还原面板大小' : '最大化面板'"
                     @click="toggleMaximize"
                   >
                     <template #icon>
@@ -372,6 +374,7 @@ function toggleMaximize() {
                     quaternary
                     size="tiny"
                     class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
+                    aria-label="关闭面板"
                     @click="layoutStore.setBottomPanelVisible(false)"
                   >
                     <template #icon>
@@ -390,23 +393,31 @@ function toggleMaximize() {
 </template>
 
 <style scoped>
+.bottom-panel-tabs {
+  --bottom-panel-tab-height: max(32px, calc(var(--app-font-size, 14px) * 32 / 14));
+}
+
 :deep(.n-tabs-nav) {
+  height: var(--bottom-panel-tab-height);
+  flex-shrink: 0;
+  box-sizing: border-box;
   background-color: rgb(var(--layout-bg-color));
   border-bottom: 1px solid var(--border-color);
   padding: 0 8px;
+}
+
+:deep(.n-tabs-tab) {
+  height: calc(var(--bottom-panel-tab-height) - 1px);
+  box-sizing: border-box;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 :deep(.n-tabs-nav-scroll-content) {
   gap: 8px;
 }
 
-:deep(.n-tabs-pane-wrapper) {
-  flex: 1;
-  min-height: 0;
-}
-
 :deep(.n-tab-pane) {
-  height: 100%;
   box-sizing: border-box;
 }
 </style>
