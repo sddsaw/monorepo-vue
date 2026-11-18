@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { WbTabItem } from '@/store/modules/tp'
 import { SvgIcon } from '@sa/components'
 import { computed } from 'vue'
 import { useTpStore } from '@/store/modules/tp'
@@ -7,9 +8,10 @@ defineOptions({
   name: 'EditorBreadcrumb',
 })
 
+const props = defineProps<{ tab?: WbTabItem }>()
 const tpStore = useTpStore()
 
-const currentTab = computed(() => tpStore.activeTab)
+const currentTab = computed(() => props.tab ?? tpStore.activeTab)
 
 const formattedPath = computed(() => {
   if (!currentTab.value?.dataPath || currentTab.value.dataPath.length === 0)

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { WbTabItem } from '@/store/modules/tp'
 import { computed } from 'vue'
 import ComponentErrorBoundary from '@/components/common/ComponentErrorBoundary.vue'
 import FallbackJsonView from '@/components/common/FallbackJsonView.vue'
@@ -9,9 +10,12 @@ defineOptions({
   name: 'MainContent',
 })
 
+// 由父级按标签 ID 挂载，离场动画期间仍使用原标签的数据。
+const props = defineProps<{ tab?: WbTabItem }>()
+
 const tpStore = useTpStore()
 
-const currentTab = computed(() => tpStore.activeTab)
+const currentTab = computed(() => props.tab)
 
 const currentData = computed(() => {
   if (!currentTab.value)
@@ -29,12 +33,12 @@ const MatchedComponent = computed(() => {
 <template>
   <div
     :style="{ backgroundColor: 'rgb(var(--container-bg-color))' }"
-    class="relative size-full overflow-hidden"
+    class="relative min-h-full"
   >
     <!-- 空状态提示 (未打开任何测试项时展示) -->
     <div
       v-if="!currentTab"
-      class="size-full flex flex-col select-none items-center justify-center text-[var(--text-muted)] text-ui-13"
+      class="min-h-240px flex flex-col select-none items-center justify-center text-[var(--text-muted)] text-ui-13"
     >
       <div class="mb-8px opacity-40 text-ui-28">
         📄
@@ -43,7 +47,7 @@ const MatchedComponent = computed(() => {
     </div>
 
     <!-- 业务组件主展示区 -->
-    <div v-else class="size-full overflow-auto">
+    <div v-else>
       <ComponentErrorBoundary
         :key="currentTab.id"
         :node-id="currentTab.id"

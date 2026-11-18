@@ -276,10 +276,13 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
       item[field] = newValue
 
       if (origin === 'ui') {
-        // 标记当前 Tab 与全局脏状态
-        const currentTab = tabs.value.find(t => t.id === activeTabId.value)
-        if (currentTab)
-          currentTab.isDirty = true
+        // 分屏下编辑的面板未必是全局激活项；按路径标记所有展示该数据的标签。
+        for (const tab of tabs.value) {
+          if (tab.componentKey !== 'SettingsView' && tab.dataPath.length <= dataPath.length
+            && tab.dataPath.every((segment, index) => segment === dataPath[index])) {
+            tab.isDirty = true
+          }
+        }
         fileDirty.value = true
       }
     }

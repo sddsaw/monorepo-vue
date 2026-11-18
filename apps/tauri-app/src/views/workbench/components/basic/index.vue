@@ -4,8 +4,7 @@ import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
 import { getMenus } from '../../config/menuConfig'
 import BottomPanel from './BottomPanel/index.vue'
-import EditorBreadcrumb from './MainContent/EditorBreadcrumb.vue'
-import MainContent from './MainContent/index.vue'
+import WorkbenchEditor from './MainContent/WorkbenchEditor.vue'
 import PrimarySideBar from './PrimarySideBar/index.vue'
 import SecondarySideBar from './SecondarySideBar/index.vue'
 import StatusBar from './StatusBar/index.vue'
@@ -128,12 +127,7 @@ onUnmounted(() => {
 
           <!-- 主编辑区与底部面板区 -->
           <main class="min-w-0 flex flex-col flex-1 overflow-hidden">
-            <!-- 顶部面包屑坐标  -->
-            <EditorBreadcrumb class="shrink-0" />
-            <!-- 业务组件主展示区 -->
-            <div class="relative min-h-0 flex-1 overflow-hidden rounded-md">
-              <MainContent class="size-full" />
-            </div>
+            <WorkbenchEditor />
 
             <!-- 底部面板 (支持 Ctrl+J 折叠，常驻保留顶部拖拽手柄) -->
             <BottomPanel class="shrink-0" />
