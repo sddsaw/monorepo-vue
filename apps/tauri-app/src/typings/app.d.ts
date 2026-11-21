@@ -23,6 +23,8 @@ declare namespace App {
       themeRadius: number
       /** Global base font size, 12–18 px */
       fontSize: number
+      /** 界面字体随主题设置持久化、跨窗口同步；预设保留个人字体。 */
+      interfaceFont: string
       /** Other color */
       otherColor: OtherColor
       /** Whether info color is followed by the primary color */
@@ -157,6 +159,8 @@ declare namespace App {
     type BaseToken = Record<string, Record<string, string>>
 
     interface ThemeSettingTokenColor {
+      /** 可选的明暗主色；未配置时使用用户选择的全局主色。 */
+      'primary'?: string
       /** the progress bar color, if not set, will use the primary color */
       'nprogress'?: string
       'container': string
@@ -174,6 +178,8 @@ declare namespace App {
     interface ThemeSettingToken {
       colors: ThemeSettingTokenColor
       boxShadow: ThemeSettingTokenBoxShadow
+      /** 可选的表面细分；缺省时沿用原主题的派生颜色。 */
+      surfaces?: Partial<Record<'panel' | 'toolbar' | 'input' | 'border' | 'hover' | 'muted' | 'alternate', string>>
     }
 
     type ThemeTokenColor = ThemePaletteColor & ThemeSettingTokenColor

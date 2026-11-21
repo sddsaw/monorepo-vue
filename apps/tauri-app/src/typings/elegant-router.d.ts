@@ -22,6 +22,7 @@ declare module "@elegant-router/types" {
     "500": "/500";
     "iframe-page": "/iframe-page/:url";
     "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?";
+    "project": "/project";
     "redis-devtools": "/redis-devtools";
     "workbench": "/workbench";
   };
@@ -60,6 +61,7 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
+    | "project"
     | "redis-devtools"
     | "workbench"
   >;
@@ -83,6 +85,7 @@ declare module "@elegant-router/types" {
     | "500"
     | "iframe-page"
     | "login"
+    | "project"
     | "redis-devtools"
     | "workbench"
   >;

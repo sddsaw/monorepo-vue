@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { DropdownOption } from 'naive-ui'
 import { addColorAlpha } from '@sa/color'
 import { FitAddon } from '@xterm/addon-fit'
 import { Terminal } from '@xterm/xterm'
-import { NDropdown, useMessage, useThemeVars } from 'naive-ui'
+import { useThemeVars } from 'naive-ui'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useThemeStore } from '@/store/modules/theme'
 import { getUiFontSize } from '@/theme/typography'
@@ -24,7 +23,6 @@ const props = withDefaults(defineProps<Props>(), {
   activeTabsCount: 0,
 })
 
-const message = useMessage()
 const themeVars = useThemeVars()
 const themeStore = useThemeStore()
 const terminalFontSize = computed(() => getUiFontSize(12, themeStore.fontSize))
@@ -59,90 +57,11 @@ let term: Terminal | null = null
 let fitAddon: FitAddon | null = null
 let resizeObserver: ResizeObserver | null = null
 
-// --- 右键菜单相关 ---
-const showDropdown = ref(false)
-const dropdownX = ref(0)
-const dropdownY = ref(0)
-const dropdownOptions = ref<DropdownOption[]>([])
-
-/** 复制文本到剪贴板 */
-async function copyToClipboard(text: string) {
-  if (!text)
-    return
-  try {
-    await navigator.clipboard.writeText(text)
-    message.success('已复制到剪贴板')
-  }
-  catch {
-    message.error('复制失败，请检查浏览器剪贴板权限')
-  }
-}
-
-/** 弹出右键菜单 */
-function handleContextMenu(e: MouseEvent) {
-  e.preventDefault()
-  if (!term)
-    return
-
-  const hasSelection = term.hasSelection()
-  const selectedText = term.getSelection()
-
-  dropdownOptions.value = [
-    {
-      label: '复制 (Copy)',
-      key: 'copy',
-      disabled: !hasSelection,
-    },
-    {
-      label: '全选 (Select All)',
-      key: 'selectAll',
-    },
-    {
-      type: 'divider',
-      key: 'd1',
-    },
-    {
-      label: '清空输出 (Clear)',
-      key: 'clear',
-    },
-  ]
-
-  dropdownX.value = e.clientX
-  dropdownY.value = e.clientY
-  showDropdown.value = true
-
-  // 临时暂存当前选中文本以便点击菜单时使用
-  currentSelectedText = selectedText
-}
-
-let currentSelectedText = ''
-
-function handleSelectDropdown(key: string) {
-  showDropdown.value = false
-  if (!term)
-    return
-
-  switch (key) {
-    case 'copy':
-      if (currentSelectedText) {
-        copyToClipboard(currentSelectedText)
-      }
-      break
-    case 'selectAll':
-      term.selectAll()
-      break
-    case 'clear':
-      clearLog()
-      break
-  }
-}
-
 /** 打印初始欢迎与状态信息 */
 function printWelcomeInfo() {
   if (!term)
     return
 
-  clearLog()
   term.writeln('')
   term.writeln(
     ` \x1B[90mATE Studio 核心解析引擎版本:\x1B[0m \x1B[42;97m 1.0.0 \x1B[0m`,
@@ -166,15 +85,8 @@ function appendLog(line: string) {
   }
 }
 
-function clearLog() {
-  // RIS enters the same write queue as logs: it clears the screen and scrollback
-  // after earlier writes, so buffered output cannot reappear after a clear.
-  term?.write('\x1Bc')
-}
-
 defineExpose({
   appendLog,
-  clearLog,
   printWelcomeInfo,
 })
 
@@ -203,8 +115,6 @@ watch(
   (active) => {
     if (active)
       safeFit()
-    else
-      showDropdown.value = false
   },
   { flush: 'post' },
 )
@@ -239,18 +149,6 @@ onMounted(() => {
   fitAddon = new FitAddon()
   term.loadAddon(fitAddon)
 
-  // 快捷键 Ctrl+C / Cmd+C 复制选中文本
-  term.attachCustomKeyEventHandler((event: KeyboardEvent) => {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'c' && term?.hasSelection()) {
-      const selected = term.getSelection()
-      if (selected && event.type === 'keydown') {
-        copyToClipboard(selected)
-      }
-      return false
-    }
-    return true
-  })
-
   printWelcomeInfo()
   safeFit()
 
@@ -284,23 +182,10 @@ onBeforeUnmount(() => {
       '--terminal-scrollbar-color-hover': themeVars.scrollbarColorHover,
       '--terminal-scrollbar-bezier': themeVars.cubicBezierEaseInOut,
     }"
-    @contextmenu="handleContextMenu"
   >
     <div
       ref="terminalRef"
       class="h-full w-full"
-    />
-
-    <!-- 右键菜单 -->
-    <NDropdown
-      placement="bottom-start"
-      trigger="manual"
-      :x="dropdownX"
-      :y="dropdownY"
-      :options="dropdownOptions"
-      :show="showDropdown"
-      :on-clickoutside="() => (showDropdown = false)"
-      @select="handleSelectDropdown"
     />
   </div>
 </template>

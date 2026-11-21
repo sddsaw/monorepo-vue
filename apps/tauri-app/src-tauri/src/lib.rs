@@ -136,6 +136,7 @@ pub fn run() {
             commands::restart_app,
             commands::open_new_window,
             commands::read_file_content,
+            commands::read_project_bundle,
             commands::save_file_content
         ])
         .build(tauri::generate_context!())

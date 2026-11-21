@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { WatermarkProps } from 'naive-ui'
 import { darkTheme, NConfigProvider, NGlobalStyle } from 'naive-ui'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+import ProjectLoadFeedback from '@/components/project/ProjectLoadFeedback.vue'
 import { naiveDateLocales, naiveLocales } from './locales'
 import { useAppEventListener } from './services/events'
 import { useAppStore } from './store/modules/app'
 import { useThemeStore } from './store/modules/theme'
+import { interfaceFontFamily } from './theme/interface-font'
 
 defineOptions({
   name: 'App',
@@ -13,6 +15,28 @@ defineOptions({
 
 const appStore = useAppStore()
 const themeStore = useThemeStore()
+const watermarkRevision = ref(0)
+
+// 中文字体按需加载；首次下载完成后重画 Canvas，避免水印停留在回退字体。
+watch([() => themeStore.watermark.visible, () => themeStore.watermarkContent, interfaceFontFamily], async ([visible, content, family], _, onCleanup) => {
+  if (!visible || !content || !document.fonts)
+    return
+  const font = `16px ${family}`
+  if (document.fonts.check(font, content))
+    return
+  let active = true
+  onCleanup(() => {
+    active = false
+  })
+  try {
+    await document.fonts.load(font, content)
+    if (active)
+      watermarkRevision.value++
+  }
+  catch (error) {
+    console.warn('水印字体加载失败，使用回退字体', error)
+  }
+}, { immediate: true })
 
 useAppEventListener('open-settings', () => {
   appStore.openThemeDrawer()
@@ -31,6 +55,7 @@ const naiveDateLocale = computed(() => {
 const watermarkProps = computed<WatermarkProps>(() => {
   return {
     content: themeStore.watermarkContent,
+    fontFamily: interfaceFontFamily.value,
     cross: true,
     fullscreen: true,
     fontSize: 16,
@@ -56,7 +81,8 @@ const watermarkProps = computed<WatermarkProps>(() => {
     <NGlobalStyle />
     <AppProvider>
       <RouterView class="bg-layout" />
-      <NWatermark v-if="themeStore.watermark.visible" v-bind="watermarkProps" />
+      <ProjectLoadFeedback />
+      <NWatermark v-if="themeStore.watermark.visible" :key="watermarkRevision" v-bind="watermarkProps" />
     </AppProvider>
   </NConfigProvider>
 </template>

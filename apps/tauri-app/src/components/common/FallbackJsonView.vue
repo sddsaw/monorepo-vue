@@ -18,11 +18,11 @@ defineProps<{
       </p>
     </div>
 
-    <div class="border border-[var(--border-color)] rounded-lg bg-layout p-4 text-xs font-mono">
+    <div class="border border-[var(--border-color)] rounded-lg bg-layout p-4 text-xs">
       <div class="mb-2 text-[var(--text-muted)] font-semibold">
-        节点数据路径: $.{{ dataPath ? dataPath.join('.') : 'root' }}
+        节点数据路径: <span class="font-mono">$.{{ dataPath ? dataPath.join('.') : 'root' }}</span>
       </div>
-      <pre class="max-h-96 overflow-auto rounded bg-[var(--hover-color)] p-3 text-success">{{ JSON.stringify(rawData, null, 2) }}</pre>
+      <pre class="max-h-96 overflow-auto rounded bg-[var(--hover-color)] p-3 text-success font-mono">{{ JSON.stringify(rawData, null, 2) }}</pre>
     </div>
   </div>
 </template>

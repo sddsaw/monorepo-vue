@@ -1,0 +1,57 @@
+/* Dockview reserves a 12px gap between groups. Keep every pointer target inside it. */
+.workbench-dockview .sash-container > .sash {
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.workbench-dockview .sash-container > .sash::before {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  background: var(--border-color);
+}
+
+.workbench-dockview .sash-container > .sash:not(.disabled)::after {
+  content: '';
+  position: absolute;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 3px;
+}
+
+.workbench-dockview .split-view-container.horizontal > .sash-container > .sash::before {
+  inset: 0 auto 0 50%;
+  width: 1px;
+}
+
+.workbench-dockview .split-view-container.horizontal > .sash-container > .sash::after {
+  inset: 0 -4px;
+  background-size: 3px 28px;
+  cursor: ew-resize;
+}
+
+.workbench-dockview .split-view-container.vertical > .sash-container > .sash::before {
+  inset: 50% 0 auto;
+  height: 1px;
+}
+
+.workbench-dockview .split-view-container.vertical > .sash-container > .sash::after {
+  inset: -4px 0;
+  background-size: 28px 3px;
+  cursor: ns-resize;
+}
+
+.workbench-dockview .sash-container > .sash:not(.disabled):is(:hover, :active) {
+  color: rgb(var(--primary-color));
+  background: transparent;
+  transition: none;
+}
+
+.workbench-dockview .sash-container > .sash:not(.disabled):is(:hover, :active)::before {
+  background: currentColor;
+}
+
+.workbench-dockview .sash-container > .sash:not(.disabled):is(:hover, :active)::after {
+  background-color: var(--active-color);
+}

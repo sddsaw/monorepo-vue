@@ -74,22 +74,22 @@ function copyDiagnosticReport() {
     </div>
 
     <!-- 研发最关心的定位坐标 -->
-    <div class="grid grid-cols-2 mb-3 gap-2 border border-error/50 rounded bg-[var(--hover-color)] p-3 text-xs font-mono">
+    <div class="grid grid-cols-2 mb-3 gap-2 border border-error/50 rounded bg-[var(--hover-color)] p-3 text-xs">
       <div>
         <strong class="text-[var(--text-muted)]">组件标识:</strong>
-        <span class="ml-1 text-warning">{{ errorInfo.componentName }}.vue</span>
+        <span class="ml-1 text-warning font-mono">{{ errorInfo.componentName }}.vue</span>
       </div>
       <div>
         <strong class="text-[var(--text-muted)]">所属文件:</strong>
-        <span class="ml-1 text-base-text">{{ fileName || '未知文件' }}</span>
+        <span class="ml-1 text-base-text" :class="{ 'font-mono': fileName }">{{ fileName || '未知文件' }}</span>
       </div>
       <div>
         <strong class="text-[var(--text-muted)]">测试项路径:</strong>
-        <span class="ml-1 text-primary">$.{{ dataPath ? dataPath.join('.') : 'root' }}</span>
+        <span class="ml-1 text-primary font-mono">$.{{ dataPath ? dataPath.join('.') : 'root' }}</span>
       </div>
       <div>
         <strong class="text-[var(--text-muted)]">触发位置:</strong>
-        <span class="ml-1 text-error">{{ errorInfo.lifecycleHook }}</span>
+        <span class="ml-1 text-error font-mono">{{ errorInfo.lifecycleHook }}</span>
       </div>
     </div>
 

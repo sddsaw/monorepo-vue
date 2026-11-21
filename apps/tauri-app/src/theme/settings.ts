@@ -9,6 +9,7 @@ export const themeSettings: App.Theme.ThemeSetting = {
   themeColor: '#007acc',
   themeRadius: 6,
   fontSize: DEFAULT_FONT_SIZE,
+  interfaceFont: 'dbx-default',
   otherColor: {
     info: '#007acc',
     success: '#388a34',

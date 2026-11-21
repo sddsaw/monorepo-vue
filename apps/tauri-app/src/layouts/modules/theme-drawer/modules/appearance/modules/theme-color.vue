@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { $t } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
 import SettingItem from '../../../components/setting-item.vue'
 
@@ -6,15 +7,9 @@ defineOptions({
   name: 'ThemeColor',
 })
 
-const themeStore = useThemeStore()
+withDefaults(defineProps<{ showTitle?: boolean }>(), { showTitle: true })
 
-const colorLabelRecord: Record<App.Theme.ThemeColorKey, string> = {
-  primary: '主色',
-  info: '信息色',
-  success: '成功色',
-  warning: '警告色',
-  error: '错误色',
-}
+const themeStore = useThemeStore()
 
 function handleUpdateColor(color: string, key: App.Theme.ThemeColorKey) {
   themeStore.updateThemeColors(key, color)
@@ -41,13 +36,15 @@ const swatches: string[] = [
 </script>
 
 <template>
-  <NDivider>{{ '主题颜色' }}</NDivider>
+  <NDivider v-if="showTitle">
+    {{ $t('theme.appearance.themeColor.title') }}
+  </NDivider>
   <div class="flex-col-stretch gap-12px">
-    <SettingItem key="recommend-color" label="应用推荐算法的颜色">
+    <SettingItem key="recommend-color" :label="$t('theme.appearance.recommendColor')">
       <template #suffix>
         <IconTooltip>
           <p>
-            <span class="pr-12px">{{ '推荐颜色的算法参照' }}</span>
+            <span class="pr-12px">{{ $t('theme.appearance.recommendColorDesc') }}</span>
             <br>
             <NButton
               text
@@ -62,24 +59,27 @@ const swatches: string[] = [
           </p>
         </IconTooltip>
       </template>
-      <NSwitch v-model:value="themeStore.recommendColor" />
+      <NSwitch v-model:value="themeStore.recommendColor" :aria-label="$t('theme.appearance.recommendColor')" />
     </SettingItem>
 
     <SettingItem
       v-for="(_, key) in themeStore.themeColors"
       :key="key"
-      :label="colorLabelRecord[key]"
+      :label="$t(`theme.appearance.themeColor.${key}`)"
     >
       <template v-if="key === 'info'" #suffix>
         <NCheckbox v-model:checked="themeStore.isInfoFollowPrimary">
-          {{ '跟随主色' }}
+          {{ $t('theme.appearance.themeColor.followPrimary') }}
         </NCheckbox>
       </template>
-      <div class="w-90px">
+      <div class="max-w-full w-150px shrink-0">
         <NColorPicker
           :value="themeStore.themeColors[key]"
           :disabled="key === 'info' && themeStore.isInfoFollowPrimary"
           :show-alpha="false"
+          :modes="['hex']"
+          size="small"
+          :aria-label="$t(`theme.appearance.themeColor.${key}`)"
           :swatches="swatches"
           @update:value="handleUpdateColor($event, key)"
         />

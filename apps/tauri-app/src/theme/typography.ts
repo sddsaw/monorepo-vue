@@ -1,6 +1,6 @@
-export const MIN_FONT_SIZE = 12
+export const MIN_FONT_SIZE = 10
 export const DEFAULT_FONT_SIZE = 14
-export const MAX_FONT_SIZE = 18
+export const MAX_FONT_SIZE = 16
 
 /** UI、旧缓存及跨窗口消息共用相同边界。 */
 export function normalizeFontSize(value: unknown): number {

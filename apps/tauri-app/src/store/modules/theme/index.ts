@@ -1,10 +1,13 @@
 import type { Ref } from 'vue'
+import type { ThemePreset } from '@/theme/presets'
 import { getPaletteColorByNumber } from '@sa/color'
 import { useDateFormat, useEventListener, useNow, usePreferredColorScheme } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, effectScope, onScopeDispose, ref, toRefs, watch } from 'vue'
 import { SetupStoreId } from '@/enum'
 import { emitAppEvent, listenAppEvent } from '@/services/events'
+import { applyInterfaceFont, normalizeInterfaceFont } from '@/theme/interface-font'
+import { resolveThemePreset } from '@/theme/presets'
 import { themeSettings } from '@/theme/settings'
 import { normalizeFontSize } from '@/theme/typography'
 import { localStg } from '@/utils/storage'
@@ -12,6 +15,7 @@ import { useAuthStore } from '../auth'
 import {
   addThemeVarsToGlobal,
   createThemeToken,
+  getModeThemeColors,
   getNaiveTheme,
   getThemeSurfaceColors,
   initThemeSettings,
@@ -49,7 +53,7 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   const colourWeaknessMode = computed(() => settings.value.colourWeakness)
 
   /** Theme colors */
-  const themeColors = computed(() => {
+  const baseThemeColors = computed(() => {
     const { themeColor, otherColor, isInfoFollowPrimary } = settings.value
     const colors: App.Theme.ThemeColor = {
       primary: themeColor,
@@ -58,6 +62,13 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     }
     return colors
   })
+
+  const themeColors = computed(() => getModeThemeColors(
+    baseThemeColors.value,
+    settings.value.tokens,
+    darkMode.value,
+    settings.value.isInfoFollowPrimary,
+  ))
 
   /** Naive theme */
   const naiveTheme = computed(() => getNaiveTheme(themeColors.value, settings.value, naiveThemeOverrides.value, darkMode.value))
@@ -160,6 +171,10 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
     if (key === 'primary') {
       settings.value.themeColor = colorValue
+      // 手动选择主色后退出预设的明暗覆盖，避免设置界面改色不生效。
+      delete settings.value.tokens.light.colors.primary
+      if (settings.value.tokens.dark?.colors)
+        delete settings.value.tokens.dark.colors.primary
     }
     else {
       settings.value.otherColor[key] = colorValue
@@ -178,9 +193,10 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
   /** Setup theme vars to global */
   function setupThemeVarsToGlobal() {
     const { themeTokens, darkThemeTokens } = createThemeToken(
-      themeColors.value,
+      baseThemeColors.value,
       settings.value.tokens,
       settings.value.recommendColor,
+      settings.value.isInfoFollowPrimary,
     )
     addThemeVarsToGlobal(themeTokens, darkThemeTokens)
   }
@@ -218,6 +234,12 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
    */
   function setNaiveThemeOverrides(overrides?: App.Theme.NaiveUIThemeOverride) {
     naiveThemeOverrides.value = overrides
+  }
+
+  function applyPreset(preset: ThemePreset, appearanceOnly = false) {
+    const resolved = resolveThemePreset(preset, settings.value, appearanceOnly)
+    Object.assign(settings.value, resolved.settings)
+    naiveThemeOverrides.value = resolved.overrides
   }
 
   /** Only run timer when watermark is visible and time display is enabled */
@@ -265,6 +287,28 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
 
   // watch store
   scope.run(() => {
+    // 字体和字号共用主题快照；本地修改与远端事件走同一个 DOM 更新入口。
+    watch(() => settings.value.interfaceFont, (value) => {
+      const font = normalizeInterfaceFont(value)
+      if (font !== value)
+        settings.value.interfaceFont = font
+      applyInterfaceFont(font)
+    }, { immediate: true, flush: 'sync' })
+
+    watch(surfaceColors, (surface) => {
+      const vars = {
+        '--text-muted': surface.muted,
+        '--border-color': surface.border,
+        '--hover-color': surface.hover,
+        '--panel-bg-color': surface.panel,
+        '--toolbar-bg-color': surface.toolbar,
+        '--input-bg-color': surface.input,
+        '--alternate-row-color': surface.alternate,
+      }
+      document.documentElement.toggleAttribute('data-striped-theme', surface.alternate !== 'transparent')
+      Object.entries(vars).forEach(([key, value]) => document.documentElement.style.setProperty(key, value))
+    }, { immediate: true })
+
     watch(() => settings.value.fontSize, (value) => {
       const size = normalizeFontSize(value)
       if (size !== value)
@@ -348,5 +392,6 @@ export const useThemeStore = defineStore(SetupStoreId.Theme, () => {
     setWatermarkEnableUserName,
     setWatermarkEnableTime,
     setNaiveThemeOverrides,
+    applyPreset,
   }
 })

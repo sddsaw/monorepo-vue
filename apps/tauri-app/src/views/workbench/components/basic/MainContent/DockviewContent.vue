@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import { useThemeStore } from '@/store/modules/theme'
 import EditorBreadcrumb from './EditorBreadcrumb.vue'
 import MainContent from './index.vue'
+import WorkbenchIframe from './WorkbenchIframe.vue'
 
 defineProps<{ tab: WbTabItem }>()
 const emit = defineEmits<{ activate: [] }>()
@@ -14,16 +15,18 @@ const wrapperScroll = computed(() => themeStore.layout.scrollMode === 'wrapper')
 <template>
   <section
     class="dock-content h-full min-h-0 min-w-0 flex flex-col bg-container"
-    :class="{ 'dock-content--wrapper': wrapperScroll }"
+    :class="{ 'dock-content--wrapper': wrapperScroll && !tab.iframeSrc }"
     @pointerdown.capture="emit('activate')"
     @focusin="emit('activate')"
   >
     <EditorBreadcrumb
+      v-if="!tab.iframeSrc"
       :tab="tab"
       class="shrink-0"
       :class="{ 'dock-content__heading--fixed': wrapperScroll && themeStore.fixedHeaderAndTab }"
     />
-    <div class="dock-content__body min-h-0 flex-1">
+    <WorkbenchIframe v-if="tab.iframeSrc" :src="tab.iframeSrc" :title="tab.label" />
+    <div v-else class="dock-content__body min-h-0 flex-1">
       <MainContent :tab="tab" />
     </div>
   </section>

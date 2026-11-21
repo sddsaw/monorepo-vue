@@ -105,7 +105,7 @@ const RIGHT_MOUSE_BUTTON = 2
 
 const resolvedMode = computed<UnionKey.ThemeTabMode>(() => props.customMode ?? themeStore.tab.mode)
 const resolvedDarkMode = computed<boolean>(() => props.customDarkMode ?? themeStore.darkMode)
-const resolvedActiveColor = computed<string>(() => props.customActiveColor ?? themeStore.themeColor)
+const resolvedActiveColor = computed<string>(() => props.customActiveColor ?? themeStore.themeColors.primary)
 const resolvedActiveTabId = computed<string>(() =>
   isCustom.value ? (props.customActiveTabId ?? '') : tabStore.activeTabId,
 )

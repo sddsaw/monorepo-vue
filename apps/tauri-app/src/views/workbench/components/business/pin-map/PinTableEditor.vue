@@ -179,21 +179,6 @@ function updatePinType(pinName: string, newType: string) {
 </template>
 
 <style scoped>
-.business-editor-container {
-  animation: fadeInSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeInSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .editor-card {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }

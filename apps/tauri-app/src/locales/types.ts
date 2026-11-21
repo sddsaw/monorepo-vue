@@ -561,6 +561,11 @@ export interface Schema {
     }
   }
   workbench: {
+    tabs: {
+      closeConfirmTitle: string
+      closeConfirmContent: string
+      closeConfirmAction: string
+    }
     menu: {
       file: string
       openProject: string
@@ -577,6 +582,7 @@ export interface Schema {
       runDrc: string
       tools: string
       hardwareCheck: string
+      iframeDemo: string
       channelMap: string
       help: string
       preferences: string
@@ -608,6 +614,8 @@ export interface Schema {
       searchPlaceholderEmpty: string
     }
     settings: {
+      title: string
+      scrollModeTip: string
       appearance: string
       aboutUs: string
       themeAndColor: string
@@ -634,12 +642,6 @@ export interface Schema {
       noneRadius: string
       smallRadius: string
       largeRadius: string
-      tabLayout: string
-      tabLayoutDesc: string
-      modern: string
-      modernDesc: string
-      compact: string
-      compactDesc: string
       aboutTitle: string
       aboutDesc: string
       checkUpdates: string

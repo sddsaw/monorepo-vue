@@ -1,145 +1,141 @@
 <script setup lang="ts">
-import { defu } from 'defu'
+import type { ThemePreset } from '@/theme/presets'
 import { computed } from 'vue'
+import { $t, i18n } from '@/locales'
 import { useThemeStore } from '@/store/modules/theme'
+import { resolveThemePreset } from '@/theme/presets'
 import { themeSettings } from '@/theme/settings'
 
-defineOptions({
-  name: 'ThemePreset',
-})
+const props = withDefaults(defineProps<{
+  /** 工作台仅应用外观，保留布局和水印等个人设置。 */
+  appearanceOnly?: boolean
+}>(), { appearanceOnly: false })
 
-type ThemePreset = Pick<
-  App.Theme.ThemeSetting,
-  | 'themeScheme'
-  | 'grayscale'
-  | 'colourWeakness'
-  | 'recommendColor'
-  | 'themeColor'
-  | 'themeRadius'
-  | 'otherColor'
-  | 'isInfoFollowPrimary'
-  | 'layout'
-  | 'page'
-  | 'header'
-  | 'tab'
-  | 'fixedHeaderAndTab'
-  | 'sider'
-  | 'footer'
-  | 'watermark'
-  | 'tokens'
-> & {
-  name: string
-  desc: string
-  version: string
-  /** Optional NaiveUI theme overrides */
-  naiveui?: App.Theme.NaiveUIThemeOverride
-}
-
-const presetModules = import.meta.glob('@/theme/preset/*.json', { eager: true, import: 'default' })
-
+const presetModules = import.meta.glob<ThemePreset>('@/theme/preset/*.json', { eager: true, import: 'default' })
 const themeStore = useThemeStore()
+// 与 locales.$t 相同，避免对开放的预设键递归展开整份语言 Schema。
+const hasTranslation = i18n.global.te as (key: string) => boolean
 
-// Extract preset data
-const presets = computed(() =>
-  Object.entries(presetModules)
-    .map(([path, presetData]) => {
-      const fileName = path.split('/').pop()?.replace('.json', '') || ''
-      return {
-        id: fileName,
-        ...(presetData as ThemePreset),
-      }
-    })
-    .sort((a, b) => {
-      if (a.name === 'default')
-        return -1
-      if (b.name === 'default')
-        return 1
-      return a.name.localeCompare(b.name)
-    }),
-)
-
-function getPresetName(preset: ThemePreset): string {
-  return preset.name
-}
-
-function getPresetDesc(preset: ThemePreset): string {
-  return preset.desc
-}
-
-function applyPreset(preset: ThemePreset): void {
-  const mergedPreset = defu(preset, themeSettings)
-  const { themeScheme, grayscale, colourWeakness, layout, watermark, naiveui, ...rest } = mergedPreset
-  themeStore.setThemeScheme(themeScheme)
-  themeStore.setGrayscale(grayscale)
-  themeStore.setColourWeakness(colourWeakness)
-  themeStore.setThemeLayout(layout.mode)
-  themeStore.setWatermarkEnableUserName(watermark.enableUserName)
-  themeStore.setWatermarkEnableTime(watermark.enableTime)
-
-  Object.assign(themeStore, {
-    ...rest,
-    layout: { ...themeStore.layout, scrollMode: layout.scrollMode },
-    page: { ...rest.page },
-    header: { ...rest.header },
-    tab: { ...rest.tab },
-    sider: { ...rest.sider },
-    footer: { ...rest.footer },
-    watermark: { ...watermark },
-    tokens: { ...rest.tokens },
+const presets = computed(() => Object.entries(presetModules)
+  .filter(([, preset]) => !props.appearanceOnly || preset.themeScheme)
+  .map(([path, preset]) => {
+    const id = path.split('/').pop()?.replace('.json', '') || ''
+    const settings = resolveThemePreset(preset, themeSettings).settings
+    const colors = { ...settings.tokens.light.colors, ...(settings.themeScheme === 'dark' ? settings.tokens.dark?.colors : {}) }
+    const nameKey = `theme.appearance.preset.${id}.name` as const
+    const descKey = `theme.appearance.preset.${id}.desc` as const
+    return {
+      id,
+      preset,
+      settings,
+      colors,
+      name: hasTranslation(nameKey) ? $t(nameKey) : preset.name,
+      desc: hasTranslation(descKey) ? $t(descKey) : preset.desc,
+    }
   })
+  .sort((a, b) => {
+    if (a.id === 'default')
+      return -1
+    if (b.id === 'default')
+      return 1
+    return a.preset.name.localeCompare(b.preset.name)
+  }))
 
-  // Apply NaiveUI theme overrides if present
-  themeStore.setNaiveThemeOverrides(naiveui)
-
-  window.$message?.success('预设应用成功')
+function applyPreset(preset: ThemePreset) {
+  themeStore.applyPreset(preset, props.appearanceOnly)
+  window.$message?.success($t('theme.appearance.preset.applySuccess'))
 }
 </script>
 
 <template>
-  <NDivider>{{ '主题预设' }}</NDivider>
-
-  <div class="flex flex-col gap-3">
-    <div
-      v-for="preset in presets"
-      :key="preset.id"
-      class="border border-primary/10 rounded-lg border-solid bg-white/5 p-3 backdrop-blur-10 transition-all duration-300 hover:(shadow-md -translate-y-0.5)"
-    >
-      <div class="mb-2 flex items-center justify-between">
-        <div class="min-w-0 w-full flex flex-1 items-center justify-between gap-2">
-          <h5 class="m-0 truncate text-sm text-primary font-600">
-            {{ getPresetName(preset) }}
-          </h5>
-          <NBadge :value="`v${preset.version}`" type="info" size="small" class="flex-shrink-0 opacity-80" />
+  <section class="space-y-3">
+    <div class="text-[var(--text-muted)] font-semibold text-ui-11">
+      {{ $t('theme.appearance.preset.title') }}
+    </div>
+    <p v-if="appearanceOnly" class="m-0 text-[var(--text-muted)] text-ui-11">
+      {{ $t('theme.appearance.preset.appearanceHint') }}
+    </p>
+    <div class="flex flex-col gap-2">
+      <div
+        v-for="{ id, preset, settings, colors, name, desc } in presets"
+        :key="id"
+        class="flex items-center gap-3 border border-[var(--border-color)] rounded-[var(--theme-radius)] p-3"
+      >
+        <div
+          aria-hidden="true"
+          class="preset-preview shrink-0"
+          :style="{ backgroundColor: colors.layout, color: settings.themeColor, borderRadius: `${settings.themeRadius}px` }"
+        >
+          <div class="preview-toolbar" />
+          <div class="preview-panels">
+            <div class="preview-tree" :style="{ backgroundColor: colors.container }">
+              <i /><i /><i />
+            </div>
+            <div class="preview-editor" :style="{ backgroundColor: colors.container }">
+              <i />
+            </div>
+          </div>
         </div>
-        <NButton type="primary" size="tiny" ghost round class="ml-2 flex-shrink-0" @click="applyPreset(preset)">
-          {{ '应用' }}
+        <div class="min-w-0 flex-1">
+          <div class="text-base-text font-medium text-ui-13">
+            {{ name }}
+          </div>
+          <p class="m-0 mt-1 text-[var(--text-muted)] text-ui-11">
+            {{ desc }}
+          </p>
+        </div>
+        <NButton
+          size="small"
+          :aria-label="`${$t('theme.appearance.preset.apply')} ${name}`"
+          @click="applyPreset(preset)"
+        >
+          {{ $t('theme.appearance.preset.apply') }}
         </NButton>
       </div>
-
-      <p class="line-clamp-2 mb-3 text-xs text-gray-500 leading-4">
-        {{ getPresetDesc(preset) }}
-      </p>
-
-      <div class="flex items-center justify-between">
-        <div class="flex gap-1">
-          <div
-            v-for="(color, key) in { primary: preset.themeColor, ...preset.otherColor }"
-            :key="key"
-            class="h-3 w-3 cursor-pointer border border-white/30 rounded-full transition-transform hover:scale-110"
-            :style="{ backgroundColor: color }"
-            :class="{ 'ring-1 ring-primary/50': key === 'primary' }"
-            :title="key"
-          />
-        </div>
-        <div class="flex items-center gap-1">
-          <div class="text-lg">
-            {{ preset.themeScheme === 'dark' ? '🌙' : '☀️' }}
-          </div>
-          <div class="text-lg">
-            {{ preset.grayscale ? '🎨' : '' }}
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
+  </section>
 </template>
+
+<style scoped>
+.preset-preview {
+  width: 72px;
+  height: 48px;
+  overflow: hidden;
+  border: 1px solid rgb(128 128 128 / 30%);
+}
+
+.preview-toolbar {
+  height: 9px;
+  border-bottom: 1px solid rgb(128 128 128 / 20%);
+}
+
+.preview-panels {
+  display: flex;
+  gap: 2px;
+  height: 37px;
+  padding: 2px;
+}
+
+.preview-tree {
+  width: 21px;
+  padding: 4px 3px;
+}
+
+.preview-tree i {
+  display: block;
+  height: 2px;
+  margin-bottom: 4px;
+  background: #aaa;
+}
+
+.preview-editor {
+  flex: 1;
+  padding: 5px 3px;
+}
+
+.preview-editor i {
+  display: block;
+  height: 4px;
+  background: currentColor;
+}
+</style>

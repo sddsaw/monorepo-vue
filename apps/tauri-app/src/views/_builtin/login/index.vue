@@ -35,7 +35,7 @@ const moduleMap: Record<UnionKey.LoginModule, LoginModule> = {
 const activeModule = computed(() => moduleMap[props.module || 'pwd-login'])
 
 const bgThemeColor = computed(() =>
-  themeStore.darkMode ? getPaletteColorByNumber(themeStore.themeColor, 600) : themeStore.themeColor,
+  themeStore.darkMode ? getPaletteColorByNumber(themeStore.themeColors.primary, 600) : themeStore.themeColors.primary,
 )
 
 const bgColor = computed(() => {
@@ -43,7 +43,7 @@ const bgColor = computed(() => {
 
   const ratio = themeStore.darkMode ? 0.5 : 0.2
 
-  return mixColor(COLOR_WHITE, themeStore.themeColor, ratio)
+  return mixColor(COLOR_WHITE, themeStore.themeColors.primary, ratio)
 })
 
 const appTitle = computed(() => import.meta.env.VITE_APP_TITLE || 'Soybean Desktop')

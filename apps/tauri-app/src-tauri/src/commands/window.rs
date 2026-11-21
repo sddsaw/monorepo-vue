@@ -90,6 +90,8 @@ pub async fn open_new_window(
     let h = clamp_dimension(height, 600.0, MIN_WINDOW_HEIGHT, MAX_WINDOW_HEIGHT);
 
     let mut builder = tauri::WebviewWindowBuilder::new(&app, &label, webview_url)
+        // 让 WebKit/WebView2 将 HTML5 拖放交给 Dockview，避免原生文件拖放接管落点事件。
+        .disable_drag_drop_handler()
         .title(title)
         .inner_size(w, h)
         .min_inner_size(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)

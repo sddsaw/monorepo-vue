@@ -2,6 +2,7 @@ import type { RouteKey, RoutePath } from '@elegant-router/types'
 import type { RouteLocationNormalized, RouteLocationRaw, Router } from 'vue-router'
 import { useAuthStore } from '@/store/modules/auth'
 import { useRouteStore } from '@/store/modules/route'
+import { useTpStore } from '@/store/modules/tp'
 
 /**
  * create route guard
@@ -34,6 +35,11 @@ export function createRouteGuard(router: Router) {
     // if the user does not have authorization, then switch to the 403 page
     if (!hasAuth) {
       return { name: noAuthorizationRoute }
+    }
+
+    // 工作台只承载已加载的工程；首次访问或刷新时回到统一入口。
+    if (to.name === 'workbench' && !useTpStore().rawJson) {
+      return { name: 'project', replace: true }
     }
 
     // switch route normally

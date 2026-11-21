@@ -1,0 +1,40 @@
+{
+  "name": "Unity Editor Dark",
+  "desc": "参考 Unity 6.6 编辑器：中性灰面板、深色工具栏、蓝色高亮与紧凑小圆角。",
+  "version": "1.0.0",
+  "scope": "appearance",
+  "themeScheme": "dark",
+  "themeColor": "#6aa9e9",
+  "themeRadius": 3,
+  "fontSize": 13,
+  "recommendColor": false,
+  "otherColor": {
+    "info": "#6aa9e9",
+    "success": "#73a656",
+    "warning": "#d9ad50",
+    "error": "#d96a63"
+  },
+  "tokens": {
+    "light": {
+      "colors": { "primary": "#006bb3" },
+      "boxShadow": { "header": "none", "sider": "none", "tab": "none" }
+    },
+    "dark": {
+      "colors": {
+        "layout": "rgb(20, 20, 20)",
+        "container": "rgb(56, 56, 56)",
+        "base-text": "rgb(210, 210, 210)"
+      },
+      "surfaces": {
+        "panel": "#383838",
+        "toolbar": "#202020",
+        "input": "#282828",
+        "border": "#232323",
+        "hover": "#484848",
+        "muted": "#b0b0b0",
+        "alternate": "#3e3e3e"
+      },
+      "boxShadow": { "header": "none", "sider": "none", "tab": "none" }
+    }
+  }
+}

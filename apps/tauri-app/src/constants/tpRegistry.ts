@@ -6,6 +6,9 @@ import { type Component, defineAsyncComponent } from 'vue'
  * 采用 defineAsyncComponent 实现异步拆包懒加载，保证主包极小、首屏极快
  */
 export const TP_COMPONENTS = {
+  ProjectDefinition: defineAsyncComponent(() => import('@/views/workbench/components/business/project/ProjectDefinitionView.vue')),
+  ProjectHardware: defineAsyncComponent(() => import('@/views/workbench/components/business/project/ProjectHardwareView.vue')),
+  ProjectData: defineAsyncComponent(() => import('@/views/workbench/components/business/project/ProjectDataView.vue')),
   // ─── 测试流与测试项 (TestFlow) ──────────────────────────
   SuiteSummary: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/SuiteSummary.vue')),
   Continuity: defineAsyncComponent(() => import('@/views/workbench/components/business/test-flow/ContinuityEditor.vue')),

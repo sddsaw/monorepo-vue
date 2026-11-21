@@ -92,6 +92,11 @@ const local: Schema = {
       recommendColor: 'Apply Recommended Color Algorithm',
       recommendColorDesc: 'The recommended color algorithm refers to',
       preset: {
+        appearanceHint: 'Applies appearance only, keeping panel layout and watermark settings. Colors, font size and corners remain adjustable.',
+        unity: {
+          name: 'Unity Editor Dark',
+          desc: 'Inspired by Unity 6.6: gray panels, dark toolbars, blue accents and subtle corners.',
+        },
         title: 'Theme Presets',
         apply: 'Apply',
         applySuccess: 'Preset applied successfully',
@@ -232,6 +237,7 @@ const local: Schema = {
     '500': 'Server Error',
     'iframe-page': 'Iframe',
     'home': 'Home',
+    'project': 'Project Home',
     'workbench': 'Workbench',
     'document': 'Document',
     'document_project': 'Project Document',
@@ -716,6 +722,11 @@ const local: Schema = {
     },
   },
   workbench: {
+    tabs: {
+      closeConfirmTitle: 'Unsaved changes',
+      closeConfirmContent: '{count} selected tab(s) have unsaved changes. Close anyway? Closing will not save them; the changes will remain in the current project.',
+      closeConfirmAction: 'Close anyway',
+    },
     menu: {
       file: 'File',
       openProject: 'Open Project',
@@ -732,6 +743,7 @@ const local: Schema = {
       runDrc: 'Run DRC Validation',
       tools: 'Tools',
       hardwareCheck: 'Hardware Self-Check',
+      iframeDemo: 'Iframe Demo',
       channelMap: 'Channel Map Configuration',
       help: 'Help',
       preferences: 'Preferences',
@@ -763,6 +775,8 @@ const local: Schema = {
       searchPlaceholderEmpty: 'Open ATE Test Program File (Ctrl+O)',
     },
     settings: {
+      title: 'Settings',
+      scrollModeTip: 'Content scrolls only the editor; wrapper scrolling includes tabs and breadcrumbs. The window title bar stays fixed.',
       appearance: 'Appearance',
       aboutUs: 'About Us',
       themeAndColor: 'Theme & Color',
@@ -789,12 +803,6 @@ const local: Schema = {
       noneRadius: 'None',
       smallRadius: 'Small',
       largeRadius: 'Large',
-      tabLayout: 'Tab Layout',
-      tabLayoutDesc: 'Switch modern split or classic compact',
-      modern: 'Modern Split',
-      modernDesc: 'Clearer panel separation with block tabs.',
-      compact: 'Classic Compact',
-      compactDesc: 'Continuous tab bar with compact headers.',
       aboutTitle: 'Soybean Desktop',
       aboutDesc: 'Modern cross-platform ATE testing workbench built on Tauri & Vue 3.',
       checkUpdates: 'Check Updates',

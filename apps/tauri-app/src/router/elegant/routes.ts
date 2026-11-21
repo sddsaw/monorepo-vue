@@ -59,6 +59,17 @@ export const generatedRoutes: GeneratedRoute[] = [
     }
   },
   {
+    name: 'project',
+    path: '/project',
+    component: 'layout.blank$view.project',
+    meta: {
+      title: '工程首页',
+      i18nKey: 'route.project',
+      constant: true,
+      hideInMenu: true
+    }
+  },
+  {
     name: 'redis-devtools',
     path: '/redis-devtools',
     component: 'layout.blank$view.redis-devtools',

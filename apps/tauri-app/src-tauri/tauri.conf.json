@@ -18,6 +18,7 @@
         "minWidth": 880,
         "minHeight": 620,
         "resizable": true,
+        "dragDropEnabled": false,
         "fullscreen": false,
         "decorations": true,
         "titleBarStyle": "Overlay",

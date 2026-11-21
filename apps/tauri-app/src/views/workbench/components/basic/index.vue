@@ -87,19 +87,6 @@ function handleKeyDown(e: KeyboardEvent) {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeyDown)
-
-  // 尝试自动恢复上次打开的文件会话
-  try {
-    const lastFile = localStorage.getItem('ate_last_opened_file')
-    if (lastFile && !tpStore.filePath) {
-      tpStore.loadFile(lastFile).catch(() => {
-        // 外部文件若已被删除则忽略
-      })
-    }
-  }
-  catch {
-    // ignore
-  }
 })
 
 onUnmounted(() => {
@@ -108,38 +95,33 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NMessageProvider>
-    <NDialogProvider>
-      <div
-        :style="{
-          backgroundColor: 'rgb(var(--layout-bg-color))',
-          color: 'rgb(var(--base-text-color))',
-        }"
-        class="workbench-shell flex flex-col select-none overflow-hidden font-sans"
-      >
-        <!-- 1. 顶部标题栏 -->
-        <WindowTitleBar :menus="menus" class="shrink-0" />
+  <div class="workbench-shell flex flex-col select-none overflow-hidden bg-layout text-base-text font-sans">
+    <!-- 1. 顶部标题栏 -->
+    <WindowTitleBar :menus="menus" class="shrink-0" />
 
-        <!-- 2. 中间主工作区 -->
-        <div class="relative flex flex-1 overflow-hidden rounded-md">
-          <!-- 左侧主侧边栏 (资源管理器树) -->
-          <PrimarySideBar />
+    <!-- 2. 中间主工作区 -->
+    <div class="relative flex flex-1 overflow-hidden rounded-md">
+      <!-- 左侧主侧边栏 (资源管理器树) -->
+      <PrimarySideBar />
 
-          <!-- 主编辑区与底部面板区 -->
-          <main class="min-w-0 flex flex-col flex-1 overflow-hidden">
-            <WorkbenchEditor />
+      <!-- 主编辑区与底部面板区 -->
+      <main class="min-w-0 flex flex-col flex-1 overflow-hidden rounded-md">
+        <NAlert v-if="tpStore.projectWarnings.length" type="warning" :show-icon="true" class="shrink-0" title="工程已加载，存在关联文件提示">
+          <div v-for="warning in tpStore.projectWarnings" :key="warning" class="break-all text-ui-12">
+            {{ warning }}
+          </div>
+        </NAlert>
+        <WorkbenchEditor />
 
-            <!-- 底部面板 (支持 Ctrl+J 折叠，常驻保留顶部拖拽手柄) -->
-            <BottomPanel class="shrink-0" />
-          </main>
+        <!-- 底部面板 (支持 Ctrl+J 切换显隐) -->
+        <BottomPanel class="shrink-0" />
+      </main>
 
-          <!-- 右侧辅助侧边栏 (Copilot / 聊天面板，常驻保留左侧拖拽手柄) -->
-          <SecondarySideBar class="shrink-0" />
-        </div>
+      <!-- 右侧辅助侧边栏 (Copilot / 聊天面板) -->
+      <SecondarySideBar class="shrink-0" />
+    </div>
 
-        <!-- 3. 底部紧凑状态栏 (开发环境下展示，支持环境变量配置) -->
-        <StatusBar v-if="showStatusBar" class="shrink-0" />
-      </div>
-    </NDialogProvider>
-  </NMessageProvider>
+    <!-- 3. 底部紧凑状态栏 (开发环境下展示，支持环境变量配置) -->
+    <StatusBar v-if="showStatusBar" class="shrink-0" />
+  </div>
 </template>

@@ -31,14 +31,10 @@ function copyLocation() {
 <template>
   <div
     v-if="currentTab"
-    :style="{
-      backgroundColor: 'rgb(var(--container-bg-color))',
-      borderColor: 'var(--border-color)',
-    }"
-    class="flex flex-wrap select-none items-center justify-between gap-x-3 border-b px-12px text-[var(--text-muted)] text-ui-12 min-h-ui-26"
+    class="flex flex-wrap select-none items-center justify-between gap-x-3 border-b border-[var(--border-color)] bg-container px-12px text-[var(--text-muted)] text-ui-12 min-h-ui-26"
   >
     <!-- 左侧：UI 库 n-breadcrumb 面包屑导航 -->
-    <NBreadcrumb separator="›" class="min-w-0 flex-1 overflow-hidden font-mono text-ui-11" :title="`${tpStore.fileName || ''} / ${formattedPath} / ${currentTab.label || ''}`">
+    <NBreadcrumb separator="›" class="min-w-0 flex-1 overflow-hidden text-ui-11" :title="`${tpStore.fileName || ''} / ${formattedPath} / ${currentTab.label || ''}`">
       <!-- 针对系统首选项界面的面包屑 -->
       <template v-if="currentTab.componentKey === 'SettingsView'">
         <NBreadcrumbItem>
@@ -66,7 +62,7 @@ function copyLocation() {
 
         <!-- 数据寻址路径 -->
         <NBreadcrumbItem v-if="formattedPath">
-          <span class="text-[var(--text-muted)]">
+          <span class="text-[var(--text-muted)] font-mono">
             {{ formattedPath }}
           </span>
         </NBreadcrumbItem>

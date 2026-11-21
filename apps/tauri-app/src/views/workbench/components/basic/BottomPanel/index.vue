@@ -67,18 +67,6 @@ onBeforeUnmount(() => {
   stopMockStream = null
 })
 
-/** 处理拖拽折叠事件 (向下拖拽低于阈值时收起底部面板) */
-function handleCollapse() {
-  layoutStore.setBottomPanelVisible(false)
-  isResizing.value = false
-  panelHeight.value = 180
-}
-
-/** 折叠状态下向上拖拽或双击手柄时重新展开底部面板 */
-function handleExpand() {
-  layoutStore.setBottomPanelVisible(true)
-}
-
 /** 手动拖拽过程中重置最大化状态 */
 function handleResize() {
   if (isMaximized.value) {
@@ -102,33 +90,26 @@ function toggleMaximize() {
 
 <template>
   <div class="w-full flex flex-col shrink-0">
-    <!-- 顶部常驻拖拽调整高度手柄 (展开时向上变大、向下低于阈值折叠；折叠后可向上拖拽或双击重新拉开) -->
+    <!-- 底部面板显示时可拖拽调节高度 -->
     <ResizeHandle
+      v-show="layoutStore.bottomPanelVisible"
       v-model="panelHeight"
       direction="row"
       :reverse="true"
       :min="100"
       :max="500"
-      :collapsed="!layoutStore.bottomPanelVisible"
-      :collapse-threshold="80"
-      :expand-threshold="30"
-      :title="layoutStore.bottomPanelVisible ? '拖拽调节高度 (向下拖拽收起)' : '向上拖拽或双击展开底部面板'"
+      title="拖拽调节高度"
       @start="isResizing = true"
       @end="isResizing = false"
       @resize="handleResize"
-      @collapse="handleCollapse"
-      @expand="handleExpand"
-      @dblclick="!layoutStore.bottomPanelVisible && handleExpand()"
     />
 
     <section
       :style="{
         height: layoutStore.bottomPanelVisible ? `${panelHeight}px` : '0px',
         opacity: layoutStore.bottomPanelVisible ? 1 : 0,
-        backgroundColor: 'rgb(var(--layout-bg-color))',
-        borderColor: 'var(--border-color)',
       }"
-      class="z-20 w-full flex flex-col shrink-0 select-none overflow-hidden rounded-[var(--theme-radius)] text-xs"
+      class="z-20 w-full flex flex-col shrink-0 select-none overflow-hidden border-[var(--border-color)] rounded-[var(--theme-radius)] bg-[var(--panel-bg-color)] text-xs"
       :class="[
         layoutStore.bottomPanelVisible && 'mb-4px border',
         !isResizing ? 'transition-[height,opacity] duration-220 ease-[cubic-bezier(0.25,1,0.5,1)]' : '',
@@ -163,7 +144,7 @@ function toggleMaximize() {
             </template>
 
             <NScrollbar class="h-full">
-              <div class="p-3 text-xs font-mono">
+              <div class="p-3 text-xs">
                 <!-- 无问题状态：NEmpty 展示成功反馈 -->
                 <div v-if="tpStore.validationResult.errors.length === 0" class="py-6">
                   <NEmpty description="当前测试程序未检测到 DRC 规则或上下限错误" size="small">
@@ -209,7 +190,7 @@ function toggleMaximize() {
             </template>
 
             <NScrollbar class="h-full">
-              <div class="select-text p-3 text-xs text-base-text font-mono space-y-2">
+              <div class="select-text p-3 text-xs text-base-text space-y-2">
                 <div v-if="logsCleared" class="py-4 text-center text-[var(--text-muted)] italic">
                   日志已清空
                 </div>
@@ -326,24 +307,6 @@ function toggleMaximize() {
                   </NButton>
                 </template>
                 <span>灌入 1,000 条日志 (性能压测)</span>
-              </NTooltip>
-
-              <!-- 清空输出 (Output) -->
-              <NTooltip v-if="activeTab === 'output'" placement="top" trigger="hover">
-                <template #trigger>
-                  <NButton
-                    quaternary
-                    size="tiny"
-                    class="text-[var(--text-muted)] !h-22px !w-22px !p-0 hover:text-base-text"
-                    aria-label="清空输出"
-                    @click="outputTerminalRef?.clearLog()"
-                  >
-                    <template #icon>
-                      <SvgIcon icon="ri:delete-bin-line" class="text-ui-13" />
-                    </template>
-                  </NButton>
-                </template>
-                <span>清空输出</span>
               </NTooltip>
 
               <!-- 最大化 / 还原切换 -->

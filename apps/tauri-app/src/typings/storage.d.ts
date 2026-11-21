@@ -24,7 +24,6 @@ declare namespace StorageType {
     darkMode: boolean
     /** The theme settings */
     themeSettings: App.Theme.ThemeSetting
-    themeMigrationVersion: number
     themeNaiveOverrides: App.Theme.NaiveUIThemeOverride | null
     /** Workbench UI scale */
     workbenchZoom: number

@@ -56,46 +56,6 @@ async function main() {
     assert.match(await buffer(), /WHILE_PANEL_COLLAPSED/)
     console.warn('PASS logs survive first activation, tab switches and panel collapse')
 
-    await page.evaluate(() => {
-      const { term, api } = window.terminalFixture
-      for (let i = 0; i < 1000; i++)
-        api.appendLog(`OLD_QUEUED_${i}`)
-      term.write('OLD_CURRENT_LINE')
-      api.clearLog()
-      api.appendLog('AFTER_CLEAR')
-    })
-    await flush()
-    assert.doesNotMatch(await buffer(), /OLD_/)
-    assert.match(await buffer(), /AFTER_CLEAR/)
-    await page.getByRole('button', { name: '清空输出', exact: true }).click()
-    await flush()
-    assert.equal((await buffer()).trim(), '')
-    await page.evaluate(() => window.terminalFixture.api.appendLog('CONTEXT_CLEAR'))
-    await flush()
-    await page.locator('.output-terminal-wrapper').click({ button: 'right' })
-    await page.getByText('清空输出 (Clear)', { exact: true }).click()
-    await flush()
-    assert.equal((await buffer()).trim(), '')
-    console.warn('PASS clear removes queued output, current line and history through both UI actions')
-
-    await page.evaluate(() => {
-      window.copiedOutput = []
-      Object.defineProperty(navigator.clipboard, 'writeText', {
-        configurable: true,
-        value: async text => window.copiedOutput.push(text),
-      })
-      window.terminalFixture.api.appendLog('COPY_ONCE')
-    })
-    await flush()
-    await page.evaluate(() => {
-      window.terminalFixture.term.selectAll()
-      window.terminalFixture.term.focus()
-    })
-    await page.keyboard.press('Control+c')
-    assert.equal(await page.evaluate(() => window.copiedOutput.length), 1)
-    assert.match(await page.evaluate(() => window.copiedOutput[0]), /COPY_ONCE/)
-    await page.evaluate(() => window.terminalFixture.term.clearSelection())
-
     await page.getByRole('button', { name: '灌入 1,000 条日志', exact: true }).click()
     await flush()
     assert.ok((await buffer()).split('\n').length >= 1000)

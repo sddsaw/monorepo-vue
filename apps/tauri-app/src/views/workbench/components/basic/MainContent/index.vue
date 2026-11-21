@@ -31,10 +31,7 @@ const MatchedComponent = computed(() => {
 </script>
 
 <template>
-  <div
-    :style="{ backgroundColor: 'rgb(var(--container-bg-color))' }"
-    class="relative min-h-full"
-  >
+  <div class="relative min-h-full bg-container">
     <!-- 空状态提示 (未打开任何测试项时展示) -->
     <div
       v-if="!currentTab"
@@ -59,7 +56,7 @@ const MatchedComponent = computed(() => {
       >
         <component
           :is="MatchedComponent"
-          v-if="MatchedComponent && currentData"
+          v-if="MatchedComponent && currentData !== undefined"
           :data="currentData"
           :data-path="currentTab.dataPath"
         />

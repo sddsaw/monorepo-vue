@@ -128,6 +128,8 @@ declare namespace Env {
     readonly VITE_REDIS_DEVTOOLS_AUTO_OPEN?: CommonType.YesOrNo
     /** 是否展示工作台底部状态栏（Y | N） */
     readonly VITE_SHOW_STATUS_BAR?: CommonType.YesOrNo
+    /** 是否执行工程关联文件检查，默认 false，仅字符串 true 开启 */
+    readonly VITE_VALIDATE_PROJECT_REFERENCES?: 'true' | 'false'
   }
 }
 

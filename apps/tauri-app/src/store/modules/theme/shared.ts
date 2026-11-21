@@ -3,6 +3,7 @@ import { addColorAlpha, getColorPalette, getPaletteColorByNumber, getRgb } from 
 import { toggleHtmlClass } from '@sa/utils'
 import { defu } from 'defu'
 import { DARK_CLASS } from '@/constants/app'
+import { normalizeInterfaceFont } from '@/theme/interface-font'
 import { overrideThemeSettings, themeSettings } from '@/theme/settings'
 import { getTypographyTheme, normalizeFontSize } from '@/theme/typography'
 import { themeVars } from '@/theme/vars'
@@ -13,6 +14,7 @@ export function initThemeSettings() {
   // 用户设置在开发、生产和新版本中均优先，默认配置只补齐新增字段。
   const settings = defu(localStg.get('themeSettings'), overrideThemeSettings, themeSettings)
   settings.fontSize = normalizeFontSize(settings.fontSize)
+  settings.interfaceFont = normalizeInterfaceFont(settings.interfaceFont)
   return settings
 }
 
@@ -27,15 +29,16 @@ export function createThemeToken(
   colors: App.Theme.ThemeColor,
   tokens?: App.Theme.ThemeSetting['tokens'],
   recommended = false,
+  isInfoFollowPrimary = false,
 ) {
-  const paletteColors = createThemePaletteColors(colors, recommended)
-
   const { light, dark } = tokens || themeSettings.tokens
+  const lightColors = getModeThemeColors(colors, tokens, false, isInfoFollowPrimary)
+  const darkColors = getModeThemeColors(colors, tokens, true, isInfoFollowPrimary)
 
   const themeTokens: App.Theme.ThemeTokenCSSVars = {
     colors: {
-      ...paletteColors,
-      nprogress: paletteColors.primary,
+      ...createThemePaletteColors(lightColors, recommended),
+      nprogress: lightColors.primary,
       ...light.colors,
     },
     boxShadow: {
@@ -46,6 +49,8 @@ export function createThemeToken(
   const darkThemeTokens: App.Theme.ThemeTokenCSSVars = {
     colors: {
       ...themeTokens.colors,
+      ...createThemePaletteColors(darkColors, recommended),
+      nprogress: dark?.colors?.nprogress ?? light.colors.nprogress ?? darkColors.primary,
       ...dark?.colors,
     },
     boxShadow: {
@@ -58,6 +63,17 @@ export function createThemeToken(
     themeTokens,
     darkThemeTokens,
   }
+}
+
+/** 预设可以为明暗模式提供主色，CSS、组件库和标签栏共用同一解析规则。 */
+export function getModeThemeColors(
+  colors: App.Theme.ThemeColor,
+  tokens: App.Theme.ThemeSetting['tokens'] | undefined,
+  darkMode: boolean,
+  isInfoFollowPrimary: boolean,
+): App.Theme.ThemeColor {
+  const primary = (darkMode ? tokens?.dark : tokens?.light)?.colors?.primary ?? colors.primary
+  return { ...colors, primary, info: isInfoFollowPrimary ? primary : colors.info }
 }
 
 /**
@@ -195,12 +211,13 @@ interface NaiveColorAction {
  * @param colors Theme colors
  * @param [recommended] Use recommended color. Default is `false`
  */
-function getNaiveThemeColors(colors: App.Theme.ThemeColor, recommended = false) {
+function getNaiveThemeColors(colors: App.Theme.ThemeColor, recommended = false, darkMode = false) {
   const colorActions: NaiveColorAction[] = [
     { scene: '', handler: color => color },
     { scene: 'Suppl', handler: color => color },
     { scene: 'Hover', handler: color => getPaletteColorByNumber(color, 500, recommended) },
-    { scene: 'Pressed', handler: color => getPaletteColorByNumber(color, 700, recommended) },
+    // 暗色实心按钮使用黑字，按下时取亮色阶，避免深色背景吞掉文字。
+    { scene: 'Pressed', handler: color => getPaletteColorByNumber(color, darkMode ? 400 : 700, recommended) },
     { scene: 'Active', handler: color => addColorAlpha(color, 0.1) },
   ]
 
@@ -224,13 +241,18 @@ export function getThemeSurfaceColors(settings: App.Theme.ThemeSetting, darkMode
   const { light, dark } = settings.tokens
   const colors = { ...light.colors, ...(darkMode ? dark?.colors : {}) }
   const text = colors['base-text']
+  const surfaces = { ...light.surfaces, ...(darkMode ? dark?.surfaces : {}) }
   return {
     container: colors.container,
     layout: colors.layout,
     text,
-    muted: addColorAlpha(text, 0.65),
-    border: addColorAlpha(text, 0.16),
-    hover: addColorAlpha(text, 0.08),
+    muted: surfaces.muted ?? addColorAlpha(text, 0.65),
+    border: surfaces.border ?? addColorAlpha(text, 0.16),
+    hover: surfaces.hover ?? addColorAlpha(text, 0.08),
+    panel: surfaces.panel ?? colors.layout,
+    toolbar: surfaces.toolbar ?? colors.container,
+    input: surfaces.input ?? colors.container,
+    alternate: surfaces.alternate ?? 'transparent',
   }
 }
 
@@ -247,21 +269,22 @@ export function getNaiveTheme(
   overrides?: GlobalThemeOverrides,
   darkMode = false,
 ) {
-  const { primary: colorLoading } = colors
+  const modeColors = getModeThemeColors(colors, settings.tokens, darkMode, settings.isInfoFollowPrimary)
+  const { primary: colorLoading } = modeColors
   const surface = getThemeSurfaceColors(settings, darkMode)
   const inputBorder = `1px solid ${surface.border}`
 
   const theme: GlobalThemeOverrides = {
     common: {
       ...getTypographyTheme(settings.fontSize),
-      ...getNaiveThemeColors(colors, settings.recommendColor),
+      ...getNaiveThemeColors(modeColors, settings.recommendColor, darkMode),
       fontFamily: 'var(--wb-interface-font, var(--wb-default-interface-font))',
       bodyColor: surface.layout,
       cardColor: surface.container,
       modalColor: surface.container,
       popoverColor: surface.container,
       tableColor: surface.container,
-      inputColor: surface.container,
+      inputColor: surface.input,
       textColorBase: surface.text,
       textColor1: surface.text,
       textColor2: surface.muted,
@@ -273,12 +296,13 @@ export function getNaiveTheme(
     Card: { borderRadius: `${settings.themeRadius}px` },
     // 暗色主题默认使用透明边框，与统一面板背景重合时无法辨认输入区域。
     Input: {
+      color: surface.input,
       borderRadius: `${settings.themeRadius}px`,
       border: inputBorder,
       borderDisabled: inputBorder,
       groupLabelBorder: inputBorder,
     },
-    InternalSelection: { border: inputBorder },
+    InternalSelection: { border: inputBorder, color: surface.input },
     Alert: { borderRadius: `${settings.themeRadius}px` },
     LoadingBar: {
       colorLoading,

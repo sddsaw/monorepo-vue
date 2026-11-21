@@ -168,6 +168,7 @@ const routeMap: RouteMap = {
   "500": "/500",
   "iframe-page": "/iframe-page/:url",
   "login": "/login/:module(pwd-login|code-login|register|reset-pwd|bind-wechat)?",
+  "project": "/project",
   "redis-devtools": "/redis-devtools",
   "workbench": "/workbench"
 };

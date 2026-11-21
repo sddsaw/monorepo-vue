@@ -1,0 +1,24 @@
+/* A distinct family name ensures Windows and macOS use the bundled files. */
+@font-face {
+  font-family: 'Workbench PingFang SC';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./pingfang-sc-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Workbench PingFang SC';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./pingfang-sc-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Workbench PingFang SC';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./pingfang-sc-600.woff2') format('woff2');
+}

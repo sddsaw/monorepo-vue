@@ -11,12 +11,6 @@ interface Props {
   min?: number
   /** 最大尺寸 */
   max?: number
-  /** 当前关联面板是否处于折叠状态 */
-  collapsed?: boolean
-  /** 折叠触发阈值：展开态向内拖拽计算尺寸低于此阈值时直接触发折叠 */
-  collapseThreshold?: number
-  /** 展开触发阈值：折叠态向外拖拽超过此距离时触发展开 */
-  expandThreshold?: number
   /** 是否反向计算变化量 (例如右侧侧边栏向左拖拽变大，或底部面板向上拖拽变高) */
   reverse?: boolean
   /** 提示文案 */
@@ -28,9 +22,6 @@ const props = withDefaults(defineProps<Props>(), {
   direction: 'col',
   min: 160,
   max: 600,
-  collapsed: false,
-  collapseThreshold: undefined,
-  expandThreshold: 40,
   reverse: false,
   title: '拖拽调节尺寸',
 })
@@ -40,62 +31,25 @@ const emit = defineEmits<{
   (e: 'start'): void
   (e: 'resize', value: number): void
   (e: 'end'): void
-  (e: 'collapse'): void
-  (e: 'expand'): void
 }>()
 
 const handleRef = ref<HTMLElement | null>(null)
 
 let startCoord = 0
 let startSize = 0
-let isCurrentlyCollapsed = false
-// 从折叠态开始拖拽时，在尚未越过 collapseThreshold 前使用 expandThreshold 判定回缩，防止刚展开立即闪断折叠
-let hasEnteredNormalZone = !props.collapsed
 
 const { isDragging } = useDraggable(handleRef, {
   preventDefault: true,
   onStart: (_, e: PointerEvent) => {
     emit('start')
     startCoord = props.direction === 'col' ? e.clientX : e.clientY
-    startSize = props.collapsed ? 0 : props.modelValue
-    isCurrentlyCollapsed = props.collapsed
-    hasEnteredNormalZone = !props.collapsed
+    startSize = props.modelValue
   },
   onMove: (_, e: PointerEvent) => {
     const currentCoord = props.direction === 'col' ? e.clientX : e.clientY
     const rawDelta = currentCoord - startCoord
     const delta = props.reverse ? -rawDelta : rawDelta
     const targetSize = startSize + delta
-
-    if (isCurrentlyCollapsed) {
-      // 折叠态：向外拖拽超过展开阈值时重新展开面板
-      if (targetSize >= props.expandThreshold) {
-        isCurrentlyCollapsed = false
-        if (props.collapseThreshold === undefined || targetSize >= props.collapseThreshold) {
-          hasEnteredNormalZone = true
-        }
-        emit('expand')
-        const newSize = Math.max(props.min, Math.min(props.max, targetSize))
-        emit('update:modelValue', newSize)
-        emit('resize', newSize)
-      }
-      return
-    }
-
-    if (props.collapseThreshold !== undefined && targetSize >= props.collapseThreshold) {
-      hasEnteredNormalZone = true
-    }
-
-    // 检查是否向内拖拽超过折叠阈值
-    const activeCollapseThreshold = hasEnteredNormalZone
-      ? props.collapseThreshold
-      : props.expandThreshold
-
-    if (activeCollapseThreshold !== undefined && targetSize < activeCollapseThreshold) {
-      isCurrentlyCollapsed = true
-      emit('collapse')
-      return
-    }
 
     const newSize = Math.max(props.min, Math.min(props.max, targetSize))
     emit('update:modelValue', newSize)

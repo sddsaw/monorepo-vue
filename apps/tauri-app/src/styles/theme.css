@@ -6,6 +6,10 @@
   --border-color: rgb(var(--base-text-color) / 0.16);
   --hover-color: rgb(var(--base-text-color) / 0.08);
   --active-color: rgb(var(--primary-color) / 0.15);
+  --toolbar-bg-color: rgb(var(--container-bg-color));
+  --panel-bg-color: rgb(var(--layout-bg-color));
+  --input-bg-color: rgb(var(--container-bg-color));
+  --alternate-row-color: transparent;
 }
 
 .workbench-shell {
@@ -21,4 +25,12 @@
 
 .business-editor-container .business-table {
   min-width: 640px;
+}
+
+:root[data-striped-theme] .business-editor-container .business-table tbody tr:nth-child(even) td {
+  background-color: var(--alternate-row-color);
+}
+
+:root[data-striped-theme] .business-editor-container .business-table tbody tr:hover td {
+  background-color: var(--hover-color);
 }

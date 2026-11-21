@@ -13,6 +13,9 @@ export interface TPTreeNode {
   id: string
   /** 节点显示名称 (如 'Continuity_Test' 或 'DC_TestSuite') */
   label: string
+  isLeaf?: boolean
+  disabled?: boolean
+  description?: string
   /** 节点类型：folder 仅展开收起；file 点击触发打开对应业务组件 */
   nodeType: TPTreeNodeType
   /** 自定义图标标识符 */
@@ -23,7 +26,7 @@ export interface TPTreeNode {
   dataPath?: (string | number)[]
   /** 传入业务组件的当前节点数据快照/引用 (nodeType === 'file' 时有效) */
   rawData?: Record<string, any>
-  /** 子节点列表 (nodeType === 'folder' 时存在) */
+  /** 分类与可打开的硬件节点均可包含子节点 */
   children?: TPTreeNode[]
 }
 

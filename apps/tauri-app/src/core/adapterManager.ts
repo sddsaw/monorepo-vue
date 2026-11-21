@@ -179,7 +179,7 @@ export const genericJsonAdapter: TPModuleAdapter = {
           label: `${subKey}: ${typeof subVal === 'object' ? (Array.isArray(subVal) ? `[${subVal.length}]` : '{...}') : String(subVal)}`,
           nodeType: 'file',
           icon: 'ri:file-code-line',
-          componentKey: 'SuiteSummary',
+          componentKey: 'ProjectData',
           dataPath: [key, subKey],
           rawData: typeof subVal === 'object' ? subVal : { value: subVal },
         }))
@@ -200,7 +200,7 @@ export const genericJsonAdapter: TPModuleAdapter = {
         label: `${key}: ${String(value)}`,
         nodeType: 'file',
         icon: 'ri:file-text-line',
-        componentKey: 'SuiteSummary',
+        componentKey: 'ProjectData',
         dataPath: [key],
         rawData: { [key]: value },
       }

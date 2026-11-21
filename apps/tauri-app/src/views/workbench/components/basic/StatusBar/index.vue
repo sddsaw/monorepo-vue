@@ -17,8 +17,7 @@ const showStatusBar = import.meta.env.VITE_SHOW_STATUS_BAR !== undefined
 <template>
   <footer
     v-if="showStatusBar"
-    :style="{ backgroundColor: 'rgb(var(--layout-bg-color))' }"
-    class="flex shrink-0 flex-wrap select-none items-center justify-between gap-x-3 px-3 text-base-text font-sans text-ui-11 min-h-ui-22"
+    class="flex shrink-0 flex-wrap select-none items-center justify-between gap-x-3 bg-layout px-3 text-base-text font-sans text-ui-11 min-h-ui-22"
   >
     <!-- 左侧状态项 -->
     <div class="min-w-0 flex flex-1 items-center gap-3">
@@ -42,16 +41,22 @@ const showStatusBar = import.meta.env.VITE_SHOW_STATUS_BAR !== undefined
 
       <!-- 文件及未打开标签页状态展示 -->
       <div
-        class="min-w-0 flex items-center gap-1.5 rounded px-1 py-0.5 text-[var(--text-muted)] font-mono"
+        class="min-w-0 flex items-center gap-1.5 rounded px-1 py-0.5 text-[var(--text-muted)]"
         :title="tpStore.fileName ? (tpStore.activeTab ? $t('workbench.statusbar.currentFile', { file: tpStore.fileName }) : `${tpStore.fileName} (${$t('workbench.statusbar.unopenedTab')})`) : $t('workbench.statusbar.noFile')"
       >
         <SvgIcon icon="ri:file-code-line" class="text-[var(--text-muted)] text-ui-12" />
-        <span class="truncate">{{ tpStore.fileName ? (tpStore.activeTab ? tpStore.fileName : `${tpStore.fileName} (${$t('workbench.statusbar.unopenedTab')})`) : $t('workbench.statusbar.noFile') }}</span>
+        <span class="truncate">
+          <template v-if="tpStore.fileName">
+            <span class="font-mono">{{ tpStore.fileName }}</span>
+            <span v-if="!tpStore.activeTab"> ({{ $t('workbench.statusbar.unopenedTab') }})</span>
+          </template>
+          <template v-else>{{ $t('workbench.statusbar.noFile') }}</template>
+        </span>
       </div>
     </div>
 
     <!-- 右侧状态项 -->
-    <div class="max-w-full min-w-0 flex flex-wrap items-center gap-x-3 font-mono text-ui-10">
+    <div class="max-w-full min-w-0 flex flex-wrap items-center gap-x-3 text-ui-10">
       <!-- 未保存脏数据指示 -->
       <div v-if="tpStore.isDirty" class="flex animate-pulse items-center gap-1 text-warning font-bold">
         <span>●</span>
@@ -64,7 +69,7 @@ const showStatusBar = import.meta.env.VITE_SHOW_STATUS_BAR !== undefined
       </div>
 
       <!-- 编码格式 -->
-      <div class="text-[var(--text-muted)]">
+      <div class="text-[var(--text-muted)] font-mono">
         UTF-8
       </div>
 

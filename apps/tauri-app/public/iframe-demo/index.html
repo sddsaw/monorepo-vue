@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe 演示</title>
+    <style>
+      :root { color-scheme: light dark; font: 14px/1.6 system-ui, sans-serif; }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 24px; color: light-dark(#263342, #dce5ee); background: light-dark(#f5f7fa, #20252b); }
+      main { max-width: 920px; margin: auto; }
+      h1 { margin: 8px 0; font-size: 24px; }
+      h2 { margin: 0 0 16px; font-size: 16px; }
+      p { margin: 8px 0 20px; }
+      .eyebrow { color: light-dark(#1765a2, #80c4ff); font-weight: 600; letter-spacing: .06em; }
+      .card { margin-top: 20px; padding: 20px; border: 1px solid light-dark(#cbd5df, #485360); border-radius: 8px; background: light-dark(#fff, #292f37); }
+      .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; }
+      label { display: flex; flex-direction: column; gap: 6px; }
+      input, select, textarea { min-width: 0; width: 100%; padding: 10px; border: 1px solid light-dark(#9baab8, #697786); border-radius: 4px; background: light-dark(#fff, #20252b); color: inherit; font: inherit; }
+      :focus-visible { outline: 2px solid light-dark(#1765a2, #80c4ff); outline-offset: 2px; }
+      textarea { resize: vertical; }
+      ol { margin-bottom: 0; padding-left: 22px; }
+      li + li { margin-top: 8px; }
+      @media (max-width: 480px) { body { padding: 16px; } .card { padding: 16px; } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">WORKBENCH / IFRAME</div>
+      <h1>独立网页面板</h1>
+      <p>这是嵌入工作台的本地演示网页。试着把它与测试项并排显示，再拖动分隔线改变尺寸。</p>
+      <section class="card">
+        <h2>交互表单</h2>
+        <div class="fields">
+          <label>测试名称<input placeholder="例如：电源检查" autocomplete="off"></label>
+          <label>运行模式<select><option>自动测试</option><option>手动调试</option></select></label>
+          <label>备注<textarea rows="3" placeholder="在这里输入文字，检查 iframe 内的焦点与输入。"></textarea></label>
+        </div>
+      </section>
+      <section class="card">
+        <h2>试试这些操作</h2>
+        <ol>
+          <li>拖动上方的 Iframe 标签到内容区边缘，创建左右或上下分屏。</li>
+          <li>拖动两块面板之间的分隔线，观察表单自动调整列数。</li>
+          <li>调整后点击输入框，确认网页恢复正常交互。</li>
+        </ol>
+        <p>此页面仅用于演示，输入内容不会保存到工程。</p>
+      </section>
+    </main>
+  </body>
+</html>

@@ -245,7 +245,7 @@ async function handleCopyJson() {
         <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
             <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-success" />
-            <span class="text-base-text font-medium font-mono text-ui-12">底层原始数据结构 (Live Sync)</span>
+            <span class="text-base-text font-medium text-ui-12">底层原始数据结构 (Live Sync)</span>
           </div>
           <NButton size="tiny" secondary type="primary" @click="handleCopyJson">
             <template #icon>
@@ -261,21 +261,6 @@ async function handleCopyJson() {
 </template>
 
 <style scoped>
-.business-editor-container {
-  animation: fadeInSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeInSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .metric-card {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }

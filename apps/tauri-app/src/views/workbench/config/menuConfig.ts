@@ -2,6 +2,7 @@ import type { WindowTitleBarMenu } from '../components/basic/WindowTitleBar/type
 import { $t } from '@/locales'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
+import { openIframeDemo } from './iframeDemo'
 
 /**
  * 获取窗口标题栏顶部菜单配置（全量使用 $t 国际化驱动）
@@ -128,6 +129,12 @@ export function getMenus(): WindowTitleBarMenu[] {
       key: 'tools',
       label: $t('workbench.menu.tools'),
       children: [
+        {
+          key: 'iframe-demo',
+          label: $t('workbench.menu.iframeDemo'),
+          icon: 'ri:window-line',
+          onSelect: openIframeDemo,
+        },
         {
           key: 'hardware-check',
           label: $t('workbench.menu.hardwareCheck'),

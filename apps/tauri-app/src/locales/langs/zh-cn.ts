@@ -92,6 +92,11 @@ const local: Schema = {
       recommendColor: '应用推荐算法的颜色',
       recommendColorDesc: '推荐颜色的算法参照',
       preset: {
+        appearanceHint: '仅应用外观，保留面板布局和水印设置；应用后仍可调整颜色、字号与圆角。',
+        unity: {
+          name: 'Unity Editor Dark',
+          desc: '参考 Unity 6.6：中灰面板、深色工具栏、蓝色高亮与小圆角。',
+        },
         title: '主题预设',
         apply: '应用',
         applySuccess: '预设应用成功',
@@ -228,6 +233,7 @@ const local: Schema = {
     '500': '服务器错误',
     'iframe-page': '外链页面',
     'home': '首页',
+    'project': '工程首页',
     'workbench': '工作台',
     'document': '文档',
     'document_project': '项目文档',
@@ -712,6 +718,11 @@ const local: Schema = {
     },
   },
   workbench: {
+    tabs: {
+      closeConfirmTitle: '存在未保存修改',
+      closeConfirmContent: '所选的 {count} 个标签有未保存修改，仍要关闭吗？关闭不会保存修改，改动仍保留在当前工程中。',
+      closeConfirmAction: '仍然关闭',
+    },
     menu: {
       file: '文件',
       openProject: '打开工程',
@@ -728,6 +739,7 @@ const local: Schema = {
       runDrc: '执行 DRC 校验',
       tools: '工具',
       hardwareCheck: '机台硬件自检',
+      iframeDemo: 'Iframe 演示',
       channelMap: '通道映射配置',
       help: '帮助',
       preferences: '首选项设置',
@@ -759,6 +771,8 @@ const local: Schema = {
       searchPlaceholderEmpty: '打开 ATE 测试程序文件 (Ctrl+O)',
     },
     settings: {
+      title: '设置',
+      scrollModeTip: '主体滚动仅滚动编辑内容；外层滚动包含标签栏与路径栏，窗口标题栏保持固定。',
       appearance: '外观设置',
       aboutUs: '关于我们',
       themeAndColor: '主题与色彩',
@@ -785,12 +799,6 @@ const local: Schema = {
       noneRadius: '直角',
       smallRadius: '精细',
       largeRadius: '大弧度',
-      tabLayout: '标签与面板布局',
-      tabLayoutDesc: '切换现代分块还是经典紧凑',
-      modern: '现代分隔',
-      modernDesc: '面板分隔更清晰，标签页为块状样式。',
-      compact: '经典紧凑',
-      compactDesc: '使用连续标签栏和更紧凑的面板标题。',
       aboutTitle: 'Soybean Desktop',
       aboutDesc: '现代化跨平台 ATE 测试可视化分析工作台，基于 Rust & Vue 3 构建。',
       checkUpdates: '检查新版本',

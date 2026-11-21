@@ -4,7 +4,7 @@ import type { Component, VNodeChild } from 'vue'
 import type { IconType, ToolbarGroup, ToolbarItem, WindowTitleBarMenu, WindowTitleBarMenuItem } from './types'
 import { SvgIcon } from '@sa/components'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { NButton, NDropdown, NEllipsis, NTooltip } from 'naive-ui'
+import { NButton, NDropdown, NTooltip } from 'naive-ui'
 import { computed, h, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import ProximaLogo from '@/components/common/ProximaLogo.vue'
 import { $t } from '@/locales'
@@ -12,6 +12,8 @@ import { isTauri } from '@/plugins/tauri'
 import { useThemeStore } from '@/store/modules/theme'
 import { useTpStore } from '@/store/modules/tp'
 import { useWorkbenchLayoutStore } from '@/store/modules/workbenchLayout'
+import { getTypographyTheme, uiControlSizeCss } from '@/theme/typography'
+import { openIframeDemo } from '@/views/workbench/config/iframeDemo'
 import { getMenus } from '@/views/workbench/config/menuConfig'
 import { getToolbarGroups } from '@/views/workbench/config/toolbarConfig'
 import SettingsView from './components/SettingsView.vue'
@@ -85,10 +87,10 @@ function renderMenuIcon(icon?: IconType): (() => VNodeChild) | undefined {
   if (!icon)
     return undefined
   if (typeof icon === 'string')
-    return () => h(SvgIcon, { icon, class: 'text-ui-14 shrink-0' })
+    return () => h(SvgIcon, { icon, class: 'text-ui-16 shrink-0' })
   if (typeof icon === 'function')
     return icon as () => VNodeChild
-  return () => h(icon as Component, { class: 'text-ui-14 shrink-0' })
+  return () => h(icon as Component, { class: 'text-ui-16 shrink-0' })
 }
 
 /** 菜单项标签渲染：当含有快捷键时，标签居左、快捷键靠右弱化显示 */
@@ -98,7 +100,7 @@ function renderOptionLabel(item: WindowTitleBarMenuItem): string | (() => VNodeC
   return () =>
     h('div', { class: 'flex items-center justify-between gap-16px w-full min-w-130px select-none' }, [
       h('span', { class: 'truncate' }, item.label),
-      h('span', { class: 'text-ui-10 text-[var(--text-muted)] font-mono tracking-wider opacity-70 shrink-0 ml-auto pl-8px' }, item.shortcut),
+      h('span', { class: 'text-ui-12 text-[var(--text-muted)] font-mono shrink-0 ml-auto pl-8px' }, item.shortcut),
     ])
 }
 
@@ -167,6 +169,7 @@ const visibleCount = ref(activeMenus.value.length)
 let menuItemWidths: number[] = []
 let resizeObserver: ResizeObserver | null = null
 const themeStore = useThemeStore()
+const iconButtonSize = uiControlSizeCss(28)
 
 /** 超出左侧可用宽度的菜单项折叠为级联子菜单 */
 const overflowMenuOptions = computed<DropdownOption[]>(() =>
@@ -174,6 +177,7 @@ const overflowMenuOptions = computed<DropdownOption[]>(() =>
     key: `overflow-${menu.key}`,
     label: menu.label,
     icon: renderMenuIcon(menu.icon),
+    disabled: menu.disabled,
     children: menu._dropdownOptions,
   })),
 )
@@ -196,7 +200,7 @@ function updateVisibleMenus() {
     return
 
   const GAP = 2
-  const ELLIPSIS_WIDTH = 26
+  const ELLIPSIS_WIDTH = Number.parseFloat(getTypographyTheme(themeStore.fontSize).heightSmall) + GAP
   const availableWidth = container.clientWidth
   const totalWidth = menuItemWidths.reduce((sum, w, i) => sum + w + (i > 0 ? GAP : 0), 0)
 
@@ -220,13 +224,15 @@ function updateVisibleMenus() {
   visibleCount.value = count
 }
 
+function remeasureMenus() {
+  menuItemWidths = []
+  visibleCount.value = activeMenus.value.length
+  nextTick(updateVisibleMenus)
+}
+
 watch(
-  [() => activeMenus.value, () => themeStore.fontSize],
-  () => {
-    menuItemWidths = []
-    visibleCount.value = activeMenus.value.length
-    nextTick(updateVisibleMenus)
-  },
+  [() => activeMenus.value, () => themeStore.fontSize, () => themeStore.interfaceFont],
+  remeasureMenus,
   { deep: true },
 )
 
@@ -234,6 +240,7 @@ watch(
 const internalSearchKeyword = ref('')
 const isSearching = ref(false)
 const searchInputRef = ref<HTMLInputElement | null>(null)
+const searchTriggerRef = ref<HTMLButtonElement | null>(null)
 
 const currentSearchKeyword = computed({
   get: () => (props.searchKeyword !== undefined ? props.searchKeyword : internalSearchKeyword.value),
@@ -256,18 +263,28 @@ function startSearch() {
   nextTick(() => searchInputRef.value?.focus())
 }
 
+function clearSearch() {
+  currentSearchKeyword.value = ''
+  nextTick(() => (isSearching.value ? searchInputRef.value : searchTriggerRef.value)?.focus())
+}
+
 function handleSearchEsc() {
   currentSearchKeyword.value = ''
   isSearching.value = false
+  nextTick(() => searchTriggerRef.value?.focus())
 }
 
-function handleSearchSubmit() {
+function handleSearchSubmit(event: KeyboardEvent) {
+  if (event.isComposing)
+    return
+  event.preventDefault()
   isSearching.value = false
   emit('search', currentSearchKeyword.value)
+  nextTick(() => searchTriggerRef.value?.focus())
 }
 
 function handleGlobalKeydown(e: KeyboardEvent) {
-  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+  if (props.showSearch && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
     e.preventDefault()
     startSearch()
   }
@@ -299,6 +316,7 @@ async function handleClose() {
 onMounted(() => {
   window.addEventListener('keydown', handleGlobalKeydown)
   window.addEventListener('resize', updateVisibleMenus)
+  document.fonts.addEventListener('loadingdone', remeasureMenus)
 
   if (menuContainerRef.value) {
     updateVisibleMenus()
@@ -310,6 +328,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keydown', handleGlobalKeydown)
   window.removeEventListener('resize', updateVisibleMenus)
+  document.fonts.removeEventListener('loadingdone', remeasureMenus)
   resizeObserver?.disconnect()
 })
 </script>
@@ -317,14 +336,12 @@ onUnmounted(() => {
 <template>
   <header
     data-tauri-drag-region
-    class="workbench-titlebar flex flex-col select-none border-b border-[var(--border-color)] font-sans text-ui-12"
-    :style="{ backgroundColor: 'rgb(var(--layout-bg-color))' }"
+    class="workbench-titlebar flex flex-col select-none border-b border-[var(--border-color)] bg-layout font-sans text-ui-12"
   >
     <!-- 第一行：顶部三列居中对称网格标题栏 -->
     <div
       data-tauri-drag-region
-      class="titlebar-main grid items-center px-8px h-ui-30"
-      :style="{ gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)' }"
+      class="titlebar-main grid items-center px-8px py-2px min-h-ui-32"
     >
       <!-- 左列：Logo + 标题 + 自适应菜单栏 (放不下时自动收起到省略号) -->
       <div
@@ -334,10 +351,10 @@ onUnmounted(() => {
       >
         <!-- Logo / 标题 -->
         <slot name="logo">
-          <div v-if="showLogo" class="mr-8px flex shrink-0 items-center gap-6px text-base-text font-bold tracking-wide">
-            <ProximaLogo :size="17" :show-shadow="false" />
+          <div v-if="showLogo" class="mr-8px flex shrink-0 items-center gap-8px text-base-text font-600">
+            <ProximaLogo :size="16" :show-shadow="false" />
             <slot name="title">
-              <span class="text-ui-11">{{ title }}</span>
+              <span class="text-ui-14">{{ title }}</span>
             </slot>
           </div>
         </slot>
@@ -358,11 +375,11 @@ onUnmounted(() => {
               :options="menu._dropdownOptions"
               @select="handleMenuSelect"
             >
-              <NButton quaternary size="tiny" :disabled="menu.disabled" class="text-base-text !px-6px hover:text-base-text !text-ui-11 !h-ui-22">
-                <SvgIcon v-if="typeof menu.icon === 'string'" :icon="menu.icon" class="mr-4px text-ui-12" />
-                <component :is="menu.icon" v-else-if="menu.icon" class="mr-4px text-ui-12" />
+              <NButton quaternary size="small" :disabled="menu.disabled" class="text-base-text !px-8px hover:text-base-text">
+                <SvgIcon v-if="typeof menu.icon === 'string'" :icon="menu.icon" class="mr-4px text-ui-16" />
+                <component :is="menu.icon" v-else-if="menu.icon" class="mr-4px text-ui-16" />
                 <span class="mr-2px">{{ menu.label }}</span>
-                <SvgIcon icon="ri:arrow-down-s-line" class="text-[var(--text-muted)] text-ui-10" />
+                <SvgIcon icon="ri:arrow-down-s-line" class="text-[var(--text-muted)] text-ui-16" />
               </NButton>
             </NDropdown>
           </div>
@@ -373,14 +390,14 @@ onUnmounted(() => {
             :style="{ display: visibleCount < normalizedMenus.length ? 'flex' : 'none' }"
           >
             <NDropdown
-              trigger="hover"
+              trigger="click"
               :show-arrow="true"
               :options="overflowMenuOptions"
               @select="handleMenuSelect"
             >
-              <NButton quaternary size="tiny" class="shrink-0 text-base-text !w-24px !p-0 hover:text-base-text !h-ui-22">
+              <NButton quaternary size="small" aria-label="更多菜单" class="titlebar-icon-button shrink-0 text-base-text !p-0 hover:text-base-text">
                 <template #icon>
-                  <SvgIcon icon="codicon:ellipsis" class="text-ui-14" />
+                  <SvgIcon icon="codicon:ellipsis" class="text-ui-16" />
                 </template>
               </NButton>
             </NDropdown>
@@ -392,18 +409,24 @@ onUnmounted(() => {
       <slot name="search">
         <div
           v-if="showSearch"
-          class="titlebar-search min-w-0 flex cursor-pointer items-center border border-[var(--border-color)] rounded-4px bg-container px-8px text-base-text shadow-inner transition-colors text-ui-12 h-ui-22 hover:border-primary/80"
-          :style="{ width: 'clamp(120px, calc(30vw / var(--app-zoom, 1)), 420px)' }"
+          class="titlebar-search min-w-0 flex cursor-text items-center border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-[var(--input-bg-color)] px-8px text-base-text text-ui-14 min-h-ui-28"
           @click="startSearch"
         >
-          <SvgIcon icon="ri:search-line" class="mr-6px shrink-0 text-[var(--text-muted)] text-ui-12" />
+          <SvgIcon icon="ri:search-line" class="mr-8px shrink-0 text-[var(--text-muted)] text-ui-16" />
 
           <!-- 展示态 -->
-          <div v-if="!isSearching" class="min-w-0 flex flex-1 items-center overflow-hidden">
-            <NEllipsis :tooltip="{ placement: 'bottom' }" class="w-full select-none text-ui-11" :class="currentSearchKeyword ? 'text-base-text' : 'text-[var(--text-muted)]'">
-              {{ currentSearchKeyword || computedSearchPlaceholder }}
-            </NEllipsis>
-          </div>
+          <button
+            v-if="!isSearching"
+            ref="searchTriggerRef"
+            type="button"
+            :aria-label="$t('common.search')"
+            :aria-keyshortcuts="isMac ? 'Meta+P' : 'Control+P'"
+            :title="currentSearchKeyword || computedSearchPlaceholder"
+            class="min-w-0 flex-1 truncate bg-transparent text-left text-ui-14 min-h-ui-28"
+            :class="currentSearchKeyword ? 'text-base-text' : 'text-[var(--text-muted)]'"
+          >
+            {{ currentSearchKeyword || computedSearchPlaceholder }}
+          </button>
 
           <!-- 输入态 -->
           <input
@@ -412,7 +435,8 @@ onUnmounted(() => {
             v-model="currentSearchKeyword"
             type="text"
             :placeholder="computedSearchPlaceholder"
-            class="min-w-0 w-full flex-1 border-none bg-transparent text-base-text outline-none text-ui-11 placeholder-gray-500"
+            :aria-label="$t('common.search')"
+            class="titlebar-search-input min-w-0 w-full flex-1 border-none bg-transparent text-base-text outline-none text-ui-14 min-h-ui-28"
             @click.stop
             @blur="isSearching = false"
             @keydown.esc.stop="handleSearchEsc"
@@ -422,31 +446,37 @@ onUnmounted(() => {
           <button
             v-if="currentSearchKeyword"
             type="button"
-            class="ml-4px shrink-0 p-2px text-[var(--text-muted)] hover:text-base-text"
-            title="清空"
-            @click.stop="currentSearchKeyword = ''"
+            class="titlebar-icon-button ml-4px flex shrink-0 items-center justify-center rounded-[var(--theme-radius)] text-[var(--text-muted)] hover:bg-[var(--hover-color)] hover:text-base-text"
+            aria-label="清空搜索"
+            title="清空搜索"
+            @mousedown.prevent
+            @click.stop="clearSearch"
           >
-            <SvgIcon icon="ri:close-line" class="text-ui-11" />
+            <SvgIcon icon="ri:close-line" class="text-ui-16" />
           </button>
 
-          <span class="ml-6px shrink-0 select-none border border-[var(--border-color)] rounded-4px bg-layout px-4px text-[var(--text-muted)] font-mono text-ui-9">
+          <span class="ml-8px shrink-0 select-none border border-[var(--border-color)] rounded-[var(--theme-radius)] bg-layout px-4px text-[var(--text-muted)] font-mono text-ui-12">
             {{ isMac ? '⌘P' : 'Ctrl+P' }}
           </span>
         </div>
       </slot>
 
       <!-- 右列：工程文件名、面板切换控制器与窗口控制按钮 -->
-      <div data-tauri-drag-region class="titlebar-actions h-full min-w-0 flex items-center justify-end gap-6px pl-8px">
+      <div data-tauri-drag-region class="titlebar-actions h-full min-w-0 flex items-center justify-end gap-8px pl-8px">
         <slot name="actions" />
 
         <!-- 视图面板显隐与设置按钮 -->
-        <div v-if="showLayoutControls" class="min-w-0 flex items-center gap-6px">
+        <div v-if="showLayoutControls" class="flex shrink-0 items-center gap-8px">
           <!-- 切换主侧边栏 -->
           <ButtonIcon
             icon="ri:layout-left-line"
             :tooltip-content="$t('workbench.controls.toggleSidebar')"
+            :aria-label="$t('workbench.controls.toggleSidebar')"
+            :aria-pressed="layoutStore.sidebarVisible"
+            size="small"
+            class="titlebar-icon-button !text-ui-16"
             :type="layoutStore.sidebarVisible ? 'primary' : 'default'"
-            :class="[layoutStore.sidebarVisible && 'bg-[var(--hover-color)]']"
+            :class="[layoutStore.sidebarVisible && 'bg-[var(--active-color)]']"
             @click="layoutStore.toggleSidebar"
           />
 
@@ -454,8 +484,12 @@ onUnmounted(() => {
           <ButtonIcon
             icon="ri:layout-bottom-line"
             :tooltip-content="$t('workbench.controls.toggleBottomPanel')"
+            :aria-label="$t('workbench.controls.toggleBottomPanel')"
+            :aria-pressed="layoutStore.bottomPanelVisible"
+            size="small"
+            class="titlebar-icon-button !text-ui-16"
             :type="layoutStore.bottomPanelVisible ? 'primary' : 'default'"
-            :class="[layoutStore.bottomPanelVisible && 'bg-[var(--hover-color)]']"
+            :class="[layoutStore.bottomPanelVisible && 'bg-[var(--active-color)]']"
             @click="layoutStore.toggleBottomPanel"
           />
 
@@ -463,8 +497,12 @@ onUnmounted(() => {
           <ButtonIcon
             icon="ri:layout-right-line"
             :tooltip-content="$t('workbench.controls.toggleSecondarySidebar')"
+            :aria-label="$t('workbench.controls.toggleSecondarySidebar')"
+            :aria-pressed="layoutStore.secondarySidebarVisible"
+            size="small"
+            class="titlebar-icon-button !text-ui-16"
             :type="layoutStore.secondarySidebarVisible ? 'primary' : 'default'"
-            :class="[layoutStore.secondarySidebarVisible && 'bg-[var(--hover-color)]']"
+            :class="[layoutStore.secondarySidebarVisible && 'bg-[var(--active-color)]']"
             @click="layoutStore.toggleSecondarySidebar"
           />
 
@@ -472,9 +510,13 @@ onUnmounted(() => {
           <ButtonIcon
             icon="codicon:settings-gear"
             :tooltip-content="$t('workbench.controls.settings')"
+            :aria-label="$t('workbench.controls.settings')"
+            :aria-expanded="showSettings"
+            size="small"
+            class="titlebar-icon-button !text-ui-16"
             :type="showSettings ? 'primary' : 'default'"
             :class="[
-              showSettings ? 'bg-[var(--hover-color)] text-base-text' : 'text-[var(--text-muted)] hover:text-base-text',
+              showSettings ? 'bg-[var(--active-color)] text-base-text' : 'text-[var(--text-muted)] hover:text-base-text',
             ]"
             @click="showSettings = !showSettings"
           />
@@ -484,9 +526,9 @@ onUnmounted(() => {
         <div v-if="!isMac && showWindowControls" class="flex shrink-0 items-center gap-2px">
           <NTooltip placement="bottom" trigger="hover">
             <template #trigger>
-              <NButton quaternary size="tiny" class="text-[var(--text-muted)] !w-24px !p-0 hover:text-base-text !h-ui-22" @click="handleMinimize">
+              <NButton quaternary size="small" :aria-label="$t('workbench.controls.minimize')" class="titlebar-icon-button text-[var(--text-muted)] !p-0 hover:text-base-text" @click="handleMinimize">
                 <template #icon>
-                  <SvgIcon icon="ri:subtract-line" class="text-ui-12" />
+                  <SvgIcon icon="ri:subtract-line" class="text-ui-16" />
                 </template>
               </NButton>
             </template>
@@ -495,9 +537,9 @@ onUnmounted(() => {
 
           <NTooltip placement="bottom" trigger="hover">
             <template #trigger>
-              <NButton quaternary size="tiny" class="text-[var(--text-muted)] !w-24px !p-0 hover:text-base-text !h-ui-22" @click="handleToggleMaximize">
+              <NButton quaternary size="small" :aria-label="$t('workbench.controls.maximize')" class="titlebar-icon-button text-[var(--text-muted)] !p-0 hover:text-base-text" @click="handleToggleMaximize">
                 <template #icon>
-                  <SvgIcon icon="ri:checkbox-multiple-blank-line" class="text-ui-12" />
+                  <SvgIcon icon="ri:checkbox-multiple-blank-line" class="text-ui-16" />
                 </template>
               </NButton>
             </template>
@@ -506,9 +548,9 @@ onUnmounted(() => {
 
           <NTooltip placement="bottom" trigger="hover">
             <template #trigger>
-              <NButton quaternary size="tiny" class="text-[var(--text-muted)] !w-24px !p-0 !h-ui-22 hover:!bg-error hover:!text-base-text" @click="handleClose">
+              <NButton quaternary size="small" :aria-label="$t('workbench.controls.close')" class="titlebar-icon-button text-[var(--text-muted)] !p-0 hover:text-error" @click="handleClose">
                 <template #icon>
-                  <SvgIcon icon="ri:close-line" class="text-ui-13" />
+                  <SvgIcon icon="ri:close-line" class="text-ui-16" />
                 </template>
               </NButton>
             </template>
@@ -520,17 +562,23 @@ onUnmounted(() => {
 
     <!-- 第二行：快捷工具栏 -->
     <slot name="toolbar">
-      <div v-if="showToolbar" class="titlebar-tools flex items-center justify-between border-t border-[var(--border-color)] bg-container px-12px h-ui-30">
+      <div v-if="showToolbar" class="titlebar-tools flex items-center justify-between gap-16px border-t border-[var(--border-color)] bg-[var(--toolbar-bg-color)] px-12px py-2px min-h-ui-32">
+        <NButton size="small" class="shrink-0" @click="openIframeDemo">
+          <template #icon>
+            <SvgIcon icon="ri:window-line" class="text-ui-16" />
+          </template>
+          {{ $t('workbench.menu.iframeDemo') }}
+        </NButton>
         <!-- 工具按钮分组 -->
-        <div class="flex items-center">
+        <div class="min-w-0 flex flex-1 items-center overflow-x-auto">
           <template v-for="(group, gIndex) in activeToolbarGroups" :key="group.key">
-            <div v-if="gIndex > 0" class="mx-8px h-14px w-1px shrink-0 bg-[var(--hover-color)]" />
+            <div v-if="gIndex > 0" class="mx-8px h-16px w-1px shrink-0 bg-[var(--border-color)]" />
 
             <div
-              class="flex items-center"
+              class="flex shrink-0 items-center"
               :class="[
                 group.isCluster
-                  ? 'gap-2px border border-[var(--border-color)]/[0.08] rounded-[var(--theme-radius)] bg-[var(--hover-color)] px-4px py-2px shadow-inner'
+                  ? 'gap-4px border border-[var(--border-color)] rounded-[var(--theme-radius)] px-4px py-2px'
                   : 'gap-4px',
               ]"
             >
@@ -538,16 +586,16 @@ onUnmounted(() => {
                 <template #trigger>
                   <NButton
                     quaternary
-                    size="tiny"
-                    class="shrink-0 rounded-4px transition-all duration-150 active:scale-95 !p-0"
+                    size="small"
+                    :aria-label="action.tooltip"
+                    class="titlebar-icon-button shrink-0 !p-0"
                     :class="[
-                      group.isCluster ? '!h-ui-22 !w-22px' : '!h-ui-24 !w-24px',
                       action.class || 'text-base-text hover:text-base-text hover:!bg-[var(--hover-color)]',
                     ]"
                     @click="action.onClick"
                   >
                     <template #icon>
-                      <SvgIcon :icon="action.icon" class="text-ui-14" />
+                      <SvgIcon :icon="action.icon" class="text-ui-16" />
                     </template>
                   </NButton>
                 </template>
@@ -559,8 +607,8 @@ onUnmounted(() => {
 
         <!-- 右侧适配器运行状态 -->
         <slot name="toolbar-right">
-          <div v-if="showAdapterStatus && tpStore.activeAdapter" class="hidden items-center gap-6px text-[var(--text-muted)] font-mono text-ui-10 sm:flex">
-            <span class="inline-block h-6px w-6px animate-pulse rounded-full bg-success" />
+          <div v-if="showAdapterStatus && tpStore.activeAdapter" class="titlebar-adapter-status hidden shrink-0 items-center gap-8px text-[var(--text-muted)] text-ui-12 sm:flex">
+            <span aria-hidden="true" class="inline-block h-6px w-6px rounded-full bg-success" />
             <span class="text-base-text">{{ tpStore.activeAdapter.name }}</span>
           </div>
         </slot>
@@ -577,23 +625,64 @@ onUnmounted(() => {
   container: titlebar / inline-size;
 }
 
+.titlebar-main {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+.titlebar-search {
+  width: clamp(120px, calc(30vw / var(--app-zoom, 1)), 420px);
+}
+
+.workbench-titlebar :deep(.titlebar-icon-button) {
+  width: v-bind(iconButtonSize);
+  min-width: v-bind(iconButtonSize);
+  height: v-bind(iconButtonSize);
+}
+
+.titlebar-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.titlebar-search:focus-within {
+  outline: 2px solid rgb(var(--primary-color));
+  outline-offset: -2px;
+}
+
+.workbench-titlebar :deep(button:focus-visible) {
+  outline: 2px solid rgb(var(--primary-color));
+  outline-offset: -2px;
+}
+
+/* Preserve a visible selection even when a quaternary button is hovered. */
+.workbench-titlebar :deep(.titlebar-icon-button[aria-pressed='true']),
+.workbench-titlebar :deep(.titlebar-icon-button[aria-expanded='true']) {
+  background-color: var(--active-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workbench-titlebar :deep(button) {
+    transition: none;
+  }
+}
+
 .titlebar-tools {
-  overflow-x: auto;
   flex-shrink: 0;
 }
 
-@container titlebar (max-width: 760px) {
+@container titlebar (max-width: 1000px) {
+  .titlebar-adapter-status {
+    display: none;
+  }
+
   .titlebar-main {
-    grid-template-columns: minmax(0, 1fr) auto !important;
-    height: auto;
-    min-height: max(30px, calc(var(--app-font-size) * 30 / 14));
+    grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 4px;
   }
 
   .titlebar-search {
     grid-column: 1 / -1;
     grid-row: 2;
-    width: 100% !important;
+    width: 100%;
   }
 
   .titlebar-actions {

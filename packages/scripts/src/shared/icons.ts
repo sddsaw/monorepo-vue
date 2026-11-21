@@ -204,6 +204,11 @@ function addIconCandidate(
   }
 
   if (!getIconData(collection, parsed.name)) {
+    // Only report invalid icons if the string explicitly used the icon namespace syntax `prefix:name`.
+    // Plain hyphenated strings without `:` that don't match an icon are regular identifiers/classes, not icon references.
+    if (!rawIconName.includes(':'))
+      return
+
     invalidOccurrences.push({
       ...occurrence,
       reason: `Icon "${parsed.name}" does not exist in collection "${parsed.prefix}"`,
