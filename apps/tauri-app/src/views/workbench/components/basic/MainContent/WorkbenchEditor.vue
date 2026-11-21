@@ -5,13 +5,16 @@ import { useTpStore } from '@/store/modules/tp'
 import DockviewContent from './DockviewContent.vue'
 import DockviewTab from './DockviewTab.vue'
 import MainContent from './index.vue'
+import { useCenteredDockviewTabs } from './useCenteredDockviewTabs'
 import { useWorkbenchDockview } from './useWorkbenchDockview'
 import 'dockview-vue/dist/styles/dockview.css'
+import './workbench-sashes.css'
 
 const themeStore = useThemeStore()
 const tpStore = useTpStore()
 const host = useTemplateRef<HTMLElement>('dockview')
-const { mounts, handleTabAction, relayout } = useWorkbenchDockview(host)
+const { mounts, handleTabAction, getDisabledTabActions, relayout } = useWorkbenchDockview(host)
+const { scheduleCenter } = useCenteredDockviewTabs(host)
 // The editor uses compact tabs independently of the application navigation tab bar.
 const tabHeight = computed(() => Math.ceil(32 * Math.max(1, themeStore.fontSize / 14)))
 const panels = computed(() => mounts.value.flatMap((mount) => {
@@ -20,6 +23,35 @@ const panels = computed(() => mounts.value.flatMap((mount) => {
 }))
 
 watch([() => themeStore.tab.visible, tabHeight, () => themeStore.fontSize], relayout, { flush: 'post' })
+watch([() => tpStore.activeTabId, () => themeStore.tab.mode, tabHeight], scheduleCenter, { flush: 'post' })
+
+function preventSashTextSelection(event: PointerEvent) {
+  if (event.button === 0 && event.target instanceof Element && event.target.closest('.sash:not(.disabled)')) {
+    // Dockview 1.x does not cancel the native selection gesture (notably in WebKit).
+    // Keep propagation intact: Dockview still needs pointerdown to start resizing.
+    event.preventDefault()
+  }
+}
+
+function openTabMenuFromKeyboard(event: KeyboardEvent) {
+  if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10'))
+    return
+  if (!(event.target instanceof Element))
+    return
+  const tab = event.target.closest('.tab')?.querySelector<HTMLElement>('.workbench-dock-tab')
+  if (!tab)
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  const rect = tab.getBoundingClientRect()
+  // Delegate at the host: Dockview can replace or move native tab wrappers when docking.
+  tab.dispatchEvent(new MouseEvent('contextmenu', {
+    bubbles: true,
+    cancelable: true,
+    clientX: rect.left,
+    clientY: rect.bottom,
+  }))
+}
 </script>
 
 <template>
@@ -32,9 +64,12 @@ watch([() => themeStore.tab.visible, tabHeight, () => themeStore.fontSize], rela
       :class="themeStore.darkMode ? 'dockview-theme-dark' : 'dockview-theme-light'"
       :data-tab-mode="themeStore.tab.mode"
       :style="{
-        '--dv-tabs-and-actions-container-height': `calc(${themeStore.tab.visible ? tabHeight : 0}px * var(--app-zoom))`,
+        '--workbench-tab-height': `calc(${themeStore.tab.visible ? tabHeight : 0}px * var(--app-zoom))`,
+        '--dv-tabs-and-actions-container-height': themeStore.tab.visible ? `calc(${tabHeight}px * var(--app-zoom) + 6px)` : '0px',
         '--dv-tabs-and-actions-container-font-size': `calc(${themeStore.fontSize}px * var(--app-zoom))`,
       }"
+      @pointerdown.capture="preventSashTextSelection"
+      @keydown="openTabMenuFromKeyboard"
     />
     <div v-if="!tpStore.tabs.length" class="pointer-events-none absolute inset-0 overflow-auto">
       <MainContent />
@@ -45,7 +80,12 @@ watch([() => themeStore.tab.visible, tabHeight, () => themeStore.fontSize], rela
         <DockviewContent :tab="panel.item" @activate="panel.panel.api.setActive()" />
       </Teleport>
       <Teleport :to="panel.tab">
-        <DockviewTab :tab="panel.item" @action="handleTabAction(panel.id, $event)" />
+        <DockviewTab
+          :tab="panel.item"
+          :chrome="themeStore.tab.mode === 'chrome'"
+          :get-disabled-actions="() => getDisabledTabActions(panel.id)"
+          @action="handleTabAction(panel.id, $event)"
+        />
       </Teleport>
     </template>
   </section>
@@ -79,6 +119,27 @@ watch([() => themeStore.tab.visible, tabHeight, () => themeStore.fontSize], rela
 }
 
 /* Only decorate native tabs; Dockview continues to own their order, focus and drag targets. */
+.workbench-dockview :deep(.tabs-and-actions-container) {
+  min-height: var(--dv-tabs-and-actions-container-height);
+}
+
+.workbench-dockview :deep(.tabs-container) {
+  min-width: 0;
+  align-items: flex-start;
+  overflow-x: auto;
+  /* A reserved track prevents native scrollbars from squeezing tab content. */
+  scrollbar-width: auto;
+}
+
+.workbench-dockview :deep(.tabs-container::-webkit-scrollbar) {
+  height: 6px;
+}
+
+.workbench-dockview :deep(.tabs-container > .tab) {
+  flex: 0 0 auto;
+  height: var(--workbench-tab-height);
+}
+
 .workbench-dockview :deep(.tabs-container > .tab::before) {
   display: none;
 }
@@ -96,37 +157,33 @@ watch([() => themeStore.tab.visible, tabHeight, () => themeStore.fontSize], rela
   background-color: var(--active-color);
 }
 
-/* Chrome uses the original curved silhouette and overlapping feet, not a rounded box. */
-.workbench-dockview[data-tab-mode='chrome'] {
-  --dock-chrome-active: color-mix(in srgb, rgb(var(--primary-color)) 10%, white);
-  --dock-chrome-hover: #dee1e6;
+/* Connected tabs: hover stays flat; only selection joins the content surface. */
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tabs-and-actions-container) {
+  /* Match the existing reserved scrollbar track to the content below it. */
+  background: linear-gradient(to top, rgb(var(--container-bg-color)) 6px, rgb(var(--layout-bg-color)) 6px);
 }
 
-.workbench-dockview.dockview-theme-dark[data-tab-mode='chrome'] {
-  --dock-chrome-active: color-mix(in srgb, rgb(var(--primary-color)) 30%, black);
-  --dock-chrome-hover: #333;
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tabs-container > .tab::after) {
+  /* Replace Dockview's mouse-focus rectangle; keyboard focus is styled below. */
+  display: none;
 }
 
 .workbench-dockview[data-tab-mode='chrome'] :deep(.tabs-container) {
-  padding-right: calc(18px * var(--app-zoom));
-}
-
-.workbench-dockview[data-tab-mode='chrome'] :deep(.tabs-container > .tab) {
-  padding-top: calc(2px * var(--app-zoom));
-  margin-right: calc(-18px * var(--app-zoom));
-}
-
-.workbench-dockview[data-tab-mode='chrome'] :deep(.tabs-container > .tab:hover) {
-  z-index: 9;
+  padding-right: calc(8px * var(--app-zoom));
 }
 
 .workbench-dockview[data-tab-mode='chrome'] :deep(.tabs-container > .tab.active-tab) {
-  z-index: 10;
+  z-index: 1;
 }
 
 .workbench-dockview[data-tab-mode='chrome'] :deep(.tab .workbench-dock-tab) {
   background: transparent;
-  padding-inline: 24px;
+  padding-inline: 12px;
+}
+
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab .dock-tab-button--dirty),
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:focus-within .dock-tab-button) {
+  visibility: visible;
 }
 
 .workbench-dockview[data-tab-mode='chrome'] :deep(.dock-chrome-background),
@@ -134,16 +191,31 @@ watch([() => themeStore.tab.visible, tabHeight, () => themeStore.fontSize], rela
   display: block;
 }
 
-.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:hover .dock-chrome-background) {
-  color: var(--dock-chrome-hover);
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:not(.active-tab):hover .dock-chrome-background) {
+  color: var(--hover-color);
+  border-radius: var(--theme-radius);
 }
 
 .workbench-dockview[data-tab-mode='chrome'] :deep(.tab.active-tab .dock-chrome-background) {
-  color: var(--dock-chrome-active);
+  color: rgb(var(--container-bg-color));
 }
 
-.workbench-dockview[data-tab-mode='chrome'] :deep(.tab.active-tab .dock-chrome-divider),
-.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:hover .dock-chrome-divider) {
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab.active-tab .dock-chrome-background::before),
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab.active-tab .dock-chrome-background::after) {
+  content: '';
+}
+
+/* The first tab meets the group boundary without an inset or a left foot. */
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:first-child.active-tab .dock-chrome-background) {
+  border-top-left-radius: 0;
+}
+
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:first-child.active-tab .dock-chrome-background::before) {
+  content: none;
+}
+
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:is(.active-tab, :hover) .dock-chrome-divider),
+.workbench-dockview[data-tab-mode='chrome'] :deep(.tab:has(+ .tab:is(.active-tab, :hover)) .dock-chrome-divider) {
   opacity: 0;
 }
 
