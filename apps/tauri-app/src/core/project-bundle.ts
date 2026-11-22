@@ -1,5 +1,6 @@
 import type { PreparedProject } from './project-loader'
 import type { TPTreeNode } from './tpModule'
+import { projectGroupIcons, projectHardwareIcon } from './project-icons'
 
 export interface ProjectTextFile { path: string, content: string }
 export interface ProjectBundle {
@@ -133,7 +134,7 @@ export function prepareProjectBundle(path: string, bundle: ProjectBundle): Prepa
       const id = `group:${labels.slice(0, i + 1).join('/')}`
       current = children.find(n => n.id === id)!
       if (!current) {
-        current = { id, label: labels[i], nodeType: 'folder', children: [], icon: 'ri:folder-line' }
+        current = { id, label: labels[i], nodeType: 'folder', children: [], icon: projectGroupIcons[labels[i]] ?? 'ri:folder-line' }
         children.push(current)
       }
       children = current.children!
@@ -144,7 +145,7 @@ export function prepareProjectBundle(path: string, bundle: ProjectBundle): Prepa
   for (const labels of [
     ['DUT', 'Pin Table'],
     ['Tester', 'Channel Map'],
-    ['Tester', 'Instruments', 'Instrument'],
+    ['Tester', 'Instruments'],
     ['Test Conditions', 'Flow'],
     ['Test Conditions', 'Test Instances'],
     ['Test Conditions', 'Level and Timing', 'Levels'],
@@ -161,7 +162,7 @@ export function prepareProjectBundle(path: string, bundle: ProjectBundle): Prepa
   const hardware: JsonObject[] = []
   const hardwareNode = (id: string, label: string, data: JsonObject, note = ''): TPTreeNode => {
     const index = hardware.push({ label, source: configPath, note, values: data }) - 1
-    return { id, label, nodeType: 'file', componentKey: 'ProjectHardware', dataPath: ['hardware', index], icon: 'ri:cpu-line', children: [] }
+    return { id, label, nodeType: 'file', componentKey: 'ProjectHardware', dataPath: ['hardware', index], icon: projectHardwareIcon(String(data.function ?? data.moduleType ?? data.type ?? '')), children: [] }
   }
   const slots = new Set<number>()
   const moduleKeys = new Set<string>()
@@ -186,7 +187,7 @@ export function prepareProjectBundle(path: string, bundle: ProjectBundle): Prepa
       }
       parent.children!.push(child)
     }
-    group(['Tester', 'Instruments', 'Instrument']).children!.push(parent)
+    group(['Tester', 'Instruments']).children!.push(parent)
   }
   for (const module of modules) {
     const slot = integer(module.slot, 'module.slot')
@@ -221,9 +222,9 @@ export function prepareProjectBundle(path: string, bundle: ProjectBundle): Prepa
       id: `definition:${filePath}`,
       label: filePath.split('/').pop()!.replace(/\.json$/i, ''),
       nodeType: 'file',
-      icon: 'ri:table-line',
-      componentKey: 'ProjectDefinition',
-      dataPath: ['definitions', index],
+      icon: projectGroupIcons[schema?.groups.at(-1) ?? ''] ?? 'lucide:file-json',
+      componentKey: type === 'pinmap' ? 'PinTable' : 'ProjectDefinition',
+      dataPath: type === 'pinmap' ? ['definitions', index, 'content'] : ['definitions', index],
     })
     return { path: filePath, title: schema?.title ?? type, type, warnings: fileWarnings, content: data }
   })
@@ -231,7 +232,7 @@ export function prepareProjectBundle(path: string, bundle: ProjectBundle): Prepa
     id: 'pattern-tool',
     label: 'PatternTool (External)',
     nodeType: 'file',
-    icon: 'ri:information-line',
+    icon: 'lucide:external-link',
     disabled: true,
     description: '尚未配置外部波形工具',
   })

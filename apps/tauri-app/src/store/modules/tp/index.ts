@@ -195,6 +195,7 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
     fileDirty.value = false
     validationResult.value = { valid: true, errors: [] }
     treeData.value = project.tree
+    runValidation()
     if (/\.prx$/i.test(project.path))
       addRecentProject(project.name, project.path)
   }
@@ -404,6 +405,7 @@ export const useTpStore = defineStore(SetupStoreId.Tp, () => {
         // 同步所有包含或被替换的视图，不依赖当前激活面板。
         refreshDirtyTabs()
       }
+      runValidation()
     }
   }
 

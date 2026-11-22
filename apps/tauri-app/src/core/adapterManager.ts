@@ -1,4 +1,4 @@
-import type { TPModuleAdapter, TPTreeNode } from './tpModule'
+import type { TPModuleAdapter, TPTreeNode, TPValidationIssue } from './tpModule'
 
 /**
  * 测试流适配器 (TestFlow / TestProgram)
@@ -40,17 +40,20 @@ export const testFlowAdapter: TPModuleAdapter = {
     })
   },
   validate: (json) => {
-    const errors: string[] = []
+    const issues: TPValidationIssue[] = []
     if (json?.testSuites) {
       json.testSuites.forEach((suite: any, sIdx: number) => {
         suite.items?.forEach((item: any, iIdx: number) => {
           if (typeof item.loLimit === 'number' && typeof item.hiLimit === 'number' && item.loLimit > item.hiLimit) {
-            errors.push(`[${suite.name || `Suite ${sIdx}`}] 测试项 [${item.name || iIdx}] 上下限反向: LowLimit (${item.loLimit}) > HighLimit (${item.hiLimit})`)
+            issues.push({
+              message: `[${suite.name || `Suite ${sIdx}`}] 测试项 [${item.name || iIdx}] 上下限反向: LowLimit (${item.loLimit}) > HighLimit (${item.hiLimit})`,
+              dataPath: ['testSuites', sIdx, 'items', iIdx],
+            })
           }
         })
       })
     }
-    return { valid: errors.length === 0, errors }
+    return { valid: issues.length === 0, errors: issues.map(issue => issue.message), issues }
   },
 }
 
@@ -62,12 +65,16 @@ export const pinMapAdapter: TPModuleAdapter = {
   id: 'adapter.pin-map',
   name: '芯片管脚定义适配器',
   match: (fileName, json) => {
-    return /^PinMap.*\.json$/i.test(fileName) || Boolean(json && (json.pins || json.pinGroups))
+    return /^PinMap.*\.json$/i.test(fileName) || Boolean(json && (json.pins || json.pinGroups || json.individualPins))
   },
   buildTree: (json) => {
     if (!json)
       return []
     const tree: TPTreeNode[] = []
+
+    if (Array.isArray(json.individualPins) || Array.isArray(json.pinGroups)) {
+      return [{ id: 'pinmap-full-table', label: 'Pin Table', nodeType: 'file', icon: 'ri:table-line', componentKey: 'PinTable', dataPath: [] }]
+    }
 
     // 汇总表节点
     tree.push({

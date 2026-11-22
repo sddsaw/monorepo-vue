@@ -43,7 +43,7 @@ async function main() {
     else {
       await page.locator('.workbench-shell').waitFor()
       await page.locator('.ate-workbench-tree').getByText('pinmap', { exact: true }).click()
-      await page.locator('.definition-view').getByText('A0', { exact: true }).waitFor()
+      await page.locator('.pin-table-editor:visible').getByText('A0', { exact: true }).waitFor()
       await page.goto(new URL('#/project', page.url()).href)
     }
 
@@ -59,12 +59,37 @@ async function main() {
     await page.locator('.workbench-shell').waitFor()
     const tree = page.locator('.ate-workbench-tree')
     await tree.waitFor()
+    // Initially only the selected pinmap path is open; expand others explicitly for this full-tree audit.
+    const expandedLabels = await tree.locator('.n-tree-node').filter({ has: page.locator('.n-tree-node-switcher--expanded') }).locator('.n-tree-node-content__text').allTextContents()
+    assert.deepEqual(expandedLabels, ['DUT', 'Pin Table'])
+    async function expandAllBranches() {
+      const collapsed = tree.locator('.n-tree-node-switcher:not(.n-tree-node-switcher--expanded)').filter({ has: page.locator('svg') })
+      while (await collapsed.count())
+        await collapsed.first().click()
+    }
+    await expandAllBranches()
+
     assert.match(await tree.textContent(), /DUT.*Tester.*Test Conditions.*Job/s)
     assert.equal(await tree.getByText('PPMU', { exact: true }).count(), 2)
     assert.equal(await tree.getByText('FILLER(0)', { exact: true }).count(), 2)
     assert.match(await tree.textContent(), /MIO16\(3\)/)
+    assert.equal(await tree.getByText('Instrument', { exact: true }).count(), 0)
+    // Every visible tree node must render a locally bundled SVG, including custom ATE icons.
+    const prefixes = tree.locator('.n-tree-node-content__prefix')
+    assert.ok(await prefixes.count() > 30)
+    assert.equal(await prefixes.locator('svg').count(), await prefixes.count())
+    const instruments = tree.locator('.n-tree-node').filter({ has: page.getByText('Instruments', { exact: true }) })
+    const rack = instruments.locator('.n-tree-node-content__prefix svg')
+    assert.equal(await rack.count(), 1)
+    const rackShape = await rack.innerHTML()
+    await instruments.locator('.n-tree-node-switcher').click()
+    assert.equal(await rack.innerHTML(), rackShape)
+    await instruments.locator('.n-tree-node-switcher').click()
+    for (const tabName of ['Inspector', 'Help', 'Issues'])
+      assert.equal(await page.getByRole('tab', { name: tabName, exact: true }).locator('svg').count(), 1)
+
     await tree.getByText('pinmap', { exact: true }).click()
-    await page.locator('.definition-view').getByText('A0', { exact: true }).waitFor()
+    await page.locator('.pin-table-editor:visible').getByText('A0', { exact: true }).waitFor()
     await page.screenshot({ path: '/tmp/prx-bundle-pinmap.png' })
 
     for (const label of ['SITEASSEMBLY(1)', 'MIO16(2)', 'MVS1A(4)', 'FILLER(0)']) {
@@ -111,7 +136,7 @@ async function main() {
     await tree.getByText('MIO16(2)', { exact: true }).waitFor()
 
     await tree.getByText('pinmap', { exact: true }).click()
-    await page.locator('.definition-view:visible').getByText('A0', { exact: true }).waitFor()
+    await page.locator('.pin-table-editor:visible').getByText('A0', { exact: true }).waitFor()
     await page.setViewportSize({ width: 1000, height: 800 })
     for (const scheme of ['light', 'dark']) {
       for (const size of [12, 14, 18]) {
@@ -123,7 +148,7 @@ async function main() {
         }, { scheme, size })
         await page.waitForTimeout(300)
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false)
-        assert.equal(await page.locator('.definition-view:visible').evaluate(el => el.scrollWidth > el.clientWidth + 1), false)
+        assert.equal(await page.locator('.pin-table-editor:visible').evaluate(el => el.scrollWidth > el.clientWidth + 1), false)
         if ((scheme === 'light' && size === 12) || (scheme === 'dark' && size === 18))
           await page.screenshot({ path: `/tmp/prx-bundle-${scheme}-${size}.png` })
       }
@@ -136,6 +161,7 @@ async function main() {
     const customChooserPromise = page.waitForEvent('filechooser')
     await page.getByRole('button', { name: /选择.*工程目录/ }).click()
     await (await customChooserPromise).setFiles(temp)
+    await tree.getByText('Other Definitions', { exact: true }).click()
     await tree.getByText('unknown', { exact: true }).waitFor()
     await tree.getByText('unknown', { exact: true }).click()
     await page.locator('.definition-view').getByText('scalar-row', { exact: true }).waitFor()

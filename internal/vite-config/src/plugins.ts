@@ -36,11 +36,13 @@ export function setupVitePlugins(
     ...setupUnplugin(viteEnv, root, options?.componentResolvers),
   )
 
+  // Tauri 开发时也提供内嵌 Vue Devtools，便于查看 Pinia 状态。
+  if (platform === 'web' || !isBuild) {
+    plugins.push(setupDevtoolsPlugin(viteEnv))
+  }
+
   if (platform === 'web') {
-    plugins.push(
-      setupDevtoolsPlugin(viteEnv),
-      setupHtmlPlugin(buildTime),
-    )
+    plugins.push(setupHtmlPlugin(buildTime))
   }
 
   if (viteEnv.VITE_VISUALIZER === 'Y') {

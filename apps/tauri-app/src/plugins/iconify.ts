@@ -1,10 +1,12 @@
 import { addCollection } from '@iconify/vue/offline'
+import { ateIcons } from '@/assets/icons/ate'
 import localIcons from './local-icons.json'
 
 type LocalIconCollection = Parameters<typeof addCollection>[0]
 
 /** Setup the iconify offline */
 export function setupIconifyOffline() {
+  addCollection(ateIcons)
   localIcons.forEach((collection) => {
     if (!isLocalIconCollection(collection))
       throw new TypeError('Invalid generated local icon collection')

@@ -16,6 +16,8 @@ export interface TPTreeNode {
   isLeaf?: boolean
   disabled?: boolean
   description?: string
+  /** 节点自身的异常数量（不含子节点，父级汇总由导航树计算） */
+  errorCount?: number
   /** 节点类型：folder 仅展开收起；file 点击触发打开对应业务组件 */
   nodeType: TPTreeNodeType
   /** 自定义图标标识符 */
@@ -33,9 +35,16 @@ export interface TPTreeNode {
 /**
  * 模块适配器规则校验结果
  */
+export interface TPValidationIssue {
+  message: string
+  /** 异常在工程 JSON 中的位置，用于关联导航节点；不依赖显示名称。 */
+  dataPath: (string | number)[]
+}
+
 export interface TPValidationResult {
   valid: boolean
   errors: string[]
+  issues?: TPValidationIssue[]
 }
 
 /**

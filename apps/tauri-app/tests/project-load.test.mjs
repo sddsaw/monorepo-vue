@@ -52,6 +52,29 @@ beforeEach(() => {
   store = useTpStore(createPinia())
 })
 
+it('keeps node error locations current on load, edits, validation and project replacement', async () => {
+  await store.loadFile('/errors.prx', JSON.stringify({
+    testSuites: [{ name: 'DC', items: [
+      { id: 'a', name: 'Same', loLimit: 2, hiLimit: 1 },
+      { id: 'b', name: 'Same', loLimit: 0, hiLimit: 1 },
+    ] }],
+  }))
+  const tree = store.treeData
+  assert.equal(store.validationResult.errors.length, 1)
+  assert.deepEqual(store.validationResult.issues[0].dataPath, ['testSuites', 0, 'items', 0])
+  store.updateItemField(['testSuites', 0, 'items', 1], 'loLimit', 3)
+  assert.equal(store.validationResult.errors.length, 2)
+  store.updateItemField(['testSuites', 0, 'items', 0], 'loLimit', 0)
+  assert.equal(store.validationResult.errors.length, 1)
+  assert.deepEqual(store.validationResult.issues[0].dataPath, ['testSuites', 0, 'items', 1])
+  store.updateItemField(['testSuites', 0, 'items', 1], 'hiLimit', 4, 'redis')
+  assert.equal(store.validationResult.valid, true)
+  assert.deepEqual(store.runValidation().issues, [])
+  assert.equal(store.treeData, tree)
+  await store.loadFile('/other.prx', JSON.stringify(program))
+  assert.deepEqual(store.validationResult, { valid: true, errors: [] })
+})
+
 it('native chooser is PRX-only, cancel does not read a file or modify state', async () => {
   globalThis.projectDialog = async (options) => {
     assert.deepEqual(options.filters[0].extensions, ['prx'])

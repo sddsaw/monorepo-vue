@@ -59,12 +59,7 @@ const activeTitle = computed(() => navItems.value.find(item => item.key === acti
       </nav>
     </aside>
 
-    <section id="settings-page" class="settings-content min-h-0 min-w-0 flex flex-col flex-1 bg-container" aria-labelledby="settings-page-title">
-      <header class="shrink-0 border-b border-[var(--border-color)] px-24px py-16px">
-        <h2 id="settings-page-title" class="m-0 text-base-text font-600 text-ui-16">
-          {{ activeTitle }}
-        </h2>
-      </header>
+    <section id="settings-page" class="settings-content min-h-0 min-w-0 flex flex-col flex-1 bg-container" :aria-label="activeTitle">
       <!-- A new scroll container starts each selected page at its own heading. -->
       <NScrollbar :key="activeNav" class="min-h-0 flex-1" content-class="settings-page-content">
         <component :is="pages[activeNav]" />
