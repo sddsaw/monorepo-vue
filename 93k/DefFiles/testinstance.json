@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "DefFileType": "testinstance",
+  "metadata": {
+    "sheetId": "6a1179f4-71d4-42c9-abf8-fa789faab882",
+    "createdAt": "2026-06-15T00:00:00Z",
+    "updatedAt": "2026-06-15T00:00:00Z",
+    "createdBy": "user",
+    "version": "1"
+  },
+  "data": [
+    {
+      "id": "row-001",
+      "testName": "TC_023_PPMU_Current_Test",
+      "type": "CSharp",
+      "name": "TestClassPPMU.TC_023_PPMU_Current_Test",
+      "dcSpecsCategory": "",
+      "dcSpecsSelector": "",
+      "acSpecsCategory": "",
+      "acSpecsSelector": "",
+      "timeSets": "timesetsbasic",
+      "pinLevels": "pinlevels",
+      "mixedSignalTiming": "",
+      "overlay": "",
+      "arguments": "",
+      "comment": ""
+    },
+    {
+      "id": "row-002",
+      "testName": "TC_024_PPMU_Current_Test",
+      "type": "CSharp",
+      "name": "TestClassPPMU.TC_024_PPMU_Current_Test",
+      "dcSpecsCategory": "",
+      "dcSpecsSelector": "",
+      "acSpecsCategory": "",
+      "acSpecsSelector": "",
+      "timeSets": "timesetsbasic",
+      "pinLevels": "pinlevels",
+      "mixedSignalTiming": "",
+      "overlay": "",
+      "arguments": "",
+      "comment": ""
+    }
+  ]
+}

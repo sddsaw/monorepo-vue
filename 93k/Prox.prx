@@ -1,0 +1,7 @@
+{
+  "DefFileFolder": "DefFiles",
+  "configFile": "SimulatedConfig.json",
+  "part": "part1",
+  "env": "env1",
+  "name": "Prox.prx"
+}

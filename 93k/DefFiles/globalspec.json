@@ -1,0 +1,21 @@
+{
+  "version": "1.0",
+  "DefFileType": "globalspec",
+  "metadata": {
+    "sheetId": "e0f67c8e-dccf-4159-b4eb-b1a978a72182",
+    "createdAt": "2026-06-15T00:00:00Z",
+    "updatedAt": "2026-06-15T00:00:00Z",
+    "createdBy": "user",
+    "version": "1"
+  },
+  "data": [
+    {"id": "row-001", "symbol": "Vcl_default", "job": "", "value": "-1.8", "comment": "Detector clamp voltage low"},
+    {"id": "row-002", "symbol": "Vch_default", "job": "", "value": "6.8", "comment": "Detector clamp voltage high"},
+    {"id": "row-003", "symbol": "Vph_default", "job": "", "value": "5", "comment": "Hi-V pin voltage high"},
+    {"id": "row-004", "symbol": "Iph_default", "job": "", "value": "0", "comment": "Hi-V pin current limit"},
+    {"id": "row-005", "symbol": "Tpr_default", "job": "", "value": "0.000016", "comment": "Hi-V pin rise time"},
+    {"id": "row-006", "symbol": "gl_Isc", "job": "", "value": "0.5", "comment": ""},
+    {"id": "row-007", "symbol": "gl_Tdelay", "job": "", "value": "0.002", "comment": ""},
+    {"id": "row-008", "symbol": "Vfph_default", "job": "", "value": "6", "comment": "Fast Hi-V pin voltage high"}
+  ]
+}

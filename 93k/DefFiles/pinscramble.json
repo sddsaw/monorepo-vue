@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "DefFileType": "pinscrambletable",
+  "config": {
+    "DDRMode": false,
+    "psColumns": [
+      { "psIndex": 2, "name": "ps_cmd" },
+      { "psIndex": 1, "name": "ps_mrw" }
+    ]
+  },
+  "metadata": {
+    "sheetId": "fc9b757f-89c7-4f11-aecd-63725f1f5096",
+    "createdAt": "2026-06-17T00:00:00Z",
+    "updatedAt": "2026-06-17T00:00:00Z",
+    "createdBy": "user",
+    "version": "1"
+  },
+  "data": [
+    {"id": "row-002", "pinName": "A1", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-003", "pinName": "A2", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-004", "pinName": "A3", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-005", "pinName": "A4", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-006", "pinName": "A5", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-007", "pinName": "A6", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-008", "pinName": "A7", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""},
+    {"id": "row-009", "pinName": "A8", "ps_cmd": "x0;x1", "ps_mrw": "x2;x3", "comment": ""}
+
+  ]
+}

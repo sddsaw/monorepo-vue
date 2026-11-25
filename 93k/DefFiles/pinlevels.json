@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "DefFileType": "pinlevels",
+  "metadata": {
+    "createdAt": "2026-09-15T03:40:42.063Z",
+    "updatedAt": "2026-09-15T03:40:42.063Z",
+    "sheetId": "605df1a3-6090-47ba-b9a6-0cf38151d2b2"
+  },
+  "data": [
+    {
+      "id": "6766518b-e9d3-436f-82ec-567415c12515",
+      "pinGroup": "ALLPINS",
+      "seq": null,
+      "parameter": "VDriveLo",
+      "value": "0.1",
+      "comment": ""
+    }
+
+  ]
+}

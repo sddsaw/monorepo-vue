@@ -1,0 +1,120 @@
+{
+  "configVersion": "1.0",
+  "tester": "MEM_E",
+  "records": [
+    {
+      "slot": 1,
+      "subSlot": null,
+      "type": "SiteAssembly",
+      "idprom": "805-601-01 1A0A0001 A0120 ARC",
+      "subslots": 6
+    },
+    {
+      "slot": 2,
+      "subSlot": null,
+      "type": "SiteAssembly",
+      "idprom": "805-601-01 1A0A0002 A0120 ARC",
+      "subslots": 4
+    },
+    {
+      "slot": 3,
+      "subSlot": null,
+      "type": "RepeaterBoard",
+      "idprom": "805-601-10 1A0A0003 A0120 ARC",
+      "subslots": 0
+    },
+    {
+      "slot": 4,
+      "subSlot": null,
+      "type": "SiteAssembly",
+      "idprom": "805-601-01 1A0A0004 A0120 ARC",
+      "subslots": 4
+    }
+  ],
+  "subslotModules": [
+    {
+      "slot": 1,
+      "subSlot": 0,
+      "moduleType": "SCU",
+      "idprom": "805-601-01 1A0A0001 A0120 ARC",
+      "dps": null,
+      "hv": null,
+      "pmu": null,
+      "boards": null,
+      "version": "v1"
+    },
+    {
+      "slot": 1,
+      "subSlot": 1,
+      "moduleType": "ABMB",
+      "idprom": "805-601-02 1A0A0002 A0120 ARC",
+      "dps": null,
+      "hv": null,
+      "pmu": null,
+      "boards": null,
+      "version": "v1"
+    },
+    {
+      "slot": 1,
+      "subSlot": 2,
+      "moduleType": "MIO16",
+      "idprom": "777-777-01 1A0A0003 A0120 ARC",
+      "dps": null,
+      "hv": null,
+      "pmu": null,
+      "boards": 1,
+      "version": "v1"
+    },
+    {
+      "slot": 1,
+      "subSlot": 3,
+      "moduleType": "MIO16",
+      "idprom": "777-777-01 1A0A0033 A0120 ARC",
+      "dps": null,
+      "hv": null,
+      "pmu": null,
+      "boards": 1,
+      "version": "v1"
+    },
+    {
+      "slot": 1,
+      "subSlot": 4,
+      "moduleType": "MVS1A",
+      "idprom": "666-666-01 1A0A0005 A0120 ARC",
+      "dps": 8,
+      "hv": 8,
+      "pmu": 8,
+      "boards": 1,
+      "version": "v1"
+    },
+    {
+      "slot": 1,
+      "subSlot": 5,
+      "moduleType": "MVS1A",
+      "idprom": "666-666-01 1A0A0055 A0120 ARC",
+      "dps": 8,
+      "hv": 8,
+      "pmu": 8,
+      "boards": 1,
+      "version": "v1"
+    }
+  ],
+  "dimmConfig": [
+    {
+      "slot": 1,
+      "dimm1Type": "Standard",
+      "dimm1Count": 1,
+      "dimm2Type": null,
+      "dimm2Count": 0,
+      "notes": "ECR only"
+    },
+    {
+      "slot": 2,
+      "dimm1Type": "Standard",
+      "dimm1Count": 2,
+      "dimm2Type": null,
+      "dimm2Count": 0,
+      "notes": "ECR + LVM"
+    }
+  ]
+}

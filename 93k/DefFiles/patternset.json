@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "DefFileType": "patternset",
+  "config": {
+    "DefFileType": "MTS Pattern Sets"
+  },
+  "metadata": {
+    "sheetId": "40516aba-2ee0-471c-ab05-7160009fbdbc",
+    "createdAt": "2026-07-03T00:00:00Z",
+    "updatedAt": "2026-07-03T00:00:00Z",
+    "createdBy": "user",
+    "version": "1"
+  },
+  "data": [
+    {"id": "row-002", "patternSet": "pattern_phase1", "filePath": "DefFiles/raw_pattern.pat", "comment": "Phase 1 raw pattern"}
+  ]
+}

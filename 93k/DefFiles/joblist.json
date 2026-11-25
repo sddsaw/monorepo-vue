@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "DefFileType": "joblist",
+  "activeJob": "JobTest",
+  "testProgramPath": "TestProgram/TestProgram.csproj",
+  "metadata": {
+    "sheetRefs": {
+      "pinmap": "b7e2d298-2166-4b57-a0e7-3bb4208b5492",
+      "channelmap": "8b20da3e-de6a-426d-afa6-4631d8113bd8",
+      "flowtable": "67c14b38-cd51-4f2f-a887-1e0694d512c7",
+      "testinstance": "6a1179f4-71d4-42c9-abf8-fa789faab882"
+    },
+    "sheetId": "6e5a3a90-0e1a-4d96-984d-dd99d5446253",
+    "createdAt": "2026-06-15T00:00:00Z",
+    "updatedAt": "2026-06-15T00:00:00Z",
+    "createdBy": "user",
+    "version": "1"
+  },
+  "jobs": [
+    {
+      "id": "row-001",
+      "jobName": "JobTest",
+      "isActive": true,
+      "pinMap": "pinmap",
+      "chanMap": "DefFiles/channelmap.json",
+      "testInstances": "DefFiles/testinstance.json",
+      "flowTable": "DefFiles/flowtable.json",
+      "acSpecs": "",
+      "dcSpecs": "",
+      "patternSets": "",
+      "patternGroups": "",
+      "binTable": "",
+      "characterization": "",
+      "testProcedures": "",
+      "comment": ""
+    }
+  ]
+}

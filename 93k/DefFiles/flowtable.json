@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "DefFileType": "flowtable",
+  "metadata": {
+    "sheetId": "67c14b38-cd51-4f2f-a887-1e0694d512c7",
+    "createdAt": "2026-06-15T00:00:00Z",
+    "updatedAt": "2026-06-15T00:00:00Z",
+    "createdBy": "user",
+    "version": "1"
+  },
+  "data": [
+    {
+      "id": "row-001",
+      "label": "",
+      "enable": "",
+      "opcode": "Test",
+      "parameter": "TC_023_PPMU_Current_Test",
+      "tName": "",
+      "tNum": "",
+      "binPass": "",
+      "binFail": "2",
+      "sortPass": "",
+      "sortFail": "20",
+      "result": "Fail",
+      "actionPass": "",
+      "actionFail": "",
+      "state": "",
+      "groupSpecifier": "",
+      "groupSense": "",
+      "groupCondition": "",
+      "groupName": "",
+      "deviceSense": "",
+      "deviceCondition": "",
+      "deviceName": "",
+      "debugAssume": "",
+      "debugSites": "",
+      "comment": ""
+    }
+  ]
+}

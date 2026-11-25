@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "DefFileType": "mtstimeset",
+  "metadata": {
+    "sheetId": "2e63d076-6e04-4f77-b57b-740f3a97be5a",
+    "createdAt": "2026-07-29T09:47:45.668Z",
+    "updatedAt": "2026-11-20T01:46:21.145Z"
+  },
+  "data": [
+    {
+      "timeSet": "TSET1",
+      "cyclePeriod": "1.00E-07",
+      "cpp": "1",
+      "pinGroup": "A1",
+      "ddrSetup": "SDR",
+      "pinGroupSetup": "I/O",
+      "dataSrc": "PAT",
+      "fmt": "NR",
+      "d0": "2.00E-08",
+      "d1": "5.00E-08",
+      "d2": "",
+      "d3": "7.50E-08",
+      "compareMode": "Window",
+      "r0": "8.00E-08",
+      "r1": "",
+      "comment": "",
+      "id": "ed04a0d7-c7ac-4bd5-8e81-11ce2d018d93",
+      "tsetIndex": "2",
+      "pinGroupName": "A11"
+    },
+    {
+      "timeSet": "TSET2",
+      "cyclePeriod": "1.00E-07",
+      "cpp": "1",
+      "pinGroup": "A9",
+      "ddrSetup": "PinDuplicate",
+      "pinGroupSetup": "I/O",
+      "dataSrc": "PAT",
+      "fmt": "RH",
+      "d0": "2.00E-08",
+      "d1": "5.00E-08",
+      "d2": "",
+      "d3": "7.50E-08",
+      "compareMode": "Off",
+      "r0": "8.00E-08",
+      "r1": "",
+      "comment": "",
+      "id": "06aaf809-c60d-4d22-9274-24a0a7c97563",
+      "tsetIndex": "1",
+      "pinGroupName": "A9"
+    }
+  ]
+}
